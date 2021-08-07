@@ -1,0 +1,26 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <div class="main">
+        <div class="top-row px-4">
+            <AuthorizeView>
+                <Authorized>
+                    <span style="margin-right:10px">@context.User.FindFirst("sub").Value</span>
+                    <button class="btn btn-primary" @onclick="LogoutAsync">Kijelentkezés</button>
+                </Authorized>
+                <NotAuthorized>
+                    <NavLink class="nav-link" href="login">Bejelentkezés</NavLink>
+                    <NavLink class="nav-link" href="register">Regisztráció</NavLink>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+
+        <div class="content px-4">
+            @Body
+        </div>
+    </div>
+</div>

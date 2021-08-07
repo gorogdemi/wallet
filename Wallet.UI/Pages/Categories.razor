@@ -1,0 +1,82 @@
+﻿@page "/categories"
+@inherits AuthenticationAwareComponentBase<CategoryDialog>
+
+<h1>Kategóriák</h1>
+
+<ErrorMessageComponent ErrorMessage="@ErrorMessage"></ErrorMessageComponent>
+
+<br />
+
+@if (Data.ShowDialog)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Kategória @(Data.Id.HasValue ? "módosítás" : "létrehozás")</h5>
+                    <button type="button" class="close" @onclick="@Close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@Data.Request" OnValidSubmit="@SaveAsync">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div class="form-group">
+                            <label for="name">Név: </label>
+                            <InputText id="name" class="form-control" @bind-Value="@Data.Request.Name" placeholder="Add meg a kategória nevét"></InputText>
+                            <ValidationMessage For="@(() => Data.Request.Name)" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Kész</button>
+                        <a class="btn btn-outline-primary" @onclick="@Close">Vissza</a>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (IsLoading)
+{
+    <div>Adatok betöltése...</div>
+}
+else
+{
+    <button @onclick="@Add" class="btn btn-primary" style="margin-bottom:10px">
+        Új kategória
+        <i class="fas fa-plus-circle"></i>
+    </button>
+    <div class="row">
+        <table class="col-5 table table-borderless">
+            <thead>
+                <tr>
+                    <th class="col-3">Név</th>
+                    <th class="col-1"></th>
+                    <th class="col-1"></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var category in Categories)
+                {
+                    <tr>
+                        <td>@category.Name</td>
+                        <td>
+                            <button @onclick="() => Edit(category)" class="btn btn-primary">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button @onclick="() => DeleteAsync(category.Id)" class="btn btn-primary">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+        <div class="col-9"></div>
+    </div>
+
+}

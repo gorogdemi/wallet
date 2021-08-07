@@ -1,0 +1,17 @@
+﻿@page "/transactions/edit/{TransactionId:int}"
+@inherits TransactionFormComponentBase
+
+<h1>Tranzakció Módosítás</h1>
+
+<ErrorMessageComponent ErrorMessage="@ErrorMessage"></ErrorMessageComponent>
+
+<br />
+
+@if (IsLoading)
+{
+    <div>Adatok betöltése...</div>
+}
+else
+{
+    <TransactionForm Transaction="Data" Categories="Categories" OnClose="NavigateToTransactions" OnSubmit="EditAsync"></TransactionForm>
+}

@@ -1,0 +1,19 @@
+﻿@page "/"
+@inherits WalletComponentBase<BalanceResponse, IWalletDataService>
+
+<h1>Egyenleg</h1>
+
+<ErrorMessageComponent ErrorMessage="@ErrorMessage"></ErrorMessageComponent>
+
+<br />
+
+@if (IsLoading)
+{
+    <div>Adatok betöltése...</div>
+}
+else
+{
+    <p>Teljes: @Data.Full Ft</p>
+    <p>Készpénz: @Data.Cash Ft</p>
+    <p>Bankszámla: @Data.BankAccount Ft</p>
+}

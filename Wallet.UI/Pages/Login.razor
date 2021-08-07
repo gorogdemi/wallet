@@ -1,0 +1,31 @@
+﻿@page "/login"
+@inherits WalletComponentBase<LoginRequest, IAuthenticationService>
+
+<h1>Bejelentkezés</h1>
+<ErrorMessageComponent ErrorMessage="@ErrorMessage"></ErrorMessageComponent>
+
+<EditForm Model="Data" OnValidSubmit="LoginAsync" class="card card-body bg-light mt-5">
+    <DataAnnotationsValidator />
+
+    <div class="form-group row">
+        <label for="email" class="col-md-2 col-form-label">E-mail cím:</label>
+        <div class="col-md-10">
+            <InputText id="email" type="email" class="form-control" @bind-Value="Data.Email" />
+            <ValidationMessage For="() => Data.Email" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="password" class="col-md-2 col-form-label">Jelszó:</label>
+        <div class="col-md-10">
+            <InputText id="password" type="password" class="form-control" @bind-Value="Data.Password" />
+            <ValidationMessage For="() => Data.Password" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button type="submit" class="btn btn-primary">Bejelentkezés</button>
+        </div>
+    </div>
+</EditForm>
