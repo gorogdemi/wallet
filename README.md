@@ -1,2 +1,2 @@
-# dq-wallet
+# DQ Wallet
 DevQuarter's Wallet software.
