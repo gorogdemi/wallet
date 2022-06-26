@@ -28,22 +28,17 @@ namespace Wallet.Api.Controllers
         {
             var userId = HttpContext.GetUserId();
 
-            var transcations = await _walletContext.Transactions.Where(x => x.UserId == userId).ToListAsync();
+            var transactions = await _walletContext.Transactions.Where(x => x.UserId == userId).ToListAsync();
 
-            var cashExpenses = transcations.Where(x => x.Type == TransactionType.Expense).Sum(x => x.CashAmount);
-            var cashIncomes = transcations.Where(x => x.Type == TransactionType.Income).Sum(x => x.CashAmount);
-            var bankExpenses = transcations.Where(x => x.Type == TransactionType.Expense).Sum(x => x.BankAmount);
-            var bankIncomes = transcations.Where(x => x.Type == TransactionType.Income).Sum(x => x.BankAmount);
+            var cashExpenses = transactions.Where(x => x.Type == TransactionType.Expense).Sum(x => x.CashAmount);
+            var cashIncomes = transactions.Where(x => x.Type == TransactionType.Income).Sum(x => x.CashAmount);
+            var bankExpenses = transactions.Where(x => x.Type == TransactionType.Expense).Sum(x => x.BankAmount);
+            var bankIncomes = transactions.Where(x => x.Type == TransactionType.Income).Sum(x => x.BankAmount);
 
             var cash = cashIncomes - cashExpenses;
             var bank = bankIncomes - bankExpenses;
 
-            return Ok(new BalanceResponse
-            {
-                Full = cash + bank,
-                Cash = cash,
-                BankAccount = bank
-            });
+            return Ok(new BalanceResponse { Full = cash + bank, Cash = cash, BankAccount = bank });
         }
     }
 }

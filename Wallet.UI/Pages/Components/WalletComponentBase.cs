@@ -7,7 +7,7 @@ namespace Wallet.UI.Pages.Components
     public class WalletComponentBase<TData, TService> : ComponentBase
         where TData : class, new()
     {
-        public TData Data { get; protected set; } = new();
+        public TData Data { get; protected set; } = new ();
 
         public string ErrorMessage { get; protected set; }
 

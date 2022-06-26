@@ -4,7 +4,8 @@ namespace Wallet.Contracts.Requests
 {
     public class CategoryRequest
     {
-        [Required, MaxLength(100)]
+        [Required]
+        [MaxLength(100)]
         public string Name { get; set; }
 
         [Required]

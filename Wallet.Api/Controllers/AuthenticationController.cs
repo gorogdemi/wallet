@@ -33,39 +33,27 @@ namespace Wallet.Api.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new AuthenticationFailedResponse
-                {
-                    Errors = ModelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage))
-                });
+                return BadRequest(new AuthenticationFailedResponse { Errors = ModelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage)) });
             }
 
             var user = await _userManager.FindByEmailAsync(request.Email);
 
             if (user == null)
             {
-                return BadRequest(new AuthenticationFailedResponse
-                {
-                    Errors = new[] { "User does not exists." }
-                });
+                return BadRequest(new AuthenticationFailedResponse { Errors = new[] { "User does not exists." } });
             }
 
             var validPassword = await _userManager.CheckPasswordAsync(user, request.Password);
 
             if (!validPassword)
             {
-                return BadRequest(new AuthenticationFailedResponse
-                {
-                    Errors = new[] { "Username or password is invalid." }
-                });
+                return BadRequest(new AuthenticationFailedResponse { Errors = new[] { "Username or password is invalid." } });
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = GetToken(user, tokenHandler);
 
-            return Ok(new AuthenticationSuccessResponse
-            {
-                Token = tokenHandler.WriteToken(token)
-            });
+            return Ok(new AuthenticationSuccessResponse { Token = tokenHandler.WriteToken(token) });
         }
 
         [HttpPost("register")]
@@ -73,45 +61,29 @@ namespace Wallet.Api.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new AuthenticationFailedResponse
-                {
-                    Errors = ModelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage))
-                });
+                return BadRequest(new AuthenticationFailedResponse { Errors = ModelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage)) });
             }
 
             var existingUser = await _userManager.FindByEmailAsync(request.Email);
 
             if (existingUser != null)
             {
-                return BadRequest(new AuthenticationFailedResponse
-                {
-                    Errors = new[] { "User with this e-mail address already exists." }
-                });
+                return BadRequest(new AuthenticationFailedResponse { Errors = new[] { "User with this e-mail address already exists." } });
             }
 
-            var newUser = new User
-            {
-                Email = request.Email,
-                UserName = request.Email
-            };
+            var newUser = new User { Email = request.Email, UserName = request.Email };
 
             var createdUser = await _userManager.CreateAsync(newUser, request.Password);
 
             if (!createdUser.Succeeded)
             {
-                return BadRequest(new AuthenticationFailedResponse
-                {
-                    Errors = createdUser.Errors.Select(x => x.Description)
-                });
+                return BadRequest(new AuthenticationFailedResponse { Errors = createdUser.Errors.Select(x => x.Description) });
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = GetToken(newUser, tokenHandler);
 
-            return Ok(new AuthenticationSuccessResponse
-            {
-                Token = tokenHandler.WriteToken(token)
-            });
+            return Ok(new AuthenticationSuccessResponse { Token = tokenHandler.WriteToken(token) });
         }
 
         private SecurityToken GetToken(User newUser, JwtSecurityTokenHandler tokenHandler)
@@ -119,15 +91,16 @@ namespace Wallet.Api.Controllers
             var key = Encoding.ASCII.GetBytes(_jwtOptions.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, newUser.Email),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Email, newUser.Email),
-                    new Claim("id", newUser.Id)
-                }),
+                Subject = new ClaimsIdentity(
+                    new[]
+                    {
+                        new Claim(JwtRegisteredClaimNames.Sub, newUser.Email),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        new Claim(JwtRegisteredClaimNames.Email, newUser.Email),
+                        new Claim("id", newUser.Id),
+                    }),
                 Expires = DateTime.UtcNow.AddMonths(2),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             };
 
             return tokenHandler.CreateToken(tokenDescriptor);

@@ -26,7 +26,7 @@ namespace Wallet.UI
 
         public async Task LoginAsync(LoginRequest loginRequest)
         {
-            var authResult = await _httpClient.PostAsJsonAsync(UrlHelper.LoginUrl, loginRequest);
+            using var authResult = await _httpClient.PostAsJsonAsync(UrlHelper.LoginUrl, loginRequest);
             await GetAuthenticationResponse(authResult);
         }
 
@@ -39,7 +39,7 @@ namespace Wallet.UI
 
         public async Task RegisterAsync(RegistrationRequest registrationRequest)
         {
-            var authResult = await _httpClient.PostAsJsonAsync(UrlHelper.RegisterUrl, registrationRequest);
+            using var authResult = await _httpClient.PostAsJsonAsync(UrlHelper.RegisterUrl, registrationRequest);
             await GetAuthenticationResponse(authResult);
         }
 

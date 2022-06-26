@@ -17,6 +17,6 @@ namespace Wallet.UI.Pages.Transactions
         public EventCallback OnSubmit { get; set; }
 
         [Parameter]
-        public TransactionRequest Transaction { get; set; } = new();
+        public TransactionRequest Transaction { get; set; } = new ();
     }
 }

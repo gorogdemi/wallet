@@ -37,7 +37,7 @@ namespace Wallet.Api.Controllers
                 Name = transactionRequest.Name,
                 Date = transactionRequest.Date,
                 Type = (TransactionType)transactionRequest.Type,
-                UserId = userId
+                UserId = userId,
             };
             _walletContext.Transactions.Add(transaction);
             await _walletContext.SaveChangesAsync();
@@ -70,21 +70,24 @@ namespace Wallet.Api.Controllers
         public async Task<ActionResult<IEnumerable<TransactionResponse>>> Get()
         {
             var userId = HttpContext.GetUserId();
-            var transcations = await _walletContext.Transactions.Where(x => x.UserId == userId).Select(x => new TransactionResponse
-            {
-                Name = x.Name,
-                CashAmount = x.CashAmount,
-                BankAmount = x.BankAmount,
-                CategoryId = x.CategoryId,
-                CategoryName = x.Category.Name,
-                Comment = x.Comment,
-                Date = x.Date,
-                Id = x.Id,
-                SumAmount = x.CashAmount + x.BankAmount,
-                Type = (int)x.Type
-            }).ToListAsync();
+            var transactions = await _walletContext.Transactions.Where(x => x.UserId == userId)
+                .Select(
+                    x => new TransactionResponse
+                    {
+                        Name = x.Name,
+                        CashAmount = x.CashAmount,
+                        BankAmount = x.BankAmount,
+                        CategoryId = x.CategoryId,
+                        CategoryName = x.Category.Name,
+                        Comment = x.Comment,
+                        Date = x.Date,
+                        Id = x.Id,
+                        SumAmount = x.CashAmount + x.BankAmount,
+                        Type = (int)x.Type,
+                    })
+                .ToListAsync();
 
-            return Ok(transcations);
+            return Ok(transactions);
         }
 
         [HttpGet("{id}")]
@@ -103,7 +106,7 @@ namespace Wallet.Api.Controllers
                 return Forbid();
             }
 
-            var trensactionResponse = new TransactionResponse
+            var transactionResponse = new TransactionResponse
             {
                 Name = transaction.Name,
                 CashAmount = transaction.CashAmount,
@@ -114,30 +117,33 @@ namespace Wallet.Api.Controllers
                 Date = transaction.Date,
                 Id = transaction.Id,
                 SumAmount = transaction.CashAmount + transaction.BankAmount,
-                Type = (int)transaction.Type
+                Type = (int)transaction.Type,
             };
 
-            return Ok(trensactionResponse);
+            return Ok(transactionResponse);
         }
 
         [HttpGet("search/{text}")]
         public async Task<ActionResult<IEnumerable<TransactionResponse>>> Search(string text)
         {
             var userId = HttpContext.GetUserId();
-            var transcations = await _walletContext.Transactions.Where(x => x.UserId == userId && x.Name.ToLower().Contains(text.ToLower())).Select(x => new TransactionResponse
-            {
-                Name = x.Name,
-                CashAmount = x.CashAmount,
-                BankAmount = x.BankAmount,
-                CategoryId = x.CategoryId,
-                Comment = x.Comment,
-                Date = x.Date,
-                Id = x.Id,
-                SumAmount = x.CashAmount + x.BankAmount,
-                Type = (int)x.Type
-            }).ToListAsync();
+            var transactions = await _walletContext.Transactions.Where(x => x.UserId == userId && x.Name.ToLower().Contains(text.ToLower()))
+                .Select(
+                    x => new TransactionResponse
+                    {
+                        Name = x.Name,
+                        CashAmount = x.CashAmount,
+                        BankAmount = x.BankAmount,
+                        CategoryId = x.CategoryId,
+                        Comment = x.Comment,
+                        Date = x.Date,
+                        Id = x.Id,
+                        SumAmount = x.CashAmount + x.BankAmount,
+                        Type = (int)x.Type,
+                    })
+                .ToListAsync();
 
-            return Ok(transcations);
+            return Ok(transactions);
         }
 
         [HttpPut("{id}")]

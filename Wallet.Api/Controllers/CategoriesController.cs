@@ -28,11 +28,7 @@ namespace Wallet.Api.Controllers
         public async Task<ActionResult<bool>> Create(CategoryRequest categoryRequest)
         {
             var userId = HttpContext.GetUserId();
-            var category = new Category
-            {
-                Name = categoryRequest.Name,
-                UserId = userId
-            };
+            var category = new Category { Name = categoryRequest.Name, UserId = userId };
             _walletContext.Categories.Add(category);
             await _walletContext.SaveChangesAsync();
             return Ok(true);
@@ -64,13 +60,9 @@ namespace Wallet.Api.Controllers
         public async Task<ActionResult<IEnumerable<CategoryResponse>>> Get()
         {
             var userId = HttpContext.GetUserId();
-            var transcations = await _walletContext.Categories.Where(x => x.UserId == userId).Select(x => new CategoryResponse
-            {
-                Name = x.Name,
-                Id = x.Id,
-            }).ToListAsync();
+            var transactions = await _walletContext.Categories.Where(x => x.UserId == userId).Select(x => new CategoryResponse { Name = x.Name, Id = x.Id }).ToListAsync();
 
-            return Ok(transcations);
+            return Ok(transactions);
         }
 
         [HttpGet("{id}")]
@@ -89,11 +81,7 @@ namespace Wallet.Api.Controllers
                 return Forbid();
             }
 
-            var categoryResponse = new CategoryResponse
-            {
-                Name = category.Name,
-                Id = category.Id,
-            };
+            var categoryResponse = new CategoryResponse { Name = category.Name, Id = category.Id };
 
             return Ok(categoryResponse);
         }

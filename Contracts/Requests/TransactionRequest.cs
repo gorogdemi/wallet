@@ -16,7 +16,8 @@ namespace Wallet.Contracts.Requests
 
         public DateTime Date { get; set; }
 
-        [Required, MaxLength(100)]
+        [Required]
+        [MaxLength(100)]
         public string Name { get; set; }
 
         public int Type { get; set; }
