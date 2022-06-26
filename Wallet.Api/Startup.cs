@@ -30,7 +30,7 @@ namespace Wallet.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        // számit a sorrend
+        // szï¿½mit a sorrend
         public void Configure(IApplicationBuilder app, WalletContext walletContext)
         {
             if (!_environment.IsDevelopment())
@@ -64,8 +64,8 @@ namespace Wallet.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         // I -> interface
         // dependency injection
-        // ha itt nincs megadva, akkor elszáll nullpointerrel
-        // walletcontext használjon sql szervert, a connection string pedig az appsettings-bõl jön
+        // ha itt nincs megadva, akkor elszï¿½ll nullpointerrel
+        // walletcontext hasznï¿½ljon sql szervert, a connection string pedig az appsettings-bï¿½l jï¿½n
         // appsettings.Development.json
 
         public void ConfigureServices(IServiceCollection services)
@@ -82,7 +82,7 @@ namespace Wallet.Api
             {
                 "Postgres" => options.UseNpgsql(_configuration.GetConnectionString("Postgres")).UseLazyLoadingProxies(),
                 "SqlServer" => options.UseSqlServer(_configuration.GetConnectionString("LocalDb")).UseLazyLoadingProxies(),
-                _ => throw new Exception($"Unsupported provider: {provider}")
+                _ => throw new Exception($"Unsupported provider: {provider}"),
             });
 
             services
