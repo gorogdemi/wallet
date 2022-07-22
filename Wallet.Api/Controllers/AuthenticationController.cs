@@ -19,13 +19,13 @@ namespace Wallet.Api.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly JwtOptions _jwtOptions;
+        private readonly AuthenticationOptions _authenticationOptions;
         private readonly UserManager<User> _userManager;
 
-        public AuthenticationController(UserManager<User> userManager, IOptions<JwtOptions> jwtOptions)
+        public AuthenticationController(UserManager<User> userManager, IOptions<AuthenticationOptions> authenticationOptions)
         {
             _userManager = userManager;
-            _jwtOptions = jwtOptions.Value;
+            _authenticationOptions = authenticationOptions.Value;
         }
 
         [HttpPost("login")]
@@ -88,7 +88,7 @@ namespace Wallet.Api.Controllers
 
         private SecurityToken GetToken(User newUser, JwtSecurityTokenHandler tokenHandler)
         {
-            var key = Encoding.ASCII.GetBytes(_jwtOptions.Secret);
+            var key = Encoding.ASCII.GetBytes(_authenticationOptions.JwtSecret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(
