@@ -22,25 +22,25 @@ else
     [Parameter]
     public int TransactionId { get; set; }
 
-    public Task EditAsync() =>
+    private Task EditAsync() =>
         HandleRequest(
             () => Service.UpdateAsync(UriHelper.GetTransactionUriWith(TransactionId), Data),
-            onSuccess: () => NavigateToTransactions(),
+            onSuccess: NavigateToTransactions,
             errorMessage: "Tranzakció módosítás sikertelen!");
 
     protected override async Task OnInitializedAsync()
     {
         await HandleRequest(
             () => Service.GetAsync<TransactionResponse>(UriHelper.GetTransactionUriWith(TransactionId)),
-            onSuccess: r =>
+            onSuccess: response =>
             {
-                Data.BankAmount = r.BankAmount;
-                Data.CashAmount = r.CashAmount;
-                Data.CategoryId = r.CategoryId;
-                Data.Comment = r.Comment;
-                Data.Date = r.Date;
-                Data.Name = r.Name;
-                Data.Type = r.Type;
+                Data.BankAmount = response.BankAmount;
+                Data.CashAmount = response.CashAmount;
+                Data.CategoryId = response.CategoryId;
+                Data.Comment = response.Comment;
+                Data.Date = response.Date;
+                Data.Name = response.Name;
+                Data.Type = response.Type;
             },
             errorMessage: "Tranzakció lekérés sikertelen!");
 

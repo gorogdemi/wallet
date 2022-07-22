@@ -1,5 +1,5 @@
 ﻿@page "/"
-@inherits WalletComponentBase<BalanceResponse, IWalletDataService>
+@inherits AuthenticationAwareComponentBase<BalanceResponse>
 @attribute [Authorize]
 
 <h1>Egyenleg</h1>

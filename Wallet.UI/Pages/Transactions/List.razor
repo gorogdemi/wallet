@@ -9,7 +9,7 @@
 <br />
 
 <div class="input-group mb-3">
-    <input type="text" class="form-control" placeholder="Írja be a tranzakció nevét.." @bind="@SearchInput">
+    <input type="text" class="form-control" placeholder="Írja be a tranzakció nevét.." @bind="@_searchInput">
     <div class="input-group-append">
         <button class="btn btn-primary edit-btn" type="button" @onclick="LoadTransactionAsync">Keresés</button>
     </div>
@@ -70,9 +70,9 @@ else
 
 @code {
 
-    public string SearchInput { get; set; }
+    private string _searchInput;
 
-    public async Task DeleteAsync(int id)
+    private async Task DeleteAsync(int id)
     {
         await HandleRequest(
             () => Service.DeleteAsync(UriHelper.GetTransactionUriWith(id)),
@@ -92,14 +92,14 @@ else
 
     private Task LoadTransactionAsync() =>
         HandleRequest(
-            () => Service.GetAsync<List<TransactionResponse>>(string.IsNullOrEmpty(SearchInput) ? UriHelper.TransactionUri : UriHelper.GetTransactionUriWith(SearchInput)),
-            onSuccess: r => Data = r,
+            () => Service.GetAsync<List<TransactionResponse>>(string.IsNullOrEmpty(_searchInput) ? UriHelper.TransactionUri : UriHelper.GetTransactionUriWith(_searchInput)),
+            onSuccess: response => Data = response,
             errorMessage: "Tranzakciók betöltése sikertelen!");
 
     private Task LoadTransactionsAsync() =>
         HandleRequest(
             () => Service.GetAsync<List<TransactionResponse>>(UriHelper.TransactionUri),
-            onSuccess: r => Data = r,
+            onSuccess: response => Data = response,
             errorMessage: "Tranzakciók betöltése sikertelen!");
 
 }

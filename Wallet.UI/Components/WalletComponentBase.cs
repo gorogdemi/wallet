@@ -21,6 +21,8 @@ namespace Wallet.UI.Components
 
         protected async Task HandleRequest<T>(Func<Task<T>> request, string errorMessage, Action<T> onSuccess)
         {
+            ErrorMessage = null;
+
             try
             {
                 var result = await request();
@@ -34,6 +36,8 @@ namespace Wallet.UI.Components
 
         protected async Task HandleRequest(Func<Task> request, string errorMessage, Action onSuccess)
         {
+            ErrorMessage = null;
+
             try
             {
                 await request();
@@ -47,6 +51,8 @@ namespace Wallet.UI.Components
 
         protected async Task HandleRequest(Func<Task> request, string errorMessage, Func<Task> onSuccess)
         {
+            ErrorMessage = null;
+
             try
             {
                 await request();

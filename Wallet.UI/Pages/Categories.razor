@@ -1,5 +1,5 @@
 ﻿@page "/categories"
-@inherits AuthenticationAwareComponentBase<CategoryDialog>
+@inherits CategoryAwareComponentBase<CategoryDialog>
 @attribute [Authorize]
 
 <h1>Kategóriák</h1>
@@ -82,24 +82,24 @@ else
 
 @code {
 
-    public void Add()
+    private void Add()
     {
         Data.Request = new CategoryRequest { UserId = UserId };
         Data.Id = null;
         Data.ShowDialog = true;
     }
 
-    public void Close() => Data.ShowDialog = false;
+    private void Close() => Data.ShowDialog = false;
 
-    public async Task DeleteAsync(int id)
+    private async Task DeleteAsync(int id)
     {
         await HandleRequest(
             () => Service.DeleteAsync(UriHelper.GetCategoryUriWith(id)),
-            onSuccess: () => LoadCategoriesAsync(),
+            onSuccess: LoadCategoriesAsync,
             errorMessage: "Hiba a kategória törlése közben!");
     }
 
-    public void Edit(CategoryResponse category)
+    private void Edit(CategoryResponse category)
     {
         Data.Request = new CategoryRequest { Name = category.Name, UserId = UserId };
 
@@ -107,13 +107,13 @@ else
         Data.ShowDialog = true;
     }
 
-    public async Task SaveAsync()
+    private async Task SaveAsync()
     {
         var isEdit = Data.Id.HasValue;
 
         await HandleRequest(
-            () => isEdit ? Service.UpdateAsync(UriHelper.GetCategoryUriWith(Data.Id.Value), Data.Request) : Service.CreateAsync(UriHelper.CategoryUri, Data.Request),
-            onSuccess: () => LoadCategoriesAsync(),
+            () => isEdit ? Service.UpdateAsync(UriHelper.GetCategoryUriWith(Data.Id!.Value), Data.Request) : Service.CreateAsync(UriHelper.CategoryUri, Data.Request),
+            onSuccess: LoadCategoriesAsync,
             errorMessage: $"Hiba a kategória {(isEdit ? "módosítása" : "létrehozása")} közben!");
 
         Data.ShowDialog = false;

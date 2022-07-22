@@ -67,8 +67,6 @@
 
     private async Task RegisterAsync()
     {
-        ErrorMessage = null;
-
         await HandleRequest(
             () => Service.RegisterAsync(Data),
             onSuccess: () => NavigationManager.NavigateTo("/"),

@@ -3,18 +3,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using Wallet.Contracts.Responses;
 using Wallet.UI.Helpers;
-using Wallet.UI.Services;
 
 namespace Wallet.UI.Components
 {
-    public abstract class CategoryAwareComponentBase<TData> : WalletComponentBase<TData, IWalletDataService>
+    public abstract class CategoryAwareComponentBase<TData> : AuthenticationAwareComponentBase<TData>
         where TData : class, new()
     {
-        public IEnumerable<CategoryResponse> Categories { get; set; }
+        protected IEnumerable<CategoryResponse> Categories { get; set; }
 
-        public string GetCategoryName(int? id) => Categories?.FirstOrDefault(c => c.Id == id)?.Name ?? "Nincs";
+        protected string GetCategoryName(int? id) => Categories?.FirstOrDefault(c => c.Id == id)?.Name ?? "Nincs";
 
-        public Task LoadCategoriesAsync() =>
+        protected Task LoadCategoriesAsync() =>
             HandleRequest(
                 () => Service.GetAsync<IEnumerable<CategoryResponse>>(UriHelper.CategoryUri),
                 onSuccess: r => Categories = r,

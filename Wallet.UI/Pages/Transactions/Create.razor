@@ -19,10 +19,10 @@ else
 
 @code {
 
-    public Task CreateAsync() =>
+    private Task CreateAsync() =>
         HandleRequest(
             () => Service.CreateAsync(UriHelper.TransactionUri, Data),
-            onSuccess: () => NavigateToTransactions(),
+            onSuccess: NavigateToTransactions,
             errorMessage: "Tranzakció létrehozása sikertelen!");
 
 }

@@ -1,16 +1,17 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Wallet.UI.Services;
 
 namespace Wallet.UI.Components
 {
-    public abstract class AuthenticationAwareComponentBase<TData> : CategoryAwareComponentBase<TData>
+    public abstract class AuthenticationAwareComponentBase<TData> : WalletComponentBase<TData, IWalletDataService>
         where TData : class, new()
     {
         [Inject]
         public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
-        public string UserId { get; private set; }
+        protected string UserId { get; private set; }
 
         protected override async Task OnInitializedAsync()
         {

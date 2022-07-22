@@ -32,10 +32,8 @@
 
 @code {
 
-    public async Task LoginAsync()
+    private async Task LoginAsync()
     {
-        ErrorMessage = null;
-
         await HandleRequest(
             () => Service.LoginAsync(Data),
             onSuccess: () => NavigationManager.NavigateTo("/"),
