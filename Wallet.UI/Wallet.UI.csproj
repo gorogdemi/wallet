@@ -18,4 +18,12 @@
     <ProjectReference Include="..\Contracts\Contracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\Components\ErrorMessageComponent.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Components\ErrorMessageComponent.razor" />
+  </ItemGroup>
+
 </Project>

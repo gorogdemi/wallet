@@ -5,6 +5,7 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Wallet.UI.Helpers;
 using Wallet.UI.Services;
 
 namespace Wallet.UI

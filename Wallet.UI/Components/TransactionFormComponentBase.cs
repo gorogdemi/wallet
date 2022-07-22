@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Wallet.Contracts.Requests;
-using Wallet.UI.Pages.Components;
 
-namespace Wallet.UI.Pages.Transactions
+namespace Wallet.UI.Components
 {
-    public class TransactionFormComponentBase : AuthenticationAwareComponentBase<TransactionRequest>
+    public abstract class TransactionFormComponentBase : AuthenticationAwareComponentBase<TransactionRequest>
     {
         public void NavigateToTransactions() => NavigationManager.NavigateTo("transactions");
 

@@ -2,24 +2,24 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
-namespace Wallet.UI.Pages.Components
+namespace Wallet.UI.Components
 {
-    public class WalletComponentBase<TData, TService> : ComponentBase
+    public abstract class WalletComponentBase<TData, TService> : ComponentBase
         where TData : class, new()
     {
-        public TData Data { get; protected set; } = new ();
-
-        public string ErrorMessage { get; protected set; }
-
-        public bool IsLoading { get; protected set; } = true;
-
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
         public TService Service { get; set; }
 
-        public async Task HandleRequest<T>(Func<Task<T>> request, string errorMessage, Action<T> onSuccess)
+        protected TData Data { get; set; } = new ();
+
+        protected string ErrorMessage { get; set; }
+
+        protected bool IsLoading { get; set; } = true;
+
+        protected async Task HandleRequest<T>(Func<Task<T>> request, string errorMessage, Action<T> onSuccess)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace Wallet.UI.Pages.Components
             }
         }
 
-        public async Task HandleRequest(Func<Task> request, string errorMessage, Action onSuccess)
+        protected async Task HandleRequest(Func<Task> request, string errorMessage, Action onSuccess)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace Wallet.UI.Pages.Components
             }
         }
 
-        public async Task HandleRequest(Func<Task> request, string errorMessage, Func<Task> onSuccess)
+        protected async Task HandleRequest(Func<Task> request, string errorMessage, Func<Task> onSuccess)
         {
             try
             {

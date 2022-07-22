@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Wallet.UI.Services
+namespace Wallet.UI.Helpers
 {
     public class JwtAuthenticationStateProvider : AuthenticationStateProvider
     {
@@ -33,17 +33,19 @@ namespace Wallet.UI.Services
             var token = new JwtSecurityToken(tokenString);
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", tokenString);
 
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwtAuthType")));
+            return new AuthenticationState(new ClaimsPrincipal(GetClaimsIdentity(token)));
         }
 
         public void NotifyUserAuthentication(string tokenString)
         {
             var token = new JwtSecurityToken(tokenString);
-            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwtAuthType"));
+            var authenticatedUser = new ClaimsPrincipal(GetClaimsIdentity(token));
             var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
             NotifyAuthenticationStateChanged(authState);
         }
 
         public void NotifyUserLogout() => NotifyAuthenticationStateChanged(Task.FromResult(_anonymous));
+
+        private static ClaimsIdentity GetClaimsIdentity(JwtSecurityToken token) => new (token.Claims, "jwtAuthType", "name", "role");
     }
 }

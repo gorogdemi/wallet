@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Wallet.UI.Pages.Components
+namespace Wallet.UI.Components
 {
-    public class AuthenticationAwareComponentBase<TData> : CategoryAwareComponentBase<TData>
+    public abstract class AuthenticationAwareComponentBase<TData> : CategoryAwareComponentBase<TData>
         where TData : class, new()
     {
         [Inject]
@@ -15,7 +15,7 @@ namespace Wallet.UI.Pages.Components
         protected override async Task OnInitializedAsync()
         {
             var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            UserId = state.User.FindFirst("id").Value;
+            UserId = state.User.FindFirst("id")?.Value;
 
             await base.OnInitializedAsync();
         }

@@ -5,9 +5,9 @@ using Wallet.Contracts.Responses;
 using Wallet.UI.Helpers;
 using Wallet.UI.Services;
 
-namespace Wallet.UI.Pages.Components
+namespace Wallet.UI.Components
 {
-    public class CategoryAwareComponentBase<TData> : WalletComponentBase<TData, IWalletDataService>
+    public abstract class CategoryAwareComponentBase<TData> : WalletComponentBase<TData, IWalletDataService>
         where TData : class, new()
     {
         public IEnumerable<CategoryResponse> Categories { get; set; }
@@ -16,7 +16,7 @@ namespace Wallet.UI.Pages.Components
 
         public Task LoadCategoriesAsync() =>
             HandleRequest(
-                request: () => Service.GetAsync<IEnumerable<CategoryResponse>>(UrlHelper.CategoryUrl),
+                () => Service.GetAsync<IEnumerable<CategoryResponse>>(UriHelper.CategoryUri),
                 onSuccess: r => Categories = r,
                 errorMessage: "Kategóriák betöltése sikertelen!");
 

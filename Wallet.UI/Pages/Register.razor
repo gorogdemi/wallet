@@ -62,3 +62,17 @@
         </div>
     </div>
 </EditForm>
+
+@code {
+
+    private async Task RegisterAsync()
+    {
+        ErrorMessage = null;
+
+        await HandleRequest(
+            () => Service.RegisterAsync(Data),
+            onSuccess: () => NavigationManager.NavigateTo("/"),
+            errorMessage: "Regisztráció sikertelen!");
+    }
+
+}

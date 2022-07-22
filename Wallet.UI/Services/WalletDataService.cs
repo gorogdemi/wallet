@@ -13,13 +13,13 @@ namespace Wallet.UI.Services
             _httpClient = httpClient;
         }
 
-        public async Task CreateAsync<TRequest>(string url, TRequest request) => ThrowIfUnsuccessful(await _httpClient.PostAsJsonAsync(url, request));
+        public async Task CreateAsync<TRequest>(string uri, TRequest request) => ThrowIfUnsuccessful(await _httpClient.PostAsJsonAsync(uri, request));
 
-        public async Task DeleteAsync(string url) => ThrowIfUnsuccessful(await _httpClient.DeleteAsync(url));
+        public async Task DeleteAsync(string uri) => ThrowIfUnsuccessful(await _httpClient.DeleteAsync(uri));
 
-        public Task<TResponse> GetAsync<TResponse>(string url) => _httpClient.GetFromJsonAsync<TResponse>(url);
+        public Task<TResponse> GetAsync<TResponse>(string uri) => _httpClient.GetFromJsonAsync<TResponse>(uri);
 
-        public async Task UpdateAsync<TRequest>(string url, TRequest request) => ThrowIfUnsuccessful(await _httpClient.PutAsJsonAsync(url, request));
+        public async Task UpdateAsync<TRequest>(string uri, TRequest request) => ThrowIfUnsuccessful(await _httpClient.PutAsJsonAsync(uri, request));
 
         private static void ThrowIfUnsuccessful(HttpResponseMessage message)
         {

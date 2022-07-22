@@ -1,0 +1,105 @@
+﻿@page "/transactions"
+@inherits CategoryAwareComponentBase<List<TransactionResponse>>
+@attribute [Authorize]
+
+<h1>Tranzakciók</h1>
+
+<ErrorMessageComponent ErrorMessage="@ErrorMessage"></ErrorMessageComponent>
+
+<br />
+
+<div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="Írja be a tranzakció nevét.." @bind="@SearchInput">
+    <div class="input-group-append">
+        <button class="btn btn-primary edit-btn" type="button" @onclick="LoadTransactionAsync">Keresés</button>
+    </div>
+</div>
+
+@if (IsLoading)
+{
+    <div>Adatok betöltése...</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>
+                <a href="transactions/create" class="btn btn-primary edit-btn">Új</a>
+            </th>
+            <th>Név</th>
+            <th>Teljes</th>
+            <th>Készpénz</th>
+            <th>Bankszámla</th>
+            <th>Komment</th>
+            <th>Dátum</th>
+            <th>Típus</th>
+            <th>Kategória</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var transaction in Data)
+        {
+            <tr>
+                <td></td>
+                <td>@transaction.Name</td>
+                <td>@transaction.SumAmount Ft</td>
+                <td>@transaction.CashAmount Ft</td>
+                <td>@transaction.BankAmount Ft</td>
+                <td>@transaction.Comment</td>
+                <td>@transaction.Date</td>
+                <td>@(transaction.Type == 0 ? "Kiadás" : "Bevétel")</td>
+                <th>@(GetCategoryName(transaction.CategoryId))</th>
+                <td>
+                    <a href="@($"transactions/edit/{transaction.Id}")" class="btn btn-primary table-btn">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </td>
+                <td>
+                    <button @onclick="() => DeleteAsync(transaction.Id)" class="btn btn-primary table-btn">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    public string SearchInput { get; set; }
+
+    public async Task DeleteAsync(int id)
+    {
+        await HandleRequest(
+            () => Service.DeleteAsync(UriHelper.GetTransactionUriWith(id)),
+            onSuccess: async () =>
+            {
+                await LoadTransactionsAsync();
+                await LoadCategoriesAsync();
+            },
+            errorMessage: "Tranzakció törlése sikertelen!");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTransactionsAsync();
+        await base.OnInitializedAsync();
+    }
+
+    private Task LoadTransactionAsync() =>
+        HandleRequest(
+            () => Service.GetAsync<List<TransactionResponse>>(string.IsNullOrEmpty(SearchInput) ? UriHelper.TransactionUri : UriHelper.GetTransactionUriWith(SearchInput)),
+            onSuccess: r => Data = r,
+            errorMessage: "Tranzakciók betöltése sikertelen!");
+
+    private Task LoadTransactionsAsync() =>
+        HandleRequest(
+            () => Service.GetAsync<List<TransactionResponse>>(UriHelper.TransactionUri),
+            onSuccess: r => Data = r,
+            errorMessage: "Tranzakciók betöltése sikertelen!");
+
+}

@@ -1,5 +1,6 @@
 ﻿@page "/transactions/edit/{TransactionId:int}"
 @inherits TransactionFormComponentBase
+@attribute [Authorize]
 
 <h1>Tranzakció Módosítás</h1>
 
@@ -14,4 +15,36 @@
 else
 {
     <TransactionForm Transaction="Data" Categories="Categories" OnClose="NavigateToTransactions" OnSubmit="EditAsync"></TransactionForm>
+}
+
+@code {
+
+    [Parameter]
+    public int TransactionId { get; set; }
+
+    public Task EditAsync() =>
+        HandleRequest(
+            () => Service.UpdateAsync(UriHelper.GetTransactionUriWith(TransactionId), Data),
+            onSuccess: () => NavigateToTransactions(),
+            errorMessage: "Tranzakció módosítás sikertelen!");
+
+    protected override async Task OnInitializedAsync()
+    {
+        await HandleRequest(
+            () => Service.GetAsync<TransactionResponse>(UriHelper.GetTransactionUriWith(TransactionId)),
+            onSuccess: r =>
+            {
+                Data.BankAmount = r.BankAmount;
+                Data.CashAmount = r.CashAmount;
+                Data.CategoryId = r.CategoryId;
+                Data.Comment = r.Comment;
+                Data.Date = r.Date;
+                Data.Name = r.Name;
+                Data.Type = r.Type;
+            },
+            errorMessage: "Tranzakció lekérés sikertelen!");
+
+        await base.OnInitializedAsync();
+    }
+
 }

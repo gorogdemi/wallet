@@ -29,3 +29,17 @@
         </div>
     </div>
 </EditForm>
+
+@code {
+
+    public async Task LoginAsync()
+    {
+        ErrorMessage = null;
+
+        await HandleRequest(
+            () => Service.LoginAsync(Data),
+            onSuccess: () => NavigationManager.NavigateTo("/"),
+            errorMessage: "Bejelentkezés sikertelen!");
+    }
+
+}
