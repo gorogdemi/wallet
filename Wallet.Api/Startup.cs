@@ -11,9 +11,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
-using Wallet.Api.Context;
 using Wallet.Api.Domain;
 using Wallet.Api.Options;
+using Wallet.Api.Services;
 
 namespace Wallet.Api
 {
@@ -142,6 +142,9 @@ namespace Wallet.Api
 
                     c.AddSecurityRequirement(security);
                 });
+
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
         }
     }
 }

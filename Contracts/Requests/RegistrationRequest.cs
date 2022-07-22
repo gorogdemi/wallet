@@ -25,5 +25,8 @@ namespace Wallet.Contracts.Requests
         [Required(ErrorMessage = "A jelszót kötelező megadni.")]
         [Compare(nameof(Password), ErrorMessage = "A két jelszó nem egyezik.")]
         public string PasswordConfirm { get; set; }
+
+        [Required(ErrorMessage = "A felhasználónevet kötelező megadni.")]
+        public string UserName { get; set; }
     }
 }

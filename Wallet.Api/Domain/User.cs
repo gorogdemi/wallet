@@ -7,6 +7,8 @@ namespace Wallet.Api.Domain
     {
         public virtual ICollection<Category> Categories { get; set; }
 
+        public string FullName { get; set; }
+
         public virtual ICollection<Transaction> Transactions { get; set; }
     }
 }

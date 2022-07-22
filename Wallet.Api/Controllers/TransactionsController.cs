@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Wallet.Api.Context;
 using Wallet.Api.Domain;
 using Wallet.Api.Extensions;
 using Wallet.Contracts.Requests;

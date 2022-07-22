@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Wallet.Api.Domain;
 
-namespace Wallet.Api.Context
+namespace Wallet.Api
 {
     public class WalletContext : IdentityDbContext<User>
     {
@@ -12,6 +12,8 @@ namespace Wallet.Api.Context
         }
 
         public virtual DbSet<Category> Categories { get; set; }
+
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
         public virtual DbSet<Transaction> Transactions { get; set; }
 

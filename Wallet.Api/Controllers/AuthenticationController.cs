@@ -1,15 +1,7 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using Wallet.Api.Domain;
-using Wallet.Api.Options;
+using Wallet.Api.Services;
 using Wallet.Contracts.Requests;
 using Wallet.Contracts.Responses;
 
@@ -19,91 +11,80 @@ namespace Wallet.Api.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly AuthenticationOptions _authenticationOptions;
-        private readonly UserManager<User> _userManager;
+        private readonly IAuthenticationService _authenticationService;
+        private readonly ITokenService _tokenService;
 
-        public AuthenticationController(UserManager<User> userManager, IOptions<AuthenticationOptions> authenticationOptions)
+        public AuthenticationController(IAuthenticationService authenticationService, ITokenService tokenService)
         {
-            _userManager = userManager;
-            _authenticationOptions = authenticationOptions.Value;
+            _authenticationService = authenticationService;
+            _tokenService = tokenService;
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login(LoginRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(new AuthenticationFailedResponse { Errors = ModelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage)) });
             }
 
-            var user = await _userManager.FindByEmailAsync(request.Email);
+            var result = await _authenticationService.LoginAsync(request.UserName, request.Password);
 
-            if (user == null)
+            if (!result.Success)
             {
-                return BadRequest(new AuthenticationFailedResponse { Errors = new[] { "User does not exists." } });
+                return BadRequest(new AuthenticationFailedResponse { Errors = result.Errors });
             }
 
-            var validPassword = await _userManager.CheckPasswordAsync(user, request.Password);
+            result = await _tokenService.GenerateTokensForUser(result.User);
 
-            if (!validPassword)
+            if (!result.Success)
             {
-                return BadRequest(new AuthenticationFailedResponse { Errors = new[] { "Username or password is invalid." } });
+                return BadRequest(new AuthenticationFailedResponse { Errors = result.Errors });
             }
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = GetToken(user, tokenHandler);
-
-            return Ok(new AuthenticationSuccessResponse { Token = tokenHandler.WriteToken(token) });
+            return Ok(new AuthenticationSuccessResponse { Token = result.Token, RefreshToken = result.RefreshToken });
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegistrationRequest request)
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh(RefreshTokenRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(new AuthenticationFailedResponse { Errors = ModelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage)) });
             }
 
-            var existingUser = await _userManager.FindByEmailAsync(request.Email);
+            var result = await _tokenService.RefreshTokenAsync(request.Token, request.RefreshToken);
 
-            if (existingUser != null)
+            if (!result.Success)
             {
-                return BadRequest(new AuthenticationFailedResponse { Errors = new[] { "User with this e-mail address already exists." } });
+                return BadRequest(new AuthenticationFailedResponse { Errors = result.Errors });
             }
 
-            var newUser = new User { Email = request.Email, UserName = request.Email };
+            result = await _tokenService.GenerateTokensForUser(result.User);
 
-            var createdUser = await _userManager.CreateAsync(newUser, request.Password);
-
-            if (!createdUser.Succeeded)
+            if (!result.Success)
             {
-                return BadRequest(new AuthenticationFailedResponse { Errors = createdUser.Errors.Select(x => x.Description) });
+                return BadRequest(new AuthenticationFailedResponse { Errors = result.Errors });
             }
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = GetToken(newUser, tokenHandler);
-
-            return Ok(new AuthenticationSuccessResponse { Token = tokenHandler.WriteToken(token) });
+            return Ok(new AuthenticationSuccessResponse { Token = result.Token, RefreshToken = result.RefreshToken });
         }
 
-        private SecurityToken GetToken(User newUser, JwtSecurityTokenHandler tokenHandler)
+        public async Task<IActionResult> Register(RegistrationRequest request)
         {
-            var key = Encoding.ASCII.GetBytes(_authenticationOptions.JwtSecret);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            if (!ModelState.IsValid)
             {
-                Subject = new ClaimsIdentity(
-                    new[]
-                    {
-                        new Claim(JwtRegisteredClaimNames.Sub, newUser.Email),
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                        new Claim(JwtRegisteredClaimNames.Email, newUser.Email),
-                        new Claim("id", newUser.Id),
-                    }),
-                Expires = DateTime.UtcNow.AddMonths(2),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-            };
+                return BadRequest(new AuthenticationFailedResponse { Errors = ModelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage)) });
+            }
 
-            return tokenHandler.CreateToken(tokenDescriptor);
+            var result = await _authenticationService.RegisterAsync($"{request.LastName} {request.FirstName}", request.UserName, request.Email, request.Password);
+
+            if (!result.Success)
+            {
+                return BadRequest(new AuthenticationFailedResponse { Errors = result.Errors });
+            }
+
+            return Ok();
         }
     }
 }
