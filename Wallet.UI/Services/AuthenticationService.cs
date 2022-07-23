@@ -27,10 +27,10 @@ namespace Wallet.UI.Services
         }
 
         // TODO: try-catch mindenhova (talán ServiceResult is)
-        public async Task<bool> LoginAsync(LoginRequest loginRequest)
+        public async Task LoginAsync(LoginRequest loginRequest)
         {
             using var result = await _httpClient.PostAsJsonAsync(UriHelper.LoginUri, loginRequest);
-            return await GetAuthenticationResponse(result) is not null;
+            await GetAuthenticationResponse(result);
         }
 
         public async Task LogoutAsync()
@@ -66,10 +66,14 @@ namespace Wallet.UI.Services
             return resultString;
         }
 
-        public async Task<bool> RegisterAsync(RegistrationRequest registrationRequest)
+        public async Task RegisterAsync(RegistrationRequest registrationRequest)
         {
             using var result = await _httpClient.PostAsJsonAsync(UriHelper.RegisterUri, registrationRequest);
-            return result.IsSuccessStatusCode;
+
+            if (!result.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException();
+            }
         }
 
         private async Task<string> GetAuthenticationResponse(HttpResponseMessage result)
@@ -77,14 +81,14 @@ namespace Wallet.UI.Services
             if (!result.IsSuccessStatusCode)
             {
                 await LogoutAsync();
-                return null;
+                throw new HttpRequestException();
             }
 
             var response = await result.Content.ReadFromJsonAsync<AuthenticationSuccessResponse>();
 
             if (response is null)
             {
-                return null;
+                throw new HttpRequestException();
             }
 
             await _localStorage.SetItemAsStringAsync(AuthTokenKey, response.Token);

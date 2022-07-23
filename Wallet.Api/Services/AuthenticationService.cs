@@ -1,9 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Wallet.Api.Domain;
 using Wallet.Api.Models;
 
@@ -11,18 +9,15 @@ namespace Wallet.Api.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly AuthenticationOptions _authenticationOptions;
         private readonly ILogger<AuthenticationService> _logger;
         private readonly UserManager<User> _userManager;
 
         public AuthenticationService(
             ILogger<AuthenticationService> logger,
-            UserManager<User> userManager,
-            IOptions<AuthenticationOptions> authenticationOptions)
+            UserManager<User> userManager)
         {
             _logger = logger;
             _userManager = userManager;
-            _authenticationOptions = authenticationOptions.Value;
         }
 
         public async Task<AuthenticationResult> LoginAsync(string userName, string password)
@@ -31,7 +26,7 @@ namespace Wallet.Api.Services
 
             if (user is null)
             {
-                return new AuthenticationResult { Errors = new[] { "User does not exists." } };
+                return new AuthenticationResult { Errors = new[] { "User does not exist." } };
             }
 
             var validPassword = await _userManager.CheckPasswordAsync(user, password);
@@ -52,7 +47,7 @@ namespace Wallet.Api.Services
 
             existingUser = await _userManager.FindByNameAsync(userName);
 
-            if (existingUser is null)
+            if (existingUser is not null)
             {
                 return new AuthenticationResult { Errors = new[] { "User with username already exists." } };
             }

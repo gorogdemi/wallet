@@ -7,7 +7,8 @@ using Wallet.Contracts.Responses;
 
 namespace Wallet.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Produces("application/json")]
+    [Route("api/authentication")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
@@ -70,6 +71,7 @@ namespace Wallet.Api.Controllers
             return Ok(new AuthenticationSuccessResponse { Token = result.Token, RefreshToken = result.RefreshToken });
         }
 
+        [HttpPost("register")]
         public async Task<IActionResult> Register(RegistrationRequest request)
         {
             if (!ModelState.IsValid)

@@ -13,7 +13,6 @@ namespace Wallet.UI.Components
             await base.OnInitializedAsync();
 
             Data.Date = DateTime.Now;
-            Data.UserId = UserId;
         }
     }
 }

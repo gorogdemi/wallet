@@ -17,7 +17,7 @@ namespace Wallet.Api.Domain
         [MaxLength(255)]
         public string Comment { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateOnly Date { get; set; }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

@@ -29,6 +29,7 @@ namespace Wallet.Api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
+                    FullName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -176,6 +177,29 @@ namespace Wallet.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Token = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsInvalidated = table.Column<bool>(type: "boolean", nullable: false),
+                    IsUsed = table.Column<bool>(type: "boolean", nullable: false),
+                    JwtId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Token);
+                    table.ForeignKey(
+                        name: "FK_RefreshTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Transactions",
                 columns: table => new
                 {
@@ -249,6 +273,11 @@ namespace Wallet.Api.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_UserId",
+                table: "RefreshTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Transactions_CategoryId",
                 table: "Transactions",
                 column: "CategoryId");
@@ -275,6 +304,9 @@ namespace Wallet.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "Transactions");

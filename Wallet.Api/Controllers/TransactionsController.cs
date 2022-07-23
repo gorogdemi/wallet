@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -11,9 +12,10 @@ using Wallet.Contracts.Responses;
 
 namespace Wallet.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     [Authorize]
+    [Produces("application/json")]
+    [Route("api/transactions")]
+    [ApiController]
     public class TransactionsController : ControllerBase
     {
         private readonly WalletContext _walletContext;
@@ -34,7 +36,7 @@ namespace Wallet.Api.Controllers
                 CategoryId = transactionRequest.CategoryId,
                 Comment = transactionRequest.Comment,
                 Name = transactionRequest.Name,
-                Date = transactionRequest.Date,
+                Date = DateOnly.FromDateTime(transactionRequest.Date),
                 Type = (TransactionType)transactionRequest.Type,
                 UserId = userId,
             };
@@ -43,7 +45,7 @@ namespace Wallet.Api.Controllers
             return Ok(true);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult<bool>> Delete(int id)
         {
             var transaction = await _walletContext.Transactions.FindAsync(id);
@@ -79,7 +81,7 @@ namespace Wallet.Api.Controllers
                         CategoryId = x.CategoryId,
                         CategoryName = x.Category.Name,
                         Comment = x.Comment,
-                        Date = x.Date,
+                        Date = x.Date.ToDateTime(TimeOnly.MinValue),
                         Id = x.Id,
                         SumAmount = x.CashAmount + x.BankAmount,
                         Type = (int)x.Type,
@@ -89,7 +91,7 @@ namespace Wallet.Api.Controllers
             return Ok(transactions);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<TransactionResponse>> Get(int id)
         {
             var userId = HttpContext.GetUserId();
@@ -113,7 +115,7 @@ namespace Wallet.Api.Controllers
                 CategoryId = transaction.CategoryId,
                 CategoryName = transaction.Category?.Name,
                 Comment = transaction.Comment,
-                Date = transaction.Date,
+                Date = transaction.Date.ToDateTime(TimeOnly.MinValue),
                 Id = transaction.Id,
                 SumAmount = transaction.CashAmount + transaction.BankAmount,
                 Type = (int)transaction.Type,
@@ -135,7 +137,7 @@ namespace Wallet.Api.Controllers
                         BankAmount = x.BankAmount,
                         CategoryId = x.CategoryId,
                         Comment = x.Comment,
-                        Date = x.Date,
+                        Date = x.Date.ToDateTime(TimeOnly.MinValue),
                         Id = x.Id,
                         SumAmount = x.CashAmount + x.BankAmount,
                         Type = (int)x.Type,
@@ -172,7 +174,7 @@ namespace Wallet.Api.Controllers
             transaction.BankAmount = transactionRequest.BankAmount;
             transaction.CategoryId = transactionRequest.CategoryId;
             transaction.Comment = transactionRequest.Comment;
-            transaction.Date = transactionRequest.Date;
+            transaction.Date = DateOnly.FromDateTime(transactionRequest.Date);
             transaction.Type = (TransactionType)transactionRequest.Type;
 
             var response = await _walletContext.SaveChangesAsync();

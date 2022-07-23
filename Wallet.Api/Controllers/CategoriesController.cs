@@ -11,9 +11,10 @@ using Wallet.Contracts.Responses;
 
 namespace Wallet.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     [Authorize]
+    [Produces("application/json")]
+    [Route("api/categories")]
+    [ApiController]
     public class CategoriesController : ControllerBase
     {
         private readonly WalletContext _walletContext;

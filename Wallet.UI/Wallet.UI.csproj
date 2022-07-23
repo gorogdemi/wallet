@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.21.0" />
     <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
+    <PackageReference Include="Toolbelt.Blazor.HttpClientInterceptor" Version="10.1.0" />
   </ItemGroup>
 
   <ItemGroup>

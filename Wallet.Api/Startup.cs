@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Wallet.Api.Domain;
 using Wallet.Api.Options;
@@ -30,22 +29,16 @@ namespace Wallet.Api
 
         public void Configure(IApplicationBuilder app, WalletContext walletContext)
         {
-            if (!_environment.IsDevelopment())
+            if (_environment.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage();
+                app.UseCors();
+
                 walletContext.Database.Migrate();
             }
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Wallet.Api v1"));
-
-            app.UseCors(
-                policy => policy
-                    .WithOrigins("http://localhost:4200", "https://localhost:4201")
-                    .AllowAnyMethod()
-                    .WithHeaders(HeaderNames.ContentType, HeaderNames.Authorization)
-                    .AllowCredentials());
-
             app.UseRouting();
+
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Wallet API v1"));
 
@@ -61,12 +54,17 @@ namespace Wallet.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            if (_environment.IsDevelopment())
+            {
+                services.AddCors(
+                    options => options.AddDefaultPolicy(
+                        builder => builder.WithOrigins("http://localhost:4200", "https://localhost:4201").AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+            }
+
             var authenticationOptionsSection = _configuration.GetSection("Authentication");
             services.Configure<AuthenticationOptions>(authenticationOptionsSection);
 
             services.Configure<ForwardedHeadersOptions>(options => options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto);
-
-            services.AddCors();
 
             services.AddDbContext<WalletContext>(
                 options =>

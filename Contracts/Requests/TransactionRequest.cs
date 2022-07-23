@@ -21,8 +21,5 @@ namespace Wallet.Contracts.Requests
         public string Name { get; set; }
 
         public int Type { get; set; }
-
-        [Required]
-        public string UserId { get; set; }
     }
 }

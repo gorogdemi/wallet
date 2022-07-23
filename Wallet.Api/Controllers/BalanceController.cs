@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +9,10 @@ using Wallet.Contracts.Responses;
 
 namespace Wallet.Api.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
+    [Produces("application/json")]
+    [Route("api/balance")]
     [ApiController]
-    [Route("api/[controller]")]
     public class BalanceController : ControllerBase
     {
         private readonly WalletContext _walletContext;
