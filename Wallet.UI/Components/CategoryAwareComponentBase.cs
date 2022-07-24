@@ -11,7 +11,7 @@ namespace Wallet.UI.Components
     {
         protected IEnumerable<CategoryResponse> Categories { get; set; }
 
-        protected string GetCategoryName(int? id) => Categories?.FirstOrDefault(c => c.Id == id)?.Name ?? "Nincs";
+        protected string GetCategoryName(long? id) => Categories?.FirstOrDefault(c => c.Id == id)?.Name ?? "Nincs";
 
         protected Task LoadCategoriesAsync() =>
             HandleRequest(

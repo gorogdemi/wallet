@@ -1,10 +1,9 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Wallet.Api.Domain.Types;
 
 namespace Wallet.Api.Domain
 {
-    public class Transaction
+    public class Transaction : DomainBase
     {
         public double BankAmount { get; set; }
 
@@ -12,26 +11,18 @@ namespace Wallet.Api.Domain
 
         public virtual Category Category { get; set; }
 
-        public int? CategoryId { get; set; }
+        public long? CategoryId { get; set; }
 
-        [MaxLength(255)]
         public string Comment { get; set; }
 
         public DateOnly Date { get; set; }
 
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Required]
-        [MaxLength(100)]
         public string Name { get; set; }
 
         public TransactionType Type { get; set; }
 
         public virtual User User { get; set; }
 
-        [Required]
         public string UserId { get; set; }
     }
 }

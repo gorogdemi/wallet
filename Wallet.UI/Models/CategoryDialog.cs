@@ -4,7 +4,7 @@ namespace Wallet.UI.Models
 {
     public class CategoryDialog
     {
-        public int? Id { get; set; }
+        public long? Id { get; set; }
 
         public CategoryRequest Request { get; set; }
 

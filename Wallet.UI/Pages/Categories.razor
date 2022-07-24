@@ -84,14 +84,14 @@ else
 
     private void Add()
     {
-        Data.Request = new CategoryRequest { UserId = UserId };
+        Data.Request = new CategoryRequest();
         Data.Id = null;
         Data.ShowDialog = true;
     }
 
     private void Close() => Data.ShowDialog = false;
 
-    private async Task DeleteAsync(int id)
+    private async Task DeleteAsync(long id)
     {
         await HandleRequest(
             () => Service.DeleteAsync(UriHelper.GetCategoryUriWith(id)),
@@ -101,7 +101,7 @@ else
 
     private void Edit(CategoryResponse category)
     {
-        Data.Request = new CategoryRequest { Name = category.Name, UserId = UserId };
+        Data.Request = new CategoryRequest { Name = category.Name };
 
         Data.Id = category.Id;
         Data.ShowDialog = true;

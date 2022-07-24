@@ -7,7 +7,7 @@ using Wallet.Api.Models;
 
 namespace Wallet.Api.Services
 {
-    public class AuthenticationService : IAuthenticationService
+    internal class AuthenticationService : IAuthenticationService
     {
         private readonly ILogger<AuthenticationService> _logger;
         private readonly UserManager<User> _userManager;

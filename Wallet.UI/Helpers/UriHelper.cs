@@ -9,9 +9,9 @@
         public const string RefreshUri = "api/authentication/refresh";
         public const string TransactionUri = "api/transactions";
 
-        public static string GetCategoryUriWith(int id) => $"{CategoryUri}/{id}";
+        public static string GetCategoryUriWith(long id) => $"{CategoryUri}/{id}";
 
-        public static string GetTransactionUriWith(int id) => $"{TransactionUri}/{id}";
+        public static string GetTransactionUriWith(long id) => $"{TransactionUri}/{id}";
 
         public static string GetTransactionUriWith(string name) => $"{TransactionUri}/search/{name}";
     }

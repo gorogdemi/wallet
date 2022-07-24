@@ -1,4 +1,5 @@
 ﻿using System;
+using Wallet.Contracts.Types;
 
 namespace Wallet.Contracts.Responses
 {
@@ -8,7 +9,7 @@ namespace Wallet.Contracts.Responses
 
         public double CashAmount { get; set; }
 
-        public int? CategoryId { get; set; }
+        public long? CategoryId { get; set; }
 
         public string CategoryName { get; set; }
 
@@ -16,12 +17,12 @@ namespace Wallet.Contracts.Responses
 
         public DateTime Date { get; set; }
 
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         public string Name { get; set; }
 
         public double SumAmount { get; set; }
 
-        public int Type { get; set; }
+        public TransactionType Type { get; set; }
     }
 }

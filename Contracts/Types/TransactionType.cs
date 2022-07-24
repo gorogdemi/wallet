@@ -1,4 +1,4 @@
-﻿namespace Wallet.Api.Domain
+﻿namespace Wallet.Contracts.Types
 {
     public enum TransactionType
     {

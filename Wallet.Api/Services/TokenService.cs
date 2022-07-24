@@ -15,7 +15,7 @@ using Wallet.Api.Options;
 
 namespace Wallet.Api.Services
 {
-    public class TokenService : ITokenService
+    internal class TokenService : ITokenService
     {
         private readonly AuthenticationOptions _authenticationOptions;
         private readonly WalletContext _context;
