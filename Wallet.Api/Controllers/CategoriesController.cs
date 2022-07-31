@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -30,13 +31,13 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CategoryRequest categoryRequest)
+        public async Task<IActionResult> Create(CategoryRequest categoryRequest, CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
             var category = _mapper.Map<Category>(categoryRequest);
             category.UserId = userId;
 
-            category = await _categoryService.CreateAsync(category);
+            category = await _categoryService.CreateAsync(category, cancellationToken);
 
             _logger.LogInformation("Category created with ID '{Id}'", category.Id);
 
@@ -45,10 +46,10 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> Delete(long id)
+        public async Task<IActionResult> Delete(long id, CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
-            var category = await _categoryService.GetAsync(id);
+            var category = await _categoryService.GetAsync(id, cancellationToken);
 
             if (category == null)
             {
@@ -60,7 +61,7 @@ namespace Wallet.Api.Controllers
                 return Forbid();
             }
 
-            await _categoryService.DeleteAsync(category);
+            await _categoryService.DeleteAsync(category, cancellationToken);
 
             _logger.LogInformation("Category '{Id}' deleted", category.Id);
 
@@ -68,10 +69,10 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
-            var categories = await _categoryService.GetAllAsync(userId);
+            var categories = await _categoryService.GetAllAsync(userId, cancellationToken);
 
             _logger.LogInformation("Categories retrieved from database");
 
@@ -79,10 +80,10 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpGet("{id:long}")]
-        public async Task<IActionResult> Get(long id)
+        public async Task<IActionResult> Get(long id, CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
-            var category = await _categoryService.GetAsync(id);
+            var category = await _categoryService.GetAsync(id, cancellationToken);
 
             if (category == null)
             {
@@ -100,10 +101,10 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpGet("search/{text}")]
-        public async Task<IActionResult> Search(string text)
+        public async Task<IActionResult> Search(string text, CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
-            var categories = await _categoryService.SearchAsync(userId, text);
+            var categories = await _categoryService.SearchAsync(userId, text, cancellationToken);
 
             _logger.LogInformation("Categories retrieved from database by search text '{SearchText}'", text);
 
@@ -111,10 +112,10 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> Update(long id, CategoryRequest categoryRequest)
+        public async Task<IActionResult> Update(long id, CategoryRequest categoryRequest, CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
-            var category = await _categoryService.GetAsync(id);
+            var category = await _categoryService.GetAsync(id, cancellationToken);
 
             if (category == null)
             {
@@ -127,7 +128,7 @@ namespace Wallet.Api.Controllers
             }
 
             category = _mapper.Map(categoryRequest, category);
-            category = await _categoryService.UpdateAsync(category);
+            category = await _categoryService.UpdateAsync(category, cancellationToken);
 
             _logger.LogInformation("Category '{Id}' updated", category.Id);
 

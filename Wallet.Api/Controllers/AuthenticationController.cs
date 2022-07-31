@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Wallet.Api.Services;
@@ -22,7 +23,7 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginRequest request)
+        public async Task<IActionResult> Login(LoginRequest request, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -36,7 +37,7 @@ namespace Wallet.Api.Controllers
                 return BadRequest(new AuthenticationFailedResponse { Errors = result.Errors });
             }
 
-            result = await _tokenService.GenerateTokensForUser(result.User);
+            result = await _tokenService.GenerateTokensForUser(result.User, cancellationToken);
 
             if (!result.Success)
             {
@@ -47,21 +48,21 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh(RefreshTokenRequest request)
+        public async Task<IActionResult> Refresh(RefreshTokenRequest request, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(new AuthenticationFailedResponse { Errors = ModelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage)) });
             }
 
-            var result = await _tokenService.RefreshTokenAsync(request.Token, request.RefreshToken);
+            var result = await _tokenService.RefreshTokenAsync(request.Token, request.RefreshToken, cancellationToken);
 
             if (!result.Success)
             {
                 return BadRequest(new AuthenticationFailedResponse { Errors = result.Errors });
             }
 
-            result = await _tokenService.GenerateTokensForUser(result.User);
+            result = await _tokenService.GenerateTokensForUser(result.User, cancellationToken);
 
             if (!result.Success)
             {
@@ -79,7 +80,11 @@ namespace Wallet.Api.Controllers
                 return BadRequest(new AuthenticationFailedResponse { Errors = ModelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage)) });
             }
 
-            var result = await _authenticationService.RegisterAsync($"{request.LastName} {request.FirstName}", request.UserName, request.Email, request.Password);
+            var result = await _authenticationService.RegisterAsync(
+                $"{request.LastName} {request.FirstName}",
+                request.UserName,
+                request.Email,
+                request.Password);
 
             if (!result.Success)
             {

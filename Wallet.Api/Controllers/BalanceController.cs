@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,11 +28,11 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
 
-            var balance = await _transactionService.GetBalanceAsync(userId);
+            var balance = await _transactionService.GetBalanceAsync(userId, cancellationToken);
             _logger.LogInformation("Balance retrieved from the database");
 
             return Ok(_mapper.Map<BalanceResponse>(balance));

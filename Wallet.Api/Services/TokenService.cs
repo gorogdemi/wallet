@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +29,7 @@ namespace Wallet.Api.Services
             _authenticationOptions = authenticationOptions.Value;
         }
 
-        public async Task<AuthenticationResult> GenerateTokensForUser(User user)
+        public async Task<AuthenticationResult> GenerateTokensForUser(User user, CancellationToken cancellationToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_authenticationOptions.JwtSecret);
@@ -57,12 +58,12 @@ namespace Wallet.Api.Services
             };
 
             _context.RefreshTokens.Add(refreshToken);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return new AuthenticationResult { Success = true, Token = tokenHandler.WriteToken(token), RefreshToken = refreshToken.Token };
         }
 
-        public async Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken)
+        public async Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken)
         {
             var validatedToken = GetPrincipalFromToken(token);
 
@@ -80,7 +81,7 @@ namespace Wallet.Api.Services
             }
 
             var jti = validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
-            var storedRefreshToken = await _context.RefreshTokens.SingleOrDefaultAsync(x => x.Token == refreshToken);
+            var storedRefreshToken = await _context.RefreshTokens.SingleOrDefaultAsync(x => x.Token == refreshToken, cancellationToken);
 
             if (storedRefreshToken is null)
             {
@@ -108,7 +109,7 @@ namespace Wallet.Api.Services
             }
 
             storedRefreshToken.IsUsed = true;
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "userid").Value);
             return new AuthenticationResult { Success = true, User = user };
