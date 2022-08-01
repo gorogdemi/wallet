@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject IAuthenticationService AuthenticationService
+@inject NavigationManager NavigationManager
 
 <div class="page">
     <div class="sidebar">
@@ -9,7 +11,7 @@
         <div class="top-row px-4">
             <AuthorizeView>
                 <Authorized>
-                    <span style="margin-right:10px">@context.User.FindFirst("sub").Value</span>
+                    <span style="margin-right:10px">@context.User.FindFirst("fullname")?.Value</span>
                     <button class="btn btn-primary" @onclick="LogoutAsync">Kijelentkezés</button>
                 </Authorized>
                 <NotAuthorized>
@@ -24,3 +26,13 @@
         </div>
     </div>
 </div>
+
+@code {
+
+    private async Task LogoutAsync()
+    {
+        await AuthenticationService.LogoutAsync();
+        NavigationManager.NavigateTo("/");
+    }
+
+}

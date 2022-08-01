@@ -31,15 +31,15 @@
 
         <div class="form-group row">
             <label for="type" class="col-sm-3">Tranzakció típus: </label>
-            <InputSelect id="type" class="form-control col-sm-8" @bind-Value=@Transaction.Type>
-                <option value="@(0)">Költség</option>
-                <option value="@(1)">Bevétel</option>
+            <InputSelect id="type" class="form-control col-sm-8" @bind-Value="@Transaction.Type">
+                <option value="0">Költség</option>
+                <option value="1">Bevétel</option>
             </InputSelect>
         </div>
 
         <div class="form-group row">
             <label for="category" class="col-sm-3">Tranzakció kategória: </label>
-            <InputSelect id="category" class="form-control col-sm-8" @bind-Value=@Transaction.CategoryId>
+            <InputSelect id="category" class="form-control col-sm-8" @bind-Value="@Transaction.CategoryId">
                 <option value="">Nincs</option>
                 @foreach (var category in Categories)
                 {
@@ -52,3 +52,19 @@
         <a class="btn btn-outline-primary" @onclick="@OnClose">Vissza</a>
     </EditForm>
 </section>
+
+@code {
+
+    [Parameter]
+    public IEnumerable<CategoryResponse> Categories { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+
+    [Parameter]
+    public TransactionRequest Transaction { get; set; } = new();
+
+}

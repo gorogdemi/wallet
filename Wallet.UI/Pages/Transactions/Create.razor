@@ -1,9 +1,10 @@
 ﻿@page "/transactions/create"
 @inherits TransactionFormComponentBase
+@attribute [Authorize]
 
 <h1>Új Tranzakció</h1>
 
-<ErrorMessageComponent ErrorMessage="@ErrorMessage"></ErrorMessageComponent>
+<ErrorMessageComponent ErrorMessage="@ErrorMessage"></ErrorMessageComponent >
 
 <br />
 
@@ -14,4 +15,14 @@
 else
 {
     <TransactionForm Transaction="@Data" Categories="@Categories" OnClose="NavigateToTransactions" OnSubmit="CreateAsync"></TransactionForm>
+}
+
+@code {
+
+    private Task CreateAsync() =>
+        HandleRequest(
+            () => Service.CreateAsync(UriHelper.TransactionUri, Data),
+            onSuccess: NavigateToTransactions,
+            errorMessage: "Tranzakció létrehozása sikertelen!");
+
 }

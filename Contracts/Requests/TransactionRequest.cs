@@ -1,5 +1,5 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using Wallet.Contracts.Types;
 
 namespace Wallet.Contracts.Requests
 {
@@ -9,19 +9,14 @@ namespace Wallet.Contracts.Requests
 
         public double CashAmount { get; set; }
 
-        public int? CategoryId { get; set; }
+        public long? CategoryId { get; set; }
 
-        [MaxLength(255)]
         public string Comment { get; set; }
 
         public DateTime Date { get; set; }
 
-        [Required, MaxLength(100)]
         public string Name { get; set; }
 
-        public int Type { get; set; }
-
-        [Required]
-        public string UserId { get; set; }
+        public TransactionType Type { get; set; }
     }
 }

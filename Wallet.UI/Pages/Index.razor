@@ -1,5 +1,6 @@
 ﻿@page "/"
-@inherits WalletComponentBase<BalanceResponse, IWalletDataService>
+@inherits AuthenticationAwareComponentBase<BalanceResponse>
+@attribute [Authorize]
 
 <h1>Egyenleg</h1>
 
@@ -16,4 +17,18 @@ else
     <p>Teljes: @Data.Full Ft</p>
     <p>Készpénz: @Data.Cash Ft</p>
     <p>Bankszámla: @Data.BankAccount Ft</p>
+}
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        await HandleRequest(
+            () => Service.GetAsync<BalanceResponse>(UriHelper.BalanceUri),
+            onSuccess: result => Data = result,
+            errorMessage: "Balansz lekérése sikertelen!");
+
+        await base.OnInitializedAsync();
+    }
+
 }

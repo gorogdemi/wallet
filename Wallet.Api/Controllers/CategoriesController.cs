@@ -1,52 +1,59 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Wallet.Api.Context;
+using Microsoft.Extensions.Logging;
 using Wallet.Api.Domain;
 using Wallet.Api.Extensions;
+using Wallet.Api.Services;
 using Wallet.Contracts.Requests;
 using Wallet.Contracts.Responses;
 
 namespace Wallet.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     [Authorize]
+    [Produces("application/json")]
+    [Route("api/categories")]
+    [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly WalletContext _walletContext;
+        private readonly ICategoryService _categoryService;
+        private readonly ILogger<CategoriesController> _logger;
+        private readonly IMapper _mapper;
 
-        public CategoriesController(WalletContext walletContext)
+        public CategoriesController(ILogger<CategoriesController> logger, ICategoryService categoryService, IMapper mapper)
         {
-            _walletContext = walletContext;
+            _logger = logger;
+            _categoryService = categoryService;
+            _mapper = mapper;
         }
 
         [HttpPost]
-        public async Task<ActionResult<bool>> Create(CategoryRequest categoryRequest)
+        public async Task<IActionResult> Create(CategoryRequest categoryRequest, CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
-            var category = new Category
-            {
-                Name = categoryRequest.Name,
-                UserId = userId
-            };
-            _walletContext.Categories.Add(category);
-            await _walletContext.SaveChangesAsync();
-            return Ok(true);
+            var category = _mapper.Map<Category>(categoryRequest);
+            category.UserId = userId;
+
+            category = await _categoryService.CreateAsync(category, cancellationToken);
+
+            _logger.LogInformation("Category created with ID '{Id}'", category.Id);
+
+            var response = _mapper.Map<CategoryResponse>(category);
+            return CreatedAtAction("Get", new { id = response.Id }, response);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> Delete(int id)
+        [HttpDelete("{id:long}")]
+        public async Task<IActionResult> Delete(long id, CancellationToken cancellationToken)
         {
-            var category = await _walletContext.Categories.FindAsync(id);
             var userId = HttpContext.GetUserId();
+            var category = await _categoryService.GetAsync(id, cancellationToken);
 
             if (category == null)
             {
-                return NotFound(false);
+                return NotFound();
             }
 
             if (category.UserId != userId)
@@ -54,34 +61,33 @@ namespace Wallet.Api.Controllers
                 return Forbid();
             }
 
-            _walletContext.Categories.Remove(category);
-            var result = await _walletContext.SaveChangesAsync();
+            await _categoryService.DeleteAsync(category, cancellationToken);
 
-            return Ok(result > 0);
+            _logger.LogInformation("Category '{Id}' deleted", category.Id);
+
+            return NoContent();
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryResponse>>> Get()
+        public async Task<IActionResult> Get(CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
-            var transcations = await _walletContext.Categories.Where(x => x.UserId == userId).Select(x => new CategoryResponse
-            {
-                Name = x.Name,
-                Id = x.Id,
-            }).ToListAsync();
+            var categories = await _categoryService.GetAllAsync(userId, cancellationToken);
 
-            return Ok(transcations);
+            _logger.LogInformation("Categories retrieved from database");
+
+            return Ok(_mapper.Map<List<CategoryResponse>>(categories));
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CategoryResponse>> Get(int id)
+        [HttpGet("{id:long}")]
+        public async Task<IActionResult> Get(long id, CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
-            var category = await _walletContext.Categories.FindAsync(id);
+            var category = await _categoryService.GetAsync(id, cancellationToken);
 
             if (category == null)
             {
-                return NotFound(false);
+                return NotFound();
             }
 
             if (category.UserId != userId)
@@ -89,30 +95,31 @@ namespace Wallet.Api.Controllers
                 return Forbid();
             }
 
-            var categoryResponse = new CategoryResponse
-            {
-                Name = category.Name,
-                Id = category.Id,
-            };
+            _logger.LogInformation("Category '{Id}' retrieved from database", category.Id);
 
-            return Ok(categoryResponse);
+            return Ok(_mapper.Map<CategoryResponse>(category));
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<bool>> Update(int id, CategoryRequest categoryRequest)
+        [HttpGet("search/{text}")]
+        public async Task<IActionResult> Search(string text, CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
+            var categories = await _categoryService.SearchAsync(userId, text, cancellationToken);
 
-            if (categoryRequest == null)
-            {
-                return BadRequest(false);
-            }
+            _logger.LogInformation("Categories retrieved from database by search text '{SearchText}'", text);
 
-            var category = await _walletContext.Categories.FindAsync(id);
+            return Ok(_mapper.Map<List<Category>>(categories));
+        }
+
+        [HttpPut("{id:long}")]
+        public async Task<IActionResult> Update(long id, CategoryRequest categoryRequest, CancellationToken cancellationToken)
+        {
+            var userId = HttpContext.GetUserId();
+            var category = await _categoryService.GetAsync(id, cancellationToken);
 
             if (category == null)
             {
-                return NotFound(false);
+                return NotFound();
             }
 
             if (category.UserId != userId)
@@ -120,10 +127,13 @@ namespace Wallet.Api.Controllers
                 return Forbid();
             }
 
-            category.Name = categoryRequest.Name;
+            category = _mapper.Map(categoryRequest, category);
+            category = await _categoryService.UpdateAsync(category, cancellationToken);
 
-            var response = await _walletContext.SaveChangesAsync();
-            return Ok(response > 0 ? true : (ActionResult<bool>)false);
+            _logger.LogInformation("Category '{Id}' updated", category.Id);
+
+            var response = _mapper.Map<CategoryResponse>(category);
+            return Ok(response);
         }
     }
 }

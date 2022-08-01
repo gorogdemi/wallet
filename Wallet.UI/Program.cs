@@ -5,6 +5,8 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Toolbelt.Blazor.Extensions.DependencyInjection;
+using Wallet.UI.Helpers;
 using Wallet.UI.Services;
 
 namespace Wallet.UI
@@ -18,13 +20,16 @@ namespace Wallet.UI
 
             builder.Services.AddHttpClient("WebApi", client => client.BaseAddress = new Uri("https://localhost:5001/"));
 
+            builder.Services.AddHttpClientInterceptor();
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddAuthorizationCore();
-            builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
-            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-            builder.Services.AddScoped<IWalletDataService, WalletDataService>();
 
-            builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WebApi"));
+            builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WebApi").EnableIntercept(sp));
+            builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
+            builder.Services.AddScoped<IHttpInterceptorService, HttpInterceptorService>();
+            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+            builder.Services.AddScoped<IWalletDataService, WalletDataService>();
 
             await builder.Build().RunAsync();
         }

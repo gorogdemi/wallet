@@ -8,10 +8,10 @@
     <DataAnnotationsValidator />
 
     <div class="form-group row">
-        <label for="email" class="col-md-2 col-form-label">E-mail cím:</label>
+        <label for="username" class="col-md-2 col-form-label">Felhasznlónév:</label>
         <div class="col-md-10">
-            <InputText id="email" type="email" class="form-control" @bind-Value="Data.Email" />
-            <ValidationMessage For="() => Data.Email" />
+            <InputText id="username" type="text" class="form-control" @bind-Value="Data.UserName" />
+            <ValidationMessage For="() => Data.UserName" />
         </div>
     </div>
 
@@ -29,3 +29,15 @@
         </div>
     </div>
 </EditForm>
+
+@code {
+
+    private async Task LoginAsync()
+    {
+        await HandleRequest(
+            () => Service.LoginAsync(Data),
+            onSuccess: () => NavigationManager.NavigateTo("/"),
+            errorMessage: "Bejelentkezés sikertelen!");
+    }
+
+}

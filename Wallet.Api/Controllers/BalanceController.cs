@@ -1,49 +1,41 @@
-﻿using System.Linq;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Wallet.Api.Context;
-using Wallet.Api.Domain;
+using Microsoft.Extensions.Logging;
 using Wallet.Api.Extensions;
+using Wallet.Api.Services;
 using Wallet.Contracts.Responses;
 
 namespace Wallet.Api.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
+    [Produces("application/json")]
+    [Route("api/balance")]
     [ApiController]
-    [Route("api/[controller]")]
     public class BalanceController : ControllerBase
     {
-        private readonly WalletContext _walletContext;
+        private readonly ILogger<BalanceController> _logger;
+        private readonly IMapper _mapper;
+        private readonly ITransactionService _transactionService;
 
-        public BalanceController(WalletContext walletContext)
+        public BalanceController(ILogger<BalanceController> logger, ITransactionService transactionService, IMapper mapper)
         {
-            _walletContext = walletContext;
+            _logger = logger;
+            _transactionService = transactionService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
 
-            var transcations = await _walletContext.Transactions.Where(x => x.UserId == userId).ToListAsync();
+            var balance = await _transactionService.GetBalanceAsync(userId, cancellationToken);
+            _logger.LogInformation("Balance retrieved from the database");
 
-            var cashExpenses = transcations.Where(x => x.Type == TransactionType.Expense).Sum(x => x.CashAmount);
-            var cashIncomes = transcations.Where(x => x.Type == TransactionType.Income).Sum(x => x.CashAmount);
-            var bankExpenses = transcations.Where(x => x.Type == TransactionType.Expense).Sum(x => x.BankAmount);
-            var bankIncomes = transcations.Where(x => x.Type == TransactionType.Income).Sum(x => x.BankAmount);
-
-            var cash = cashIncomes - cashExpenses;
-            var bank = bankIncomes - bankExpenses;
-
-            return Ok(new BalanceResponse
-            {
-                Full = cash + bank,
-                Cash = cash,
-                BankAccount = bank
-            });
+            return Ok(_mapper.Map<BalanceResponse>(balance));
         }
     }
 }
