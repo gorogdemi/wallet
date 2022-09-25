@@ -1,5 +1,5 @@
 ﻿@page "/categories"
-@inherits CategoryAwareComponentBase<CategoryRequest>
+@inherits AuthenticationAwareComponentBase<CategoryRequest>
 @attribute [Authorize]
 
 <h1>Kategóriák</h1>
@@ -29,7 +29,7 @@ else
             </thead>
 
             <tbody>
-            @foreach (var category in Categories)
+            @foreach (var category in _categories)
             {
                 <tr>
                     <td>@category.Name</td>
@@ -51,6 +51,7 @@ else
 
 @code {
 
+    private IEnumerable<CategoryResponse> _categories = new List<CategoryResponse>();
     private CategoryRequestModal _modal;
     private long? _id;
 
@@ -60,6 +61,7 @@ else
     {
         Data = new CategoryRequest();
         await base.OnInitializedAsync();
+        await LoadCategoriesAsync();
     }
 
     private async Task Add()
@@ -75,6 +77,14 @@ else
             () => Service.DeleteAsync(UriHelper.GetCategoryUriWith(id)),
             onSuccess: LoadCategoriesAsync,
             errorMessage: "Hiba a kategória törlése közben!");
+    }
+
+    private async Task LoadCategoriesAsync()
+    {
+        await HandleRequest(
+            () => Service.GetAsync<List<CategoryResponse>>(UriHelper.CategoryUri),
+            onSuccess: r => _categories = r,
+            errorMessage: "Kategóriák betöltése sikertelen!");
     }
 
     private async Task EditAsync(CategoryResponse category)

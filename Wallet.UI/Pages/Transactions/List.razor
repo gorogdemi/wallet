@@ -1,5 +1,5 @@
 ﻿@page "/transactions"
-@inherits CategoryAwareComponentBase<List<TransactionResponse>>
+@inherits AuthenticationAwareComponentBase<List<TransactionResponse>>
 @attribute [Authorize]
 
 <h1>Tranzakciók</h1>
@@ -61,23 +61,13 @@ else
 
 @code {
 
+    private IEnumerable<CategoryResponse> _categories = new List<CategoryResponse>();
     private readonly Subject<ChangeEventArgs> _searchTerm = new();
-
-    private async Task DeleteAsync(long id)
-    {
-        await HandleRequest(
-            () => Service.DeleteAsync(UriHelper.GetTransactionUriWith(id)),
-            onSuccess: async () =>
-            {
-                await LoadTransactionsAsync();
-                await LoadCategoriesAsync();
-            },
-            errorMessage: "Tranzakció törlése sikertelen!");
-    }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        await LoadCategoriesAsync();
         await LoadTransactionsAsync();
 
         _searchTerm
@@ -100,6 +90,28 @@ else
                     ErrorMessage = "Tranzakciók betöltése sikertelen!";
                 }
             });
+    }
+
+    private string GetCategoryName(long? id) => _categories?.FirstOrDefault(c => c.Id == id)?.Name ?? "Nincs";
+
+    private async Task DeleteAsync(long id)
+    {
+        await HandleRequest(
+            () => Service.DeleteAsync(UriHelper.GetTransactionUriWith(id)),
+            onSuccess: async () =>
+            {
+                await LoadCategoriesAsync();
+                await LoadTransactionsAsync();
+            },
+            errorMessage: "Tranzakció törlése sikertelen!");
+    }
+
+    private async Task LoadCategoriesAsync()
+    {
+        await HandleRequest(
+            () => Service.GetAsync<List<CategoryResponse>>(UriHelper.CategoryUri),
+            onSuccess: r => _categories = r,
+            errorMessage: "Kategóriák betöltése sikertelen!");
     }
 
     private Task<List<TransactionResponse>> SearchTransactions(string searchTerm = null)
