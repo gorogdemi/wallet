@@ -1,30 +1,28 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Wallet.UI.Helpers;
 
 namespace Wallet.UI.Services
 {
     public class WalletDataService : IWalletDataService
     {
         private readonly HttpClient _httpClient;
-        private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public WalletDataService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _jsonSerializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         }
 
-        public async Task CreateAsync<TRequest>(string uri, TRequest request) => ThrowIfUnsuccessful(await _httpClient.PostAsJsonAsync(uri, request, _jsonSerializerOptions));
+        public async Task CreateAsync<TRequest>(string uri, TRequest request) =>
+            ThrowIfUnsuccessful(await _httpClient.PostAsJsonAsync(uri, request, JsonSerializerOptionsProvider.DefaultOptions));
 
         public async Task DeleteAsync(string uri) => ThrowIfUnsuccessful(await _httpClient.DeleteAsync(uri));
 
-        public Task<TResponse> GetAsync<TResponse>(string uri) => _httpClient.GetFromJsonAsync<TResponse>(uri, _jsonSerializerOptions);
+        public Task<TResponse> GetAsync<TResponse>(string uri) => _httpClient.GetFromJsonAsync<TResponse>(uri, JsonSerializerOptionsProvider.DefaultOptions);
 
-        public async Task UpdateAsync<TRequest>(string uri, TRequest request) => ThrowIfUnsuccessful(await _httpClient.PutAsJsonAsync(uri, request, _jsonSerializerOptions));
+        public async Task UpdateAsync<TRequest>(string uri, TRequest request) =>
+            ThrowIfUnsuccessful(await _httpClient.PutAsJsonAsync(uri, request, JsonSerializerOptionsProvider.DefaultOptions));
 
         private static void ThrowIfUnsuccessful(HttpResponseMessage message)
         {

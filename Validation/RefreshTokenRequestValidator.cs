@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Wallet.Contracts.Requests;
 
-namespace Wallet.Api.Validators
+namespace Wallet.Validation
 {
     public class RefreshTokenRequestValidator : AbstractValidator<RefreshTokenRequest>
     {
@@ -13,7 +13,7 @@ namespace Wallet.Api.Validators
 
             RuleFor(request => request.Token)
                 .NotEmpty()
-                .MaximumLength(100);
+                .MaximumLength(500);
         }
     }
 }

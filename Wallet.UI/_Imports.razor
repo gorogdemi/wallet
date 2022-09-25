@@ -1,6 +1,10 @@
 ﻿@using System.Net.Http
 @using System.Net.Http.Json
 @using System.Security.Claims
+@using System.Linq.Expressions
+@using System.Reactive.Subjects
+@using System.Reactive.Linq
+@using Blazored.FluentValidation
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
@@ -12,8 +16,11 @@
 @using Wallet.UI.Services
 @using Wallet.Contracts.Requests
 @using Wallet.Contracts.Responses
-@using Wallet.UI.Models
+@using Wallet.Contracts.Types
 @using Wallet.UI.Helpers
 @using Wallet.UI.Components
+@using Wallet.UI.Extensions
+@using Wallet.UI.Forms
+@using Wallet.UI.Modals
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Authorization

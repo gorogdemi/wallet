@@ -19,8 +19,8 @@ using Wallet.Api.Domain;
 using Wallet.Api.Exceptions;
 using Wallet.Api.Options;
 using Wallet.Api.Services;
-using Wallet.Api.Validators;
 using Wallet.Contracts.Requests;
+using Wallet.Validation;
 
 var builder = WebApplication.CreateBuilder(args);
 

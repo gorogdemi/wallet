@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -36,6 +35,6 @@ namespace Wallet.Api.Services
         }
 
         public async Task<IEnumerable<Transaction>> SearchAsync(string userId, string text, CancellationToken cancellationToken) =>
-            await WalletContext.Transactions.Where(t => t.UserId == userId && t.Name.Contains(text, StringComparison.OrdinalIgnoreCase)).ToListAsync(cancellationToken);
+            await WalletContext.Transactions.Where(t => t.UserId == userId && EF.Functions.ILike(t.Name, $"%{text}%")).ToListAsync(cancellationToken);
     }
 }

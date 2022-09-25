@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Wallet.Contracts.Requests;
 
-namespace Wallet.Api.Validators
+namespace Wallet.Validation
 {
     public class RegistrationRequestValidator : AbstractValidator<RegistrationRequest>
     {
@@ -16,7 +16,8 @@ namespace Wallet.Api.Validators
                 .NotEmpty()
                 .MaximumLength(100)
                 .EmailAddress()
-                .Equal(request => request.Email);
+                .Equal(request => request.Email)
+                .WithMessage("Email Confirm field does not match with Email field.");
 
             RuleFor(request => request.FirstName)
                 .NotEmpty()
@@ -33,7 +34,8 @@ namespace Wallet.Api.Validators
             RuleFor(request => request.PasswordConfirm)
                 .NotEmpty()
                 .MaximumLength(100)
-                .Equal(request => request.Password);
+                .Equal(request => request.Password)
+                .WithMessage("Password Confirm field does not match with Password field.");
 
             RuleFor(request => request.UserName)
                 .NotEmpty()

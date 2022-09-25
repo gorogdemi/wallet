@@ -33,19 +33,17 @@ namespace Wallet.UI.Helpers
             var token = new JwtSecurityToken(tokenString);
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", tokenString);
 
-            return new AuthenticationState(new ClaimsPrincipal(GetClaimsIdentity(token)));
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwtAuthType")));
         }
 
         public void NotifyUserAuthentication(string tokenString)
         {
             var token = new JwtSecurityToken(tokenString);
-            var authenticatedUser = new ClaimsPrincipal(GetClaimsIdentity(token));
-            var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
-            NotifyAuthenticationStateChanged(authState);
+            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwtAuthType"));
+            var authenticationState = Task.FromResult(new AuthenticationState(authenticatedUser));
+            NotifyAuthenticationStateChanged(authenticationState);
         }
 
         public void NotifyUserLogout() => NotifyAuthenticationStateChanged(Task.FromResult(_anonymous));
-
-        private static ClaimsIdentity GetClaimsIdentity(JwtSecurityToken token) => new (token.Claims, "jwtAuthType", "name", "role");
     }
 }

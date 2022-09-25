@@ -1,0 +1,20 @@
+@if (IsVisible)
+{
+    <div class="row">
+        <label class="fw-bold col">@Label:</label>
+        <span class="col">@ChildContent</span>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public string Label { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public bool IsVisible { get; set; } = true;
+
+}

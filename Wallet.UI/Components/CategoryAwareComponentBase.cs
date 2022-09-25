@@ -9,7 +9,7 @@ namespace Wallet.UI.Components
     public abstract class CategoryAwareComponentBase<TData> : AuthenticationAwareComponentBase<TData>
         where TData : class, new()
     {
-        protected IEnumerable<CategoryResponse> Categories { get; set; }
+        protected IEnumerable<CategoryResponse> Categories { get; set; } = new List<CategoryResponse>();
 
         protected string GetCategoryName(long? id) => Categories?.FirstOrDefault(c => c.Id == id)?.Name ?? "Nincs";
 
@@ -21,8 +21,8 @@ namespace Wallet.UI.Components
 
         protected override async Task OnInitializedAsync()
         {
-            await LoadCategoriesAsync();
             await base.OnInitializedAsync();
+            await LoadCategoriesAsync();
         }
     }
 }

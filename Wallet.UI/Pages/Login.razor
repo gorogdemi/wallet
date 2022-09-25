@@ -2,26 +2,19 @@
 @inherits WalletComponentBase<LoginRequest, IAuthenticationService>
 
 <h1>Bejelentkezés</h1>
-<ErrorMessageComponent ErrorMessage="@ErrorMessage"></ErrorMessageComponent>
 
-<EditForm Model="Data" OnValidSubmit="LoginAsync" class="card card-body bg-light mt-5">
-    <DataAnnotationsValidator />
+<Alert Message="@ErrorMessage" />
 
-    <div class="form-group row">
-        <label for="username" class="col-md-2 col-form-label">Felhasznlónév:</label>
-        <div class="col-md-10">
-            <InputText id="username" type="text" class="form-control" @bind-Value="Data.UserName" />
-            <ValidationMessage For="() => Data.UserName" />
-        </div>
-    </div>
+<EditForm EditContext="_editContext" OnValidSubmit="LoginAsync" class="card card-body bg-light mt-5">
+    <FluentValidationValidator />
 
-    <div class="form-group row">
-        <label for="password" class="col-md-2 col-form-label">Jelszó:</label>
-        <div class="col-md-10">
-            <InputText id="password" type="password" class="form-control" @bind-Value="Data.Password" />
-            <ValidationMessage For="() => Data.Password" />
-        </div>
-    </div>
+    <FormInput For="username" Label="Felhasználónév" ValidationFor="() => Data.UserName">
+        <InputText id="username" class="form-control" @bind-Value="Data.UserName" />
+    </FormInput>
+
+    <FormInput For="password" Label="Jelszó" ValidationFor="() => Data.Password">
+        <InputText id="password" type="password" class="form-control" @bind-Value="Data.Password" />
+    </FormInput>
 
     <div class="row">
         <div class="col-md-12 text-center">
@@ -31,6 +24,15 @@
 </EditForm>
 
 @code {
+
+    private EditContext _editContext;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _editContext = new EditContext(Data);
+        _editContext.SetFieldCssClassProvider(new CustomFieldClassProvider());
+    }
 
     private async Task LoginAsync()
     {

@@ -64,10 +64,10 @@ namespace Wallet.UI.Components
             }
         }
 
-        protected override Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
         {
+            await base.OnInitializedAsync();
             IsLoading = false;
-            return base.OnInitializedAsync();
         }
     }
 }

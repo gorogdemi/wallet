@@ -14,7 +14,6 @@ namespace Wallet.UI.Services
     {
         private const string AuthTokenKey = "authToken";
         private const string RefreshTokenKey = "refreshToken";
-        private const string IsUpdatingKey = "isUpdating";
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly HttpClient _httpClient;
         private readonly ILocalStorageService _localStorage;
@@ -26,7 +25,6 @@ namespace Wallet.UI.Services
             _authenticationStateProvider = authenticationStateProvider;
         }
 
-        // TODO: try-catch mindenhova (talán ServiceResult is)
         public async Task LoginAsync(LoginRequest loginRequest)
         {
             using var result = await _httpClient.PostAsJsonAsync(UriHelper.LoginUri, loginRequest);
@@ -43,15 +41,6 @@ namespace Wallet.UI.Services
 
         public async Task<string> RefreshTokenAsync()
         {
-            var isUpdating = await _localStorage.GetItemAsync<bool>(IsUpdatingKey);
-
-            if (isUpdating)
-            {
-                return null;
-            }
-
-            await _localStorage.SetItemAsync(IsUpdatingKey, true);
-
             var token = await _localStorage.GetItemAsStringAsync(AuthTokenKey);
             var refreshToken = await _localStorage.GetItemAsStringAsync(RefreshTokenKey);
 
@@ -60,8 +49,6 @@ namespace Wallet.UI.Services
                 new RefreshTokenRequest { Token = token, RefreshToken = refreshToken });
 
             var resultString = await GetAuthenticationResponse(result);
-
-            await _localStorage.SetItemAsync(IsUpdatingKey, false);
 
             return resultString;
         }

@@ -1,41 +1,10 @@
 ﻿@page "/categories"
-@inherits CategoryAwareComponentBase<CategoryDialog>
+@inherits CategoryAwareComponentBase<CategoryRequest>
 @attribute [Authorize]
 
 <h1>Kategóriák</h1>
 
-<ErrorMessageComponent ErrorMessage="@ErrorMessage"></ErrorMessageComponent>
-
-<br />
-
-@if (Data.ShowDialog)
-{
-    <div class="modal fade show d-block" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Kategória @(Data.Id.HasValue ? "módosítás" : "létrehozás")</h5>
-                    <button type="button" class="close" @onclick="@Close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <EditForm Model="@Data.Request" OnValidSubmit="@SaveAsync">
-                        <DataAnnotationsValidator />
-                        <ValidationSummary />
-                        <div class="form-group">
-                            <label for="name">Név: </label>
-                            <InputText id="name" class="form-control" @bind-Value="@Data.Request.Name" placeholder="Add meg a kategória nevét"></InputText>
-                            <ValidationMessage For="@(() => Data.Request.Name)" />
-                        </div>
-                        <button type="submit" class="btn btn-primary">Kész</button>
-                        <a class="btn btn-outline-primary" @onclick="@Close">Vissza</a>
-                    </EditForm>
-                </div>
-            </div>
-        </div>
-    </div>
-}
+<Alert Message="@ErrorMessage" />
 
 @if (IsLoading)
 {
@@ -43,16 +12,18 @@
 }
 else
 {
-    <button @onclick="@Add" class="btn btn-primary" style="margin-bottom:10px">
+    <CategoryRequestModal @ref="_modal" Title="@ModalTitle" Category="Data" OnSubmit="SaveAsync" />
+
+    <button type="button" class="btn btn-primary mt-4 mb-3" @onclick="Add">
+        <i class="bi bi-plus-circle"></i>
         Új kategória
-        <i class="fas fa-plus-circle"></i>
     </button>
+
     <div class="row">
         <table class="col-5 table table-borderless">
             <thead>
             <tr>
                 <th class="col-3">Név</th>
-                <th class="col-1"></th>
                 <th class="col-1"></th>
             </tr>
             </thead>
@@ -63,13 +34,11 @@ else
                 <tr>
                     <td>@category.Name</td>
                     <td>
-                        <button @onclick="() => Edit(category)" class="btn btn-primary">
-                            <i class="fas fa-edit"></i>
+                        <button @onclick="() => EditAsync(category)" class="btn btn-primary">
+                            <i class="bi bi-pencil"></i>
                         </button>
-                    </td>
-                    <td>
-                        <button @onclick="() => DeleteAsync(category.Id)" class="btn btn-primary">
-                            <i class="fas fa-trash"></i>
+                        <button @onclick="() => DeleteAsync(category.Id)" class="btn btn-danger">
+                            <i class="bi bi-trash"></i>
                         </button>
                     </td>
                 </tr>
@@ -82,14 +51,23 @@ else
 
 @code {
 
-    private void Add()
+    private CategoryRequestModal _modal;
+    private long? _id;
+
+    private string ModalTitle => $"Kategória {(_id.HasValue ? "módosítás" : "létrehozás")}";
+
+    protected override async Task OnInitializedAsync()
     {
-        Data.Request = new CategoryRequest();
-        Data.Id = null;
-        Data.ShowDialog = true;
+        Data = new CategoryRequest();
+        await base.OnInitializedAsync();
     }
 
-    private void Close() => Data.ShowDialog = false;
+    private async Task Add()
+    {
+        Data = new CategoryRequest();
+        _id = null;
+        await _modal.OpenAsync();
+    }
 
     private async Task DeleteAsync(long id)
     {
@@ -99,24 +77,21 @@ else
             errorMessage: "Hiba a kategória törlése közben!");
     }
 
-    private void Edit(CategoryResponse category)
+    private async Task EditAsync(CategoryResponse category)
     {
-        Data.Request = new CategoryRequest { Name = category.Name };
-
-        Data.Id = category.Id;
-        Data.ShowDialog = true;
+        Data = new CategoryRequest { Name = category.Name };
+        _id = category.Id;
+        await _modal.OpenAsync();
     }
 
     private async Task SaveAsync()
     {
-        var isEdit = Data.Id.HasValue;
+        var isEdit = _id.HasValue;
 
         await HandleRequest(
-            () => isEdit ? Service.UpdateAsync(UriHelper.GetCategoryUriWith(Data.Id!.Value), Data.Request) : Service.CreateAsync(UriHelper.CategoryUri, Data.Request),
+            () => isEdit ? Service.UpdateAsync(UriHelper.GetCategoryUriWith(_id!.Value), Data) : Service.CreateAsync(UriHelper.CategoryUri, Data),
             onSuccess: LoadCategoriesAsync,
             errorMessage: $"Hiba a kategória {(isEdit ? "módosítása" : "létrehozása")} közben!");
-
-        Data.ShowDialog = false;
     }
 
 }
