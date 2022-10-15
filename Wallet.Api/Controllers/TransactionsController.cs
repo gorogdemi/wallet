@@ -108,7 +108,7 @@ namespace Wallet.Api.Controllers
 
             _logger.LogInformation("Transactions retrieved from database by search text '{SearchText}'", text);
 
-            return Ok(_mapper.Map<List<Transaction>>(transactions));
+            return Ok(_mapper.Map<List<TransactionResponse>>(transactions));
         }
 
         [HttpPut("{id:long}")]

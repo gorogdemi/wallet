@@ -21,7 +21,11 @@ namespace Wallet.UI.Components
 
         protected string UserId { get; private set; }
 
-        public void Dispose() => InterceptorService.DisposeEvent();
+        public void Dispose()
+        {
+            InterceptorService.DisposeEvent();
+            GC.SuppressFinalize(this);
+        }
 
         protected override async Task OnInitializedAsync()
         {

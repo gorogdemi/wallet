@@ -4,9 +4,7 @@
 
 <h1>Tranzakció Módosítás</h1>
 
-<ErrorMessageComponent ErrorMessage="@ErrorMessage"></ErrorMessageComponent>
-
-<br />
+<Alert Message="@ErrorMessage" />
 
 @if (IsLoading)
 {
@@ -14,7 +12,7 @@
 }
 else
 {
-    <TransactionForm Transaction="Data" Categories="Categories" OnClose="NavigateToTransactions" OnSubmit="EditAsync"></TransactionForm>
+    <TransactionForm Transaction="Data" Categories="Categories" OnClose="NavigateToTransactions" OnSubmit="EditAsync" />
 }
 
 @code {
@@ -30,6 +28,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
+
         await HandleRequest(
             () => Service.GetAsync<TransactionResponse>(UriHelper.GetTransactionUriWith(TransactionId)),
             onSuccess: response =>
@@ -43,8 +43,6 @@ else
                 Data.Type = response.Type;
             },
             errorMessage: "Tranzakció lekérés sikertelen!");
-
-        await base.OnInitializedAsync();
     }
 
 }

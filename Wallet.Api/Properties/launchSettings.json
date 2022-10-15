@@ -1,14 +1,15 @@
 {
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:58653",
-      "sslPort": 44370
-    }
-  },
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
+    "Wallet.Api: No browser": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": "true",
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+    },
     "Wallet.Api": {
       "commandName": "Project",
       "launchBrowser": true,

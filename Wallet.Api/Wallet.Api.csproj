@@ -36,6 +36,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Contracts\Contracts.csproj" />
+        <ProjectReference Include="..\Validation\Validation.csproj" />
     </ItemGroup>
 
     <ItemGroup>

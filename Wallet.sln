@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wallet.UI", "Wallet.UI\Wall
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "Contracts\Contracts.csproj", "{6DFC0AC6-CA9F-4B3B-817F-C3B0E0B22915}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validation", "Validation\Validation.csproj", "{AC984B39-3E37-453C-870D-2913C5226325}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{6DFC0AC6-CA9F-4B3B-817F-C3B0E0B22915}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DFC0AC6-CA9F-4B3B-817F-C3B0E0B22915}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DFC0AC6-CA9F-4B3B-817F-C3B0E0B22915}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC984B39-3E37-453C-870D-2913C5226325}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC984B39-3E37-453C-870D-2913C5226325}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC984B39-3E37-453C-870D-2913C5226325}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC984B39-3E37-453C-870D-2913C5226325}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

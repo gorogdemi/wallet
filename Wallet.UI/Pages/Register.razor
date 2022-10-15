@@ -3,66 +3,38 @@
 
 <h1>Regisztráció</h1>
 
-<ErrorMessageComponent ErrorMessage="@ErrorMessage"></ErrorMessageComponent>
+<Alert Message="@ErrorMessage" />
 
-<EditForm Model="Data" OnValidSubmit="RegisterAsync" class="card card-body bg-light mt-5">
-    <DataAnnotationsValidator />
+<EditForm EditContext="_editContext" OnValidSubmit="RegisterAsync" class="card card-body bg-light mt-5">
+    <FluentValidationValidator />
 
-    <div class="form-group row">
-        <label for="last-name" class="col-md-2 col-form-label">Felhasználónév:</label>
-        <div class="col-md-10">
-            <InputText id="username" class="form-control" @bind-Value="Data.UserName" />
-            <ValidationMessage For="() => Data.UserName" />
-        </div>
-    </div>
+    <FormInput For="username" Label="Felhasználónév" ValidationFor="() => Data.UserName">
+        <InputText id="username" class="form-control" @bind-Value="Data.UserName" />
+    </FormInput>
 
-    <div class="form-group row">
-        <label for="last-name" class="col-md-2 col-form-label">Vezetéknév:</label>
-        <div class="col-md-10">
-            <InputText id="last-name" class="form-control" @bind-Value="Data.LastName" />
-            <ValidationMessage For="() => Data.LastName" />
-        </div>
-    </div>
+    <FormInput For="last-name" Label="Vezetéknév" ValidationFor="() => Data.FirstName">
+        <InputText id="last-name" class="form-control" @bind-Value="Data.FirstName" />
+    </FormInput>
 
-    <div class="form-group row">
-        <label for="first-name" class="col-md-2 col-form-label">Keresztnév:</label>
-        <div class="col-md-10">
-            <InputText id="first-name" class="form-control" @bind-Value="Data.FirstName" />
-            <ValidationMessage For="() => Data.FirstName" />
-        </div>
-    </div>
+    <FormInput For="first-name" Label="Keresztnév" ValidationFor="() => Data.LastName">
+        <InputText id="first-name" class="form-control" @bind-Value="Data.LastName" />
+    </FormInput>
 
-    <div class="form-group row">
-        <label for="email" class="col-md-2 col-form-label">E-mail cím:</label>
-        <div class="col-md-10">
-            <InputText id="email" type="email" class="form-control" @bind-Value="Data.Email" />
-            <ValidationMessage For="() => Data.Email" />
-        </div>
-    </div>
+    <FormInput For="email" Label="Email cím" ValidationFor="() => Data.Email">
+        <InputText id="email" type="email" class="form-control" @bind-Value="Data.Email" />
+    </FormInput>
 
-    <div class="form-group row">
-        <label for="email-confirm" class="col-md-2 col-form-label">E-mail cím megerősítése:</label>
-        <div class="col-md-10">
-            <InputText id="email-confirm" type="email" class="form-control" @bind-Value="Data.EmailConfirm" />
-            <ValidationMessage For="() => Data.EmailConfirm" />
-        </div>
-    </div>
+    <FormInput For="email-confirm" Label="Email cím megerősítése" ValidationFor="() => Data.EmailConfirm">
+        <InputText id="email-confirm" type="email" class="form-control" @bind-Value="Data.EmailConfirm" />
+    </FormInput>
 
-    <div class="form-group row">
-        <label for="password" class="col-md-2 col-form-label">Jelszó:</label>
-        <div class="col-md-10">
-            <InputText id="password" type="password" class="form-control" @bind-Value="Data.Password" />
-            <ValidationMessage For="() => Data.Password" />
-        </div>
-    </div>
+    <FormInput For="password" Label="Jelszó" ValidationFor="() => Data.Password">
+        <InputText id="password" type="password" class="form-control" @bind-Value="Data.Password" />
+    </FormInput>
 
-    <div class="form-group row">
-        <label for="password-confirm" class="col-md-2 col-form-label">Jelszó megerősítése:</label>
-        <div class="col-md-10">
-            <InputText id="password-confirm" type="password" class="form-control" @bind-Value="Data.PasswordConfirm" />
-            <ValidationMessage For="() => Data.PasswordConfirm" />
-        </div>
-    </div>
+    <FormInput For="password-confirm" Label="Jelszó megerősítése" ValidationFor="() => Data.PasswordConfirm">
+        <InputText id="password-confirm" type="password" class="form-control" @bind-Value="Data.PasswordConfirm" />
+    </FormInput>
 
     <div class="row">
         <div class="col-md-12 text-center">
@@ -72,6 +44,15 @@
 </EditForm>
 
 @code {
+
+    private EditContext _editContext;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _editContext = new EditContext(Data);
+        _editContext.SetFieldCssClassProvider(new CustomFieldClassProvider());
+    }
 
     private async Task RegisterAsync()
     {

@@ -1,0 +1,32 @@
+@if (IsVisible)
+{
+    <div class="row mb-3">
+        <label for="@For" class="col-sm-2 col-form-label">@Label:</label>
+        <div class="col-sm-10">
+            @ChildContent
+            @if (ValidationFor is not null)
+            {
+                <ValidationMessage For="ValidationFor" />
+            }
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public string For { get; set; }
+
+    [Parameter]
+    public string Label { get; set; }
+
+    [Parameter]
+    public Expression<Func<object>> ValidationFor { get; set; }
+
+    [Parameter]
+    public bool IsVisible { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+}

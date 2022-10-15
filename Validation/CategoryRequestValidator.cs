@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Wallet.Contracts.Requests;
 
-namespace Wallet.Api.Validators
+namespace Wallet.Validation
 {
     public class CategoryRequestValidator : AbstractValidator<CategoryRequest>
     {

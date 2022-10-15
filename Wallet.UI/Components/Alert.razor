@@ -1,0 +1,17 @@
+@if (Message is not null)
+{
+    <div>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span class="bi bi-x-circle-fill"></span>
+            @Message
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public string Message { get; set; }
+
+}

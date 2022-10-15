@@ -1,19 +1,16 @@
 ﻿@page "/transactions"
-@using Wallet.Contracts.Types
-@inherits CategoryAwareComponentBase<List<TransactionResponse>>
+@inherits AuthenticationAwareComponentBase<List<TransactionResponse>>
 @attribute [Authorize]
 
 <h1>Tranzakciók</h1>
 
-<ErrorMessageComponent ErrorMessage="@ErrorMessage"></ErrorMessageComponent>
+<Alert Message="@ErrorMessage" />
 
-<br />
-
-<div class="input-group mb-3">
-    <input type="text" class="form-control" placeholder="Írja be a tranzakció nevét.." @bind="@_searchInput">
-    <div class="input-group-append">
-        <button class="btn btn-primary edit-btn" type="button" @onclick="LoadTransactionAsync">Keresés</button>
-    </div>
+<div class="input-group mt-4 mb-3">
+    <a href="transactions/create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Új
+    </a>
+    <input type="text" class="form-control" placeholder="Írja be a tranzakció nevét.." @oninput="@_searchTerm.OnNext">
 </div>
 
 @if (IsLoading)
@@ -25,9 +22,6 @@ else
     <table class="table">
         <thead>
         <tr>
-            <th>
-                <a href="transactions/create" class="btn btn-primary edit-btn">Új</a>
-            </th>
             <th>Név</th>
             <th>Teljes</th>
             <th>Készpénz</th>
@@ -37,30 +31,26 @@ else
             <th>Típus</th>
             <th>Kategória</th>
             <th></th>
-            <th></th>
         </tr>
         </thead>
         <tbody>
         @foreach (var transaction in Data)
         {
             <tr>
-                <td></td>
                 <td>@transaction.Name</td>
                 <td>@transaction.SumAmount Ft</td>
                 <td>@transaction.CashAmount Ft</td>
                 <td>@transaction.BankAmount Ft</td>
                 <td>@transaction.Comment</td>
-                <td>@transaction.Date</td>
-                <td>@(transaction.Type is TransactionType.Expense ? "Kiadás" : "Bevétel")</td>
-                <th>@(GetCategoryName(transaction.CategoryId))</th>
+                <td>@transaction.Date.ToFormattedDate()</td>
+                <td>@transaction.Type.ToTransactionTypeText()</td>
+                <td>@(GetCategoryName(transaction.CategoryId))</td>
                 <td>
                     <a href="@($"transactions/edit/{transaction.Id}")" class="btn btn-primary table-btn">
-                        <i class="fas fa-edit"></i>
+                        <i class="bi bi-pencil"></i>
                     </a>
-                </td>
-                <td>
-                    <button @onclick="() => DeleteAsync(transaction.Id)" class="btn btn-primary table-btn">
-                        <i class="fas fa-trash"></i>
+                    <button @onclick="() => DeleteAsync(transaction.Id)" class="btn btn-danger table-btn">
+                        <i class="bi bi-trash"></i>
                     </button>
                 </td>
             </tr>
@@ -71,7 +61,38 @@ else
 
 @code {
 
-    private string _searchInput;
+    private IEnumerable<CategoryResponse> _categories = new List<CategoryResponse>();
+    private readonly Subject<ChangeEventArgs> _searchTerm = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await LoadCategoriesAsync();
+        await LoadTransactionsAsync();
+
+        _searchTerm
+            .Throttle(TimeSpan.FromMilliseconds(200))
+            .Select(e => (string)e.Value)
+            .Select(v => v?.Trim())
+            .DistinctUntilChanged()
+            .SelectMany(SearchTransactions)
+            .Subscribe(r =>
+            {
+                ErrorMessage = null;
+
+                try
+                {
+                    Data = r;
+                    StateHasChanged();
+                }
+                catch
+                {
+                    ErrorMessage = "Tranzakciók betöltése sikertelen!";
+                }
+            });
+    }
+
+    private string GetCategoryName(long? id) => _categories?.FirstOrDefault(c => c.Id == id)?.Name ?? "Nincs";
 
     private async Task DeleteAsync(long id)
     {
@@ -79,23 +100,22 @@ else
             () => Service.DeleteAsync(UriHelper.GetTransactionUriWith(id)),
             onSuccess: async () =>
             {
-                await LoadTransactionsAsync();
                 await LoadCategoriesAsync();
+                await LoadTransactionsAsync();
             },
             errorMessage: "Tranzakció törlése sikertelen!");
     }
 
-    protected override async Task OnInitializedAsync()
+    private async Task LoadCategoriesAsync()
     {
-        await LoadTransactionsAsync();
-        await base.OnInitializedAsync();
+        await HandleRequest(
+            () => Service.GetAsync<List<CategoryResponse>>(UriHelper.CategoryUri),
+            onSuccess: r => _categories = r,
+            errorMessage: "Kategóriák betöltése sikertelen!");
     }
 
-    private Task LoadTransactionAsync() =>
-        HandleRequest(
-            () => Service.GetAsync<List<TransactionResponse>>(string.IsNullOrEmpty(_searchInput) ? UriHelper.TransactionUri : UriHelper.GetTransactionUriWith(_searchInput)),
-            onSuccess: response => Data = response,
-            errorMessage: "Tranzakciók betöltése sikertelen!");
+    private Task<List<TransactionResponse>> SearchTransactions(string searchTerm = null)
+        => Service.GetAsync<List<TransactionResponse>>(string.IsNullOrEmpty(searchTerm) ? UriHelper.TransactionUri : UriHelper.GetTransactionUriWith(searchTerm));
 
     private Task LoadTransactionsAsync() =>
         HandleRequest(

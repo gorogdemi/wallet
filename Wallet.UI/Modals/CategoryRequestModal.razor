@@ -1,0 +1,54 @@
+@inherits Modal
+
+<Modal @ref="_modal" Title="@Title" CloseButtonTitle="@CloseButtonTitle">
+    <Content>
+        <EditForm EditContext="_editContext" OnValidSubmit="SubmitAsync">
+            <FluentValidationValidator />
+
+            <FormInput For="name" Label="Név" ValidationFor="() => Category.Name">
+                <InputText id="name" class="form-control" @bind-Value="@Category.Name" />
+            </FormInput>
+        </EditForm>
+    </Content>
+    <Footer>
+        <button type="submit" class="btn btn-primary" @onclick="SaveAsync">Mentés</button>
+    </Footer>
+</Modal>
+
+@code {
+
+    private Modal _modal;
+    private EditContext _editContext;
+
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+
+    [Parameter]
+    public CategoryRequest Category { get; set; }
+
+    public override async Task OpenAsync() => await _modal.OpenAsync();
+
+    public override async Task CloseAsync() => await _modal.CloseAsync();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        _editContext = new EditContext(Category);
+        _editContext.SetFieldCssClassProvider(new CustomFieldClassProvider());
+    }
+
+    private async Task SubmitAsync()
+    {
+        await CloseAsync();
+        await OnSubmit.InvokeAsync();
+    }
+
+    private async Task SaveAsync()
+    {
+        if (_editContext.Validate())
+        {
+            await SubmitAsync();
+        }
+    }
+
+}

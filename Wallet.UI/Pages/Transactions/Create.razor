@@ -4,9 +4,7 @@
 
 <h1>Új Tranzakció</h1>
 
-<ErrorMessageComponent ErrorMessage="@ErrorMessage"></ErrorMessageComponent >
-
-<br />
+<Alert Message="@ErrorMessage" />
 
 @if (IsLoading)
 {
@@ -14,7 +12,7 @@
 }
 else
 {
-    <TransactionForm Transaction="@Data" Categories="@Categories" OnClose="NavigateToTransactions" OnSubmit="CreateAsync"></TransactionForm>
+    <TransactionForm Transaction="@Data" Categories="@Categories" OnClose="NavigateToTransactions" OnSubmit="CreateAsync" />
 }
 
 @code {
