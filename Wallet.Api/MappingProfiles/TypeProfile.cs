@@ -1,6 +1,6 @@
 ﻿using System;
 using AutoMapper;
-using Wallet.Contracts.Types;
+using Wallet.Contracts.Dtos.Types;
 
 namespace Wallet.Api.MappingProfiles
 {

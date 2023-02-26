@@ -9,7 +9,7 @@ using Wallet.Api.Domain;
 using Wallet.Api.Extensions;
 using Wallet.Api.Services;
 using Wallet.Contracts.Requests;
-using Wallet.Contracts.Responses;
+using Wallet.Contracts.ViewModels;
 
 namespace Wallet.Api.Controllers
 {
@@ -41,7 +41,7 @@ namespace Wallet.Api.Controllers
 
             _logger.LogInformation("Category created with ID '{Id}'", category.Id);
 
-            var response = _mapper.Map<CategoryResponse>(category);
+            var response = _mapper.Map<CategoryViewModel>(category);
             return CreatedAtAction("Get", new { id = response.Id }, response);
         }
 
@@ -76,7 +76,7 @@ namespace Wallet.Api.Controllers
 
             _logger.LogInformation("Categories retrieved from database");
 
-            return Ok(_mapper.Map<List<CategoryResponse>>(categories));
+            return Ok(_mapper.Map<List<CategoryViewModel>>(categories));
         }
 
         [HttpGet("{id:long}")]
@@ -97,7 +97,7 @@ namespace Wallet.Api.Controllers
 
             _logger.LogInformation("Category '{Id}' retrieved from database", category.Id);
 
-            return Ok(_mapper.Map<CategoryResponse>(category));
+            return Ok(_mapper.Map<CategoryViewModel>(category));
         }
 
         [HttpGet("search/{text}")]
@@ -108,7 +108,7 @@ namespace Wallet.Api.Controllers
 
             _logger.LogInformation("Categories retrieved from database by search text '{SearchText}'", text);
 
-            return Ok(_mapper.Map<List<CategoryResponse>>(categories));
+            return Ok(_mapper.Map<List<CategoryViewModel>>(categories));
         }
 
         [HttpPut("{id:long}")]
@@ -132,7 +132,7 @@ namespace Wallet.Api.Controllers
 
             _logger.LogInformation("Category '{Id}' updated", category.Id);
 
-            var response = _mapper.Map<CategoryResponse>(category);
+            var response = _mapper.Map<CategoryViewModel>(category);
             return Ok(response);
         }
     }

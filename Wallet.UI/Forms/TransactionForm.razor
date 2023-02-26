@@ -1,4 +1,6 @@
-﻿<section class="mt-5">
+﻿@using Wallet.Contracts.ViewModels
+@using Wallet.Contracts.Dtos.Types
+<section class="mt-5">
     <EditForm EditContext="_editContext" OnValidSubmit="OnSubmit">
         <FluentValidationValidator />
 
@@ -58,7 +60,7 @@
     }
 
     [Parameter]
-    public IEnumerable<CategoryResponse> Categories { get; set; }
+    public IEnumerable<CategoryViewModel> Categories { get; set; }
 
     [Parameter]
     public EventCallback OnClose { get; set; }

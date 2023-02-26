@@ -1,4 +1,5 @@
 ﻿@page "/categories"
+@using Wallet.Contracts.ViewModels
 @inherits AuthenticationAwareComponentBase<CategoryRequest>
 @attribute [Authorize]
 
@@ -51,7 +52,7 @@ else
 
 @code {
 
-    private IEnumerable<CategoryResponse> _categories = new List<CategoryResponse>();
+    private IEnumerable<CategoryViewModel> _categories = new List<CategoryViewModel>();
     private CategoryRequestModal _modal;
     private long? _id;
 
@@ -82,12 +83,12 @@ else
     private async Task LoadCategoriesAsync()
     {
         await HandleRequest(
-            () => Service.GetAsync<List<CategoryResponse>>(UriHelper.CategoryUri),
+            () => Service.GetAsync<List<CategoryViewModel>>(UriHelper.CategoryUri),
             onSuccess: r => _categories = r,
             errorMessage: "Kategóriák betöltése sikertelen!");
     }
 
-    private async Task EditAsync(CategoryResponse category)
+    private async Task EditAsync(CategoryViewModel category)
     {
         Data = new CategoryRequest { Name = category.Name };
         _id = category.Id;

@@ -2,7 +2,7 @@
 using Wallet.Api.Domain;
 using Wallet.Api.Models;
 using Wallet.Contracts.Requests;
-using Wallet.Contracts.Responses;
+using Wallet.Contracts.ViewModels;
 
 namespace Wallet.Api.MappingProfiles
 {
@@ -11,12 +11,12 @@ namespace Wallet.Api.MappingProfiles
         public EntityProfile()
         {
             CreateMap<TransactionRequest, Transaction>();
-            CreateMap<Transaction, TransactionResponse>();
+            CreateMap<Transaction, TransactionViewModel>();
 
             CreateMap<CategoryRequest, Category>();
-            CreateMap<Category, CategoryResponse>();
+            CreateMap<Category, CategoryViewModel>();
 
-            CreateMap<BalanceModel, BalanceResponse>();
+            CreateMap<BalanceModel, BalanceViewModel>();
         }
     }
 }

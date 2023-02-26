@@ -1,6 +1,6 @@
-﻿namespace Wallet.Contracts.Responses
+﻿namespace Wallet.Contracts.ViewModels
 {
-    public class BalanceResponse
+    public class BalanceViewModel
     {
         public double BankAccount { get; set; }
 
