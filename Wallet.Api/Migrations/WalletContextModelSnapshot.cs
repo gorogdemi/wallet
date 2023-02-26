@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Wallet.Api;
+using Wallet.Api.Domain.Types;
 
 #nullable disable
 
@@ -20,6 +21,7 @@ namespace Wallet.Api.Migrations
                 .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "transaction_type", new[] { "expense", "income" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -101,12 +103,10 @@ namespace Wallet.Api.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text");
@@ -143,12 +143,10 @@ namespace Wallet.Api.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
                         .HasColumnType("text");
@@ -160,11 +158,11 @@ namespace Wallet.Api.Migrations
 
             modelBuilder.Entity("Wallet.Api.Domain.Category", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -178,6 +176,9 @@ namespace Wallet.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("Name", "UserId")
+                        .IsUnique();
 
                     b.ToTable("Categories");
                 });
@@ -219,11 +220,11 @@ namespace Wallet.Api.Migrations
 
             modelBuilder.Entity("Wallet.Api.Domain.Transaction", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<double>("BankAmount")
                         .HasColumnType("double precision");
@@ -231,8 +232,8 @@ namespace Wallet.Api.Migrations
                     b.Property<double>("CashAmount")
                         .HasColumnType("double precision");
 
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("integer");
+                    b.Property<long?>("CategoryId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Comment")
                         .HasMaxLength(255)
@@ -246,8 +247,8 @@ namespace Wallet.Api.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
+                    b.Property<TransactionType>("Type")
+                        .HasColumnType("transaction_type");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -256,6 +257,8 @@ namespace Wallet.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("Name");
 
                     b.HasIndex("UserId");
 
@@ -387,7 +390,7 @@ namespace Wallet.Api.Migrations
                     b.HasOne("Wallet.Api.Domain.User", "User")
                         .WithMany("Categories")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -396,7 +399,7 @@ namespace Wallet.Api.Migrations
             modelBuilder.Entity("Wallet.Api.Domain.RefreshToken", b =>
                 {
                     b.HasOne("Wallet.Api.Domain.User", "User")
-                        .WithMany()
+                        .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -430,6 +433,8 @@ namespace Wallet.Api.Migrations
             modelBuilder.Entity("Wallet.Api.Domain.User", b =>
                 {
                     b.Navigation("Categories");
+
+                    b.Navigation("RefreshTokens");
 
                     b.Navigation("Transactions");
                 });
