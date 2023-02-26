@@ -9,7 +9,7 @@ using Wallet.Api.Domain;
 using Wallet.Api.Extensions;
 using Wallet.Api.Services;
 using Wallet.Contracts.Requests;
-using Wallet.Contracts.Responses;
+using Wallet.Contracts.ViewModels;
 
 namespace Wallet.Api.Controllers
 {
@@ -41,7 +41,7 @@ namespace Wallet.Api.Controllers
 
             _logger.LogInformation("Transaction created with ID '{Id}'", transaction.Id);
 
-            var response = _mapper.Map<TransactionResponse>(transaction);
+            var response = _mapper.Map<TransactionViewModel>(transaction);
             return CreatedAtAction("Get", new { id = response.Id }, response);
         }
 
@@ -76,7 +76,7 @@ namespace Wallet.Api.Controllers
 
             _logger.LogInformation("Transactions retrieved from database");
 
-            return Ok(_mapper.Map<List<TransactionResponse>>(transactions));
+            return Ok(_mapper.Map<List<TransactionViewModel>>(transactions));
         }
 
         [HttpGet("{id:long}")]
@@ -97,7 +97,7 @@ namespace Wallet.Api.Controllers
 
             _logger.LogInformation("Transaction '{Id}' retrieved from database", transaction.Id);
 
-            return Ok(_mapper.Map<TransactionResponse>(transaction));
+            return Ok(_mapper.Map<TransactionViewModel>(transaction));
         }
 
         [HttpGet("search/{text}")]
@@ -108,7 +108,7 @@ namespace Wallet.Api.Controllers
 
             _logger.LogInformation("Transactions retrieved from database by search text '{SearchText}'", text);
 
-            return Ok(_mapper.Map<List<TransactionResponse>>(transactions));
+            return Ok(_mapper.Map<List<TransactionViewModel>>(transactions));
         }
 
         [HttpPut("{id:long}")]
@@ -132,7 +132,7 @@ namespace Wallet.Api.Controllers
 
             _logger.LogInformation("Transaction '{Id}' updated", transaction.Id);
 
-            var response = _mapper.Map<TransactionResponse>(transaction);
+            var response = _mapper.Map<TransactionViewModel>(transaction);
             return Ok(response);
         }
     }

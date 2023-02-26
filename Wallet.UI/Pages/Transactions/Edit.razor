@@ -1,4 +1,5 @@
 ﻿@page "/transactions/edit/{TransactionId:int}"
+@using Wallet.Contracts.ViewModels
 @inherits TransactionFormComponentBase
 @attribute [Authorize]
 
@@ -31,7 +32,7 @@ else
         await base.OnInitializedAsync();
 
         await HandleRequest(
-            () => Service.GetAsync<TransactionResponse>(UriHelper.GetTransactionUriWith(TransactionId)),
+            () => Service.GetAsync<TransactionViewModel>(UriHelper.GetTransactionUriWith(TransactionId)),
             onSuccess: response =>
             {
                 Data.BankAmount = response.BankAmount;

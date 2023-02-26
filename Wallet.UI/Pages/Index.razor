@@ -1,5 +1,6 @@
 ﻿@page "/"
-@inherits AuthenticationAwareComponentBase<BalanceResponse>
+@using Wallet.Contracts.ViewModels
+@inherits AuthenticationAwareComponentBase<Wallet.Contracts.ViewModels.BalanceViewModel>
 @attribute [Authorize]
 
 <h1>Egyenleg</h1>
@@ -26,7 +27,7 @@ else
         await base.OnInitializedAsync();
 
         await HandleRequest(
-            () => Service.GetAsync<BalanceResponse>(UriHelper.BalanceUri),
+            () => Service.GetAsync<BalanceViewModel>(UriHelper.BalanceUri),
             onSuccess: result => Data = result,
             errorMessage: "Balansz lekérése sikertelen!");
     }

@@ -1,5 +1,6 @@
 ﻿@page "/transactions"
-@inherits AuthenticationAwareComponentBase<List<TransactionResponse>>
+@using Wallet.Contracts.ViewModels
+@inherits AuthenticationAwareComponentBase<List<Wallet.Contracts.ViewModels.TransactionViewModel>>
 @attribute [Authorize]
 
 <h1>Tranzakciók</h1>
@@ -61,7 +62,7 @@ else
 
 @code {
 
-    private IEnumerable<CategoryResponse> _categories = new List<CategoryResponse>();
+    private IEnumerable<CategoryViewModel> _categories = new List<CategoryViewModel>();
     private readonly Subject<ChangeEventArgs> _searchTerm = new();
 
     protected override async Task OnInitializedAsync()
@@ -109,17 +110,17 @@ else
     private async Task LoadCategoriesAsync()
     {
         await HandleRequest(
-            () => Service.GetAsync<List<CategoryResponse>>(UriHelper.CategoryUri),
+            () => Service.GetAsync<List<CategoryViewModel>>(UriHelper.CategoryUri),
             onSuccess: r => _categories = r,
             errorMessage: "Kategóriák betöltése sikertelen!");
     }
 
-    private Task<List<TransactionResponse>> SearchTransactions(string searchTerm = null)
-        => Service.GetAsync<List<TransactionResponse>>(string.IsNullOrEmpty(searchTerm) ? UriHelper.TransactionUri : UriHelper.GetTransactionUriWith(searchTerm));
+    private Task<List<TransactionViewModel>> SearchTransactions(string searchTerm = null)
+        => Service.GetAsync<List<TransactionViewModel>>(string.IsNullOrEmpty(searchTerm) ? UriHelper.TransactionUri : UriHelper.GetTransactionUriWith(searchTerm));
 
     private Task LoadTransactionsAsync() =>
         HandleRequest(
-            () => Service.GetAsync<List<TransactionResponse>>(UriHelper.TransactionUri),
+            () => Service.GetAsync<List<TransactionViewModel>>(UriHelper.TransactionUri),
             onSuccess: response => Data = response,
             errorMessage: "Tranzakciók betöltése sikertelen!");
 

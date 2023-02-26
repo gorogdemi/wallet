@@ -1,6 +1,6 @@
-﻿namespace Wallet.Contracts.Responses
+﻿namespace Wallet.Contracts.ViewModels
 {
-    public class CategoryResponse
+    public class CategoryViewModel
     {
         public long Id { get; set; }
 

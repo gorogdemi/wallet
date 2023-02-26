@@ -1,5 +1,5 @@
 ﻿using System;
-using Wallet.Contracts.Types;
+using Wallet.Contracts.Dtos.Types;
 
 namespace Wallet.Contracts.Requests
 {

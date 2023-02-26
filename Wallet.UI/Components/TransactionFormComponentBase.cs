@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Wallet.Contracts.Requests;
-using Wallet.Contracts.Responses;
+using Wallet.Contracts.ViewModels;
 using Wallet.UI.Helpers;
 
 namespace Wallet.UI.Components
 {
     public abstract class TransactionFormComponentBase : AuthenticationAwareComponentBase<TransactionRequest>
     {
-        protected List<CategoryResponse> Categories { get; private set; } = new ();
+        protected List<CategoryViewModel> Categories { get; private set; } = new();
 
         protected void NavigateToTransactions() => NavigationManager.NavigateTo("transactions");
 
@@ -23,7 +23,7 @@ namespace Wallet.UI.Components
         private async Task LoadCategoriesAsync()
         {
             await HandleRequest(
-                () => Service.GetAsync<List<CategoryResponse>>(UriHelper.CategoryUri),
+                () => Service.GetAsync<List<CategoryViewModel>>(UriHelper.CategoryUri),
                 onSuccess: r => Categories = r,
                 errorMessage: "Kategóriák betöltése sikertelen!");
         }

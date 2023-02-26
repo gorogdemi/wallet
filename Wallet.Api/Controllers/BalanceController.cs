@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Wallet.Api.Extensions;
 using Wallet.Api.Services;
-using Wallet.Contracts.Responses;
+using Wallet.Contracts.ViewModels;
 
 namespace Wallet.Api.Controllers
 {
@@ -35,7 +35,7 @@ namespace Wallet.Api.Controllers
             var balance = await _transactionService.GetBalanceAsync(userId, cancellationToken);
             _logger.LogInformation("Balance retrieved from the database");
 
-            return Ok(_mapper.Map<BalanceResponse>(balance));
+            return Ok(_mapper.Map<BalanceViewModel>(balance));
         }
     }
 }

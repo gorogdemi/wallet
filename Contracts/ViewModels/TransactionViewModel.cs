@@ -1,9 +1,9 @@
 ﻿using System;
-using Wallet.Contracts.Types;
+using Wallet.Contracts.Dtos.Types;
 
-namespace Wallet.Contracts.Responses
+namespace Wallet.Contracts.ViewModels
 {
-    public class TransactionResponse
+    public class TransactionViewModel
     {
         public double BankAmount { get; set; }
 

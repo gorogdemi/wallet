@@ -1,4 +1,4 @@
-﻿namespace Wallet.Contracts.Types
+﻿namespace Wallet.Contracts.Dtos.Types
 {
     public enum TransactionType
     {
