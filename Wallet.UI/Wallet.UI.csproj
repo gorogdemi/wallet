@@ -31,8 +31,4 @@
         <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\js\bootstrap.bundle.min.js.map" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Models" />
-    </ItemGroup>
-
 </Project>
