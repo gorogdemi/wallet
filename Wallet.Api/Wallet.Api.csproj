@@ -3,7 +3,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <RootNamespace>Wallet.Api</RootNamespace>
         <AssemblyName>Wallet.Api</AssemblyName>
-        <NoWarn>SA1516;</NoWarn>
+        <NoWarn>$(NoWarn);</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

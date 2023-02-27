@@ -18,7 +18,7 @@ else
 @code {
 
     private Task CreateAsync() =>
-        HandleRequest(
+        HandleRequestAsync(
             () => Service.CreateAsync(UriHelper.TransactionUri, Data),
             onSuccess: NavigateToTransactions,
             errorMessage: "Tranzakció létrehozása sikertelen!");

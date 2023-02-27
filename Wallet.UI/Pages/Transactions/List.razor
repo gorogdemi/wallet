@@ -97,7 +97,7 @@ else
 
     private async Task DeleteAsync(long id)
     {
-        await HandleRequest(
+        await HandleRequestAsync(
             () => Service.DeleteAsync(UriHelper.GetTransactionUriWith(id)),
             onSuccess: async () =>
             {
@@ -109,7 +109,7 @@ else
 
     private async Task LoadCategoriesAsync()
     {
-        await HandleRequest(
+        await HandleRequestAsync(
             () => Service.GetAsync<List<CategoryViewModel>>(UriHelper.CategoryUri),
             onSuccess: r => _categories = r,
             errorMessage: "Kategóriák betöltése sikertelen!");
@@ -119,7 +119,7 @@ else
         => Service.GetAsync<List<TransactionViewModel>>(string.IsNullOrEmpty(searchTerm) ? UriHelper.TransactionUri : UriHelper.GetTransactionUriWith(searchTerm));
 
     private Task LoadTransactionsAsync() =>
-        HandleRequest(
+        HandleRequestAsync(
             () => Service.GetAsync<List<TransactionViewModel>>(UriHelper.TransactionUri),
             onSuccess: response => Data = response,
             errorMessage: "Tranzakciók betöltése sikertelen!");

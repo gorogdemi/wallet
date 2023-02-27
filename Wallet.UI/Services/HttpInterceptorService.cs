@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -22,17 +23,17 @@ namespace Wallet.UI.Services
             _authenticationService = authenticationService;
         }
 
-        public void DisposeEvent() => _interceptor.BeforeSendAsync -= InterceptBeforeHttp;
+        public void DisposeEvent() => _interceptor.BeforeSendAsync -= InterceptBeforeHttpAsync;
 
-        public void RegisterEvent() => _interceptor.BeforeSendAsync += InterceptBeforeHttp;
+        public void RegisterEvent() => _interceptor.BeforeSendAsync += InterceptBeforeHttpAsync;
 
-        private async Task InterceptBeforeHttp(object sender, HttpClientInterceptorEventArgs e)
+        private async Task InterceptBeforeHttpAsync(object sender, HttpClientInterceptorEventArgs e)
         {
             var absolutePath = e.Request.RequestUri?.AbsolutePath;
 
             if (absolutePath?.Contains("authentication") != true)
             {
-                var token = await TryRefreshToken();
+                var token = await TryRefreshTokenAsync();
 
                 if (!string.IsNullOrEmpty(token))
                 {
@@ -41,7 +42,7 @@ namespace Wallet.UI.Services
             }
         }
 
-        private async Task<string> TryRefreshToken()
+        private async Task<string> TryRefreshTokenAsync()
         {
             var authenticationState = await _authenticationStateProvider.GetAuthenticationStateAsync();
 
@@ -50,7 +51,7 @@ namespace Wallet.UI.Services
                 return null;
             }
 
-            var expiryDateTimeUtc = DateTime.UnixEpoch.AddSeconds(Convert.ToInt64(authenticationState.User.FindFirst(c => c.Type == "exp")?.Value));
+            var expiryDateTimeUtc = DateTime.UnixEpoch.AddSeconds(Convert.ToInt64(authenticationState.User.FindFirst(c => c.Type == "exp")?.Value, CultureInfo.InvariantCulture));
 
             if (expiryDateTimeUtc < DateTime.UtcNow)
             {

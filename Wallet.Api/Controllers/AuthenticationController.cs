@@ -23,7 +23,7 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> LoginAsync(LoginRequest request, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -37,7 +37,7 @@ namespace Wallet.Api.Controllers
                 return BadRequest(new AuthenticationFailedResponse { Errors = result.Errors });
             }
 
-            result = await _tokenService.GenerateTokensForUser(result.User, cancellationToken);
+            result = await _tokenService.GenerateTokensForUserAsync(result.User, cancellationToken);
 
             if (!result.Success)
             {
@@ -48,7 +48,7 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh(RefreshTokenRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> RefreshAsync(RefreshTokenRequest request, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -62,7 +62,7 @@ namespace Wallet.Api.Controllers
                 return BadRequest(new AuthenticationFailedResponse { Errors = result.Errors });
             }
 
-            result = await _tokenService.GenerateTokensForUser(result.User, cancellationToken);
+            result = await _tokenService.GenerateTokensForUserAsync(result.User, cancellationToken);
 
             if (!result.Success)
             {
@@ -73,7 +73,7 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegistrationRequest request)
+        public async Task<IActionResult> RegisterAsync(RegistrationRequest request)
         {
             if (!ModelState.IsValid)
             {

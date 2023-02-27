@@ -3,7 +3,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <RootNamespace>Wallet.UI</RootNamespace>
         <AssemblyName>Wallet.UI</AssemblyName>
-        <NoWarn>SA1516;IDISP025;</NoWarn>
+        <NoWarn>$(NoWarn);IDISP025;</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

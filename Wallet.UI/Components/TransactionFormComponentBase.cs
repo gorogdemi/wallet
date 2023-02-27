@@ -22,7 +22,7 @@ namespace Wallet.UI.Components
 
         private async Task LoadCategoriesAsync()
         {
-            await HandleRequest(
+            await HandleRequestAsync(
                 () => Service.GetAsync<List<CategoryViewModel>>(UriHelper.CategoryUri),
                 onSuccess: r => Categories = r,
                 errorMessage: "Kategóriák betöltése sikertelen!");

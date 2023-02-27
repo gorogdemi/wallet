@@ -31,7 +31,7 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(TransactionRequest transactionRequest, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateAsync(TransactionRequest transactionRequest, CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
             var transaction = _mapper.Map<Transaction>(transactionRequest);
@@ -46,7 +46,7 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> Delete(long id, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteAsync(long id, CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
             var transaction = await _transactionService.GetAsync(id, cancellationToken);
@@ -69,7 +69,7 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAsync(CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
             var transactions = await _transactionService.GetAllAsync(userId, cancellationToken);
@@ -80,7 +80,7 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpGet("{id:long}")]
-        public async Task<IActionResult> Get(long id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAsync(long id, CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
             var transaction = await _transactionService.GetAsync(id, cancellationToken);
@@ -101,7 +101,7 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpGet("search/{text}")]
-        public async Task<IActionResult> Search(string text, CancellationToken cancellationToken)
+        public async Task<IActionResult> SearchAsync(string text, CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
             var transactions = await _transactionService.SearchAsync(userId, text, cancellationToken);
@@ -112,7 +112,7 @@ namespace Wallet.Api.Controllers
         }
 
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> Update(long id, TransactionRequest transactionRequest, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateAsync(long id, TransactionRequest transactionRequest, CancellationToken cancellationToken)
         {
             var userId = HttpContext.GetUserId();
             var transaction = await _transactionService.GetAsync(id, cancellationToken);
