@@ -13,9 +13,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Npgsql;
 using Serilog;
 using Wallet.Api;
 using Wallet.Api.Domain;
+using Wallet.Api.Domain.Types;
 using Wallet.Api.Exceptions;
 using Wallet.Api.Options;
 using Wallet.Api.Services;
@@ -38,10 +40,13 @@ var authenticationOptionsSection = builder.Configuration.GetSection("Authenticat
 builder.Services.Configure<AuthenticationOptions>(authenticationOptionsSection);
 builder.Services.Configure<ForwardedHeadersOptions>(options => options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto);
 
+var dataSourceBuilder = new NpgsqlDataSourceBuilder(builder.Configuration.GetConnectionString("Postgres"));
+dataSourceBuilder.MapEnum<TransactionType>();
+
 builder.Services.AddDbContext<WalletContext>(
     options =>
     {
-        options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"));
+        options.UseNpgsql(dataSourceBuilder.Build());
         options.UseLazyLoadingProxies();
     });
 
@@ -113,7 +118,7 @@ builder.Services.AddProblemDetails(options => options.Map<WalletServiceException
 builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddFluentValidation();
+builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddHealthChecks();
 
 builder.Services.AddScoped<ITokenService, TokenService>();

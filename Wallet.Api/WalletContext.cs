@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 using Wallet.Api.Domain;
 using Wallet.Api.Domain.Types;
 
@@ -8,11 +7,6 @@ namespace Wallet.Api
 {
     public class WalletContext : IdentityDbContext<User>
     {
-        static WalletContext()
-        {
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<TransactionType>();
-        }
-
         public WalletContext(DbContextOptions<WalletContext> options)
             : base(options)
         {
