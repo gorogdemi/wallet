@@ -26,7 +26,7 @@ else
     {
         await base.OnInitializedAsync();
 
-        await HandleRequest(
+        await HandleRequestAsync(
             () => Service.GetAsync<BalanceViewModel>(UriHelper.BalanceUri),
             onSuccess: result => Data = result,
             errorMessage: "Balansz lekérése sikertelen!");

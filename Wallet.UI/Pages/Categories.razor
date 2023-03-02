@@ -74,7 +74,7 @@ else
 
     private async Task DeleteAsync(long id)
     {
-        await HandleRequest(
+        await HandleRequestAsync(
             () => Service.DeleteAsync(UriHelper.GetCategoryUriWith(id)),
             onSuccess: LoadCategoriesAsync,
             errorMessage: "Hiba a kategória törlése közben!");
@@ -82,7 +82,7 @@ else
 
     private async Task LoadCategoriesAsync()
     {
-        await HandleRequest(
+        await HandleRequestAsync(
             () => Service.GetAsync<List<CategoryViewModel>>(UriHelper.CategoryUri),
             onSuccess: r => _categories = r,
             errorMessage: "Kategóriák betöltése sikertelen!");
@@ -99,7 +99,7 @@ else
     {
         var isEdit = _id.HasValue;
 
-        await HandleRequest(
+        await HandleRequestAsync(
             () => isEdit ? Service.UpdateAsync(UriHelper.GetCategoryUriWith(_id!.Value), Data) : Service.CreateAsync(UriHelper.CategoryUri, Data),
             onSuccess: LoadCategoriesAsync,
             errorMessage: $"Hiba a kategória {(isEdit ? "módosítása" : "létrehozása")} közben!");

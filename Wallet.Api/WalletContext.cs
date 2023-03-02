@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 using Wallet.Api.Domain;
 using Wallet.Api.Domain.Types;
 
@@ -8,11 +7,6 @@ namespace Wallet.Api
 {
     public class WalletContext : IdentityDbContext<User>
     {
-        static WalletContext()
-        {
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<TransactionType>();
-        }
-
         public WalletContext(DbContextOptions<WalletContext> options)
             : base(options)
         {
@@ -24,11 +18,11 @@ namespace Wallet.Api
 
         public virtual DbSet<Transaction> Transactions { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            modelBuilder.HasPostgresEnum<TransactionType>();
+            builder.HasPostgresEnum<TransactionType>();
 
-            modelBuilder.Entity<Transaction>(
+            builder.Entity<Transaction>(
                 buildAction =>
                 {
                     buildAction
@@ -56,7 +50,7 @@ namespace Wallet.Api
                         .IsRequired();
                 });
 
-            modelBuilder.Entity<Category>(
+            builder.Entity<Category>(
                 buildAction =>
                 {
                     buildAction
@@ -76,7 +70,7 @@ namespace Wallet.Api
                         .IsRequired();
                 });
 
-            modelBuilder.Entity<User>(
+            builder.Entity<User>(
                 buildAction =>
                 {
                     buildAction
@@ -85,7 +79,7 @@ namespace Wallet.Api
                         .HasMaxLength(100);
                 });
 
-            modelBuilder.Entity<RefreshToken>(
+            builder.Entity<RefreshToken>(
                 buildAction =>
                 {
                     buildAction.HasKey(x => x.Token);
@@ -108,7 +102,7 @@ namespace Wallet.Api
                         .IsRequired();
                 });
 
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(builder);
         }
     }
 }

@@ -1,24 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
-
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <RootNamespace>Wallet.UI</RootNamespace>
         <AssemblyName>Wallet.UI</AssemblyName>
-        <NoWarn>SA1516;</NoWarn>
+        <NoWarn>$(NoWarn);IDISP025;</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
-        <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
-        <PackageReference Include="FluentValidation" Version="10.4.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.7" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.7" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="6.0.7" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.21.0" />
-        <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
+        <PackageReference Include="Blazored.FluentValidation" Version="2.1.0" />
+        <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
+        <PackageReference Include="FluentValidation" Version="11.5.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.3" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.3" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="7.0.3" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.27.0" />
+        <PackageReference Include="System.Net.Http.Json" Version="7.0.0" />
         <PackageReference Include="System.Reactive" Version="5.0.0" />
-        <PackageReference Include="Toolbelt.Blazor.HttpClientInterceptor" Version="10.1.0" />
+        <PackageReference Include="Toolbelt.Blazor.HttpClientInterceptor" Version="10.2.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -30,5 +29,4 @@
         <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\js\bootstrap.bundle.min.js" />
         <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\js\bootstrap.bundle.min.js.map" />
     </ItemGroup>
-
 </Project>

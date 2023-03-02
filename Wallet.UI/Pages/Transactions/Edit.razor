@@ -22,7 +22,7 @@ else
     public int TransactionId { get; set; }
 
     private Task EditAsync() =>
-        HandleRequest(
+        HandleRequestAsync(
             () => Service.UpdateAsync(UriHelper.GetTransactionUriWith(TransactionId), Data),
             onSuccess: NavigateToTransactions,
             errorMessage: "Tranzakció módosítás sikertelen!");
@@ -31,7 +31,7 @@ else
     {
         await base.OnInitializedAsync();
 
-        await HandleRequest(
+        await HandleRequestAsync(
             () => Service.GetAsync<TransactionViewModel>(UriHelper.GetTransactionUriWith(TransactionId)),
             onSuccess: response =>
             {

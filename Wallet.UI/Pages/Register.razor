@@ -56,7 +56,7 @@
 
     private async Task RegisterAsync()
     {
-        await HandleRequest(
+        await HandleRequestAsync(
             () => Service.RegisterAsync(Data),
             onSuccess: () => NavigationManager.NavigateTo("/"),
             errorMessage: "Regisztráció sikertelen!");

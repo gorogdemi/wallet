@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -29,18 +30,18 @@ namespace Wallet.Api.Services
             _authenticationOptions = authenticationOptions.Value;
         }
 
-        public async Task<AuthenticationResult> GenerateTokensForUser(User user, CancellationToken cancellationToken)
+        public async Task<AuthenticationResult> GenerateTokensForUserAsync(User user, CancellationToken cancellationToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_authenticationOptions.JwtSecret);
 
             var claims = new List<Claim>
             {
-                new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new (JwtRegisteredClaimNames.Sub, user.UserName),
-                new (JwtRegisteredClaimNames.Email, user.Email),
-                new ("userid", user.Id),
-                new ("fullname", user.FullName),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new(JwtRegisteredClaimNames.Sub, user.UserName),
+                new(JwtRegisteredClaimNames.Email, user.Email),
+                new("userid", user.Id),
+                new("fullname", user.FullName),
             };
 
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -73,7 +74,7 @@ namespace Wallet.Api.Services
             }
 
             var expiryDateTimeUtc =
-                DateTime.UnixEpoch.AddSeconds(Convert.ToInt64(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value));
+                DateTime.UnixEpoch.AddSeconds(Convert.ToInt64(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value, CultureInfo.InvariantCulture));
 
             if (expiryDateTimeUtc > DateTime.UtcNow)
             {

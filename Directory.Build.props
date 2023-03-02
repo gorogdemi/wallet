@@ -1,9 +1,12 @@
 <Project>
     <PropertyGroup>
-        <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)Wallet.ruleset</CodeAnalysisRuleSet>
+        <AdditionalFileItemNames>$(AdditionalFileItemNames);CodeAnalysisDictionary</AdditionalFileItemNames>
+        <NoWarn>LRT001;CA1812;</NoWarn>
+        <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="all"/>
-        <PackageReference Include="IDisposableAnalyzers" Version="4.0.2" PrivateAssets="all"/>
+        <PackageReference Include="NI.CSharp.Analyzers" Version="2.0.10" />
+        <PackageReference Include="IDisposableAnalyzers" Version="4.0.2" PrivateAssets="all" />
+        <AdditionalFiles Include="..\CodeAnalysisDictionary.xml" Visible="False" />
     </ItemGroup>
 </Project>

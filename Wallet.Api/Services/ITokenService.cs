@@ -7,7 +7,7 @@ namespace Wallet.Api.Services
 {
     public interface ITokenService
     {
-        Task<AuthenticationResult> GenerateTokensForUser(User user, CancellationToken cancellationToken);
+        Task<AuthenticationResult> GenerateTokensForUserAsync(User user, CancellationToken cancellationToken);
 
         Task<AuthenticationResult> RefreshTokenAsync(string requestToken, string requestRefreshToken, CancellationToken cancellationToken);
     }

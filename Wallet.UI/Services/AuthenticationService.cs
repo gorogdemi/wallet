@@ -12,7 +12,7 @@ namespace Wallet.UI.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private const string AuthTokenKey = "authToken";
+        private const string AuthenticationTokenKey = "authToken";
         private const string RefreshTokenKey = "refreshToken";
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly HttpClient _httpClient;
@@ -28,12 +28,12 @@ namespace Wallet.UI.Services
         public async Task LoginAsync(LoginRequest loginRequest)
         {
             using var result = await _httpClient.PostAsJsonAsync(UriHelper.LoginUri, loginRequest);
-            await GetAuthenticationResponse(result);
+            await GetAuthenticationResponseAsync(result);
         }
 
         public async Task LogoutAsync()
         {
-            await _localStorage.RemoveItemAsync(AuthTokenKey);
+            await _localStorage.RemoveItemAsync(AuthenticationTokenKey);
             await _localStorage.RemoveItemAsync(RefreshTokenKey);
             ((JwtAuthenticationStateProvider)_authenticationStateProvider).NotifyUserLogout();
             _httpClient.DefaultRequestHeaders.Authorization = null;
@@ -41,14 +41,14 @@ namespace Wallet.UI.Services
 
         public async Task<string> RefreshTokenAsync()
         {
-            var token = await _localStorage.GetItemAsStringAsync(AuthTokenKey);
+            var token = await _localStorage.GetItemAsStringAsync(AuthenticationTokenKey);
             var refreshToken = await _localStorage.GetItemAsStringAsync(RefreshTokenKey);
 
             using var result = await _httpClient.PostAsJsonAsync(
                 UriHelper.RefreshUri,
                 new RefreshTokenRequest { Token = token, RefreshToken = refreshToken });
 
-            var resultString = await GetAuthenticationResponse(result);
+            var resultString = await GetAuthenticationResponseAsync(result);
 
             return resultString;
         }
@@ -63,7 +63,7 @@ namespace Wallet.UI.Services
             }
         }
 
-        private async Task<string> GetAuthenticationResponse(HttpResponseMessage result)
+        private async Task<string> GetAuthenticationResponseAsync(HttpResponseMessage result)
         {
             if (!result.IsSuccessStatusCode)
             {
@@ -78,7 +78,7 @@ namespace Wallet.UI.Services
                 throw new HttpRequestException();
             }
 
-            await _localStorage.SetItemAsStringAsync(AuthTokenKey, response.Token);
+            await _localStorage.SetItemAsStringAsync(AuthenticationTokenKey, response.Token);
             await _localStorage.SetItemAsStringAsync(RefreshTokenKey, response.RefreshToken);
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", response.Token);
             ((JwtAuthenticationStateProvider)_authenticationStateProvider).NotifyUserAuthentication(response.Token);
