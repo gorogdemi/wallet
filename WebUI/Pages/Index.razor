@@ -1,0 +1,34 @@
+﻿@page "/"
+@inherits AuthenticationAwareComponentBase<BalanceViewModel>
+@attribute [Authorize]
+
+<h1>Egyenleg</h1>
+
+<Alert Message="@ErrorMessage" />
+
+@if (IsLoading)
+{
+    <div>Adatok betöltése...</div>
+}
+else
+{
+    <div class="mt-4">
+        <p>Teljes: @Data.Full Ft</p>
+        <p>Készpénz: @Data.Cash Ft</p>
+        <p>Bankszámla: @Data.BankAccount Ft</p>
+    </div>
+}
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        await HandleRequestAsync(
+            () => Service.GetAsync<BalanceViewModel>(UriHelper.BalanceUri),
+            onSuccess: result => Data = result,
+            errorMessage: "Balansz lekérése sikertelen!");
+    }
+
+}

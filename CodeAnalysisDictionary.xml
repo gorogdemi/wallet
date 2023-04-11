@@ -23,6 +23,7 @@
             <Word>deployer</Word>
             <Word>deserialize</Word>
             <Word>deserialized</Word>
+            <Word>dev</Word>
             <Word>dll</Word>
             <Word>dns</Word>
             <Word>dotnet</Word>
@@ -36,6 +37,7 @@
             <Word>expander</Word>
             <Word>guid</Word>
             <Word>hasher</Word>
+            <Word>initializer</Word>
             <Word>installable</Word>
             <Word>ldap</Word>
             <Word>json</Word>

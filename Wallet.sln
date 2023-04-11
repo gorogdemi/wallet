@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wallet.Api", "Wallet.Api\Wallet.Api.csproj", "{33666D6F-3E1B-49F1-9D9A-9E83BF8F389D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApi\WebApi.csproj", "{33666D6F-3E1B-49F1-9D9A-9E83BF8F389D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wallet.UI", "Wallet.UI\Wallet.UI.csproj", "{3F0E5136-AB2E-4C7D-A394-9E517EBB183E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebUI", "WebUI\WebUI.csproj", "{3F0E5136-AB2E-4C7D-A394-9E517EBB183E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "Contracts\Contracts.csproj", "{6DFC0AC6-CA9F-4B3B-817F-C3B0E0B22915}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{6DFC0AC6-CA9F-4B3B-817F-C3B0E0B22915}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validation", "Validation\Validation.csproj", "{AC984B39-3E37-453C-870D-2913C5226325}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{AC984B39-3E37-453C-870D-2913C5226325}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{2B218E8B-C526-4A79-AC94-002D9EC2001B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{AC984B39-3E37-453C-870D-2913C5226325}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC984B39-3E37-453C-870D-2913C5226325}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC984B39-3E37-453C-870D-2913C5226325}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B218E8B-C526-4A79-AC94-002D9EC2001B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B218E8B-C526-4A79-AC94-002D9EC2001B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B218E8B-C526-4A79-AC94-002D9EC2001B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B218E8B-C526-4A79-AC94-002D9EC2001B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
