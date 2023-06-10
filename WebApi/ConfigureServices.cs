@@ -43,6 +43,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     options.Map<BadRequestException>(ex => ProblemDetailsCreator.CreateBadRequestMessage(ex.Errors));
                     options.Map<EntityNotFoundException>(ex => ProblemDetailsCreator.CreateNotFoundMessage(ex.Message));
                     options.Map<EntityConflictException>(ex => ProblemDetailsCreator.CreateConflictMessage(ex.Message));
+                    options.Map<ForbiddenException>(ex => ProblemDetailsCreator.CreateForbiddenMessage(ex.Message));
                     options.Map<WalletServiceException>(ex => ProblemDetailsCreator.CreateInternalServerErrorMessage(ex.Message));
                     options.Map<Exception>(
                         ex =>

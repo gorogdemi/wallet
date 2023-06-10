@@ -34,6 +34,15 @@ namespace DevQuarter.Wallet.WebApi.Helpers
                 Detail = detail,
             };
 
+        public static ProblemDetails CreateForbiddenMessage(string detail) =>
+            new()
+            {
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.3",
+                Title = "Forbidden",
+                Status = StatusCodes.Status403Forbidden,
+                Detail = detail,
+            };
+
         public static ProblemDetails CreateInternalServerErrorMessage(string detail) =>
             new()
             {
