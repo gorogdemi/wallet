@@ -22,14 +22,14 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Wallet.UI": {
+    "WebUI": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": "true",
-      "applicationUrl": "https://localhost:4201;http://localhost:4200",
+      "applicationUrl": "https://localhost:4201",
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
     }
   }

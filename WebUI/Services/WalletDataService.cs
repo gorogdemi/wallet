@@ -28,7 +28,7 @@ namespace DevQuarter.Wallet.WebUI.Services
         {
             if (!message.IsSuccessStatusCode)
             {
-                throw new HttpRequestException();
+                throw new HttpRequestException(message.ReasonPhrase);
             }
         }
     }

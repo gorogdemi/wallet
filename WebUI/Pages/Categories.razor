@@ -12,40 +12,33 @@
 }
 else
 {
-    <CategoryRequestModal @ref="_modal" Title="@ModalTitle" Category="Data" OnSubmit="SaveAsync" />
+    <CategoryRequestModal @ref="                _modal" Title="@ModalTitle" Category="Data" OnSubmit="SaveAsync" />
 
-    <button type="button" class="btn btn-primary mt-4 mb-3" @onclick="Add">
+    <FluentDialog @ref="                MyFluentDialog" Hidden="_isDialogHidden" aria-label="Simple dialog" Modal="true" @ondialogdismiss="() => _isDialogHidden = true">
+        <h2>@ModalTitle</h2>
+        <p>The 'Close dialog' button is automatically focussed.</p>
+        <p>The 'Another button' doesn't do anything other than showing receiving focus.</p>
+        <FluentButton Appearance="Appearance.Accent" Autofocus="true" @onclick="SaveAsync">Mentés</FluentButton>
+        <FluentButton @onclick="() => _isDialogHidden = true">Bezárás</FluentButton>
+    </FluentDialog>
+
+    <FluentButton Class="mt-4 mb-3" Appearance="Appearance.Accent" @onclick="Add">
         <i class="bi bi-plus-circle"></i>
         Új kategória
-    </button>
+    </FluentButton>
 
     <div class="row">
-        <table class="col-5 table table-borderless">
-            <thead>
-            <tr>
-                <th class="col-3">Név</th>
-                <th class="col-1"></th>
-            </tr>
-            </thead>
-
-            <tbody>
-            @foreach (var category in _categories)
-            {
-                <tr>
-                    <td>@category.Name</td>
-                    <td>
-                        <button @onclick="() => EditAsync(category)" class="btn btn-primary">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button @onclick="() => DeleteAsync(category.Id)" class="btn btn-danger">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
-        <div class="col-9"></div>
+        <FluentDataGrid id="manualGrid" RowsData=@CategoryList GridTemplateColumns="1fr" TGridItem="CategoryViewModel">
+            <PropertyColumn Title="Name" Property="@(c => c.Name)" Sortable="true" Align=Align.Left />
+            <TemplateColumn>
+                <FluentButton Appearance="Appearance.Neutral" @onclick="@(() => Edit(context))">
+                    <i class="bi bi-pencil"></i>
+                </FluentButton>
+                <FluentButton Appearance="Appearance.Neutral" @onclick="@(() => DeleteAsync(context))">
+                    <i class="bi bi-trash"></i>
+                </FluentButton>
+            </TemplateColumn>
+        </FluentDataGrid>
     </div>
 }
 
@@ -54,8 +47,12 @@ else
     private IEnumerable<CategoryViewModel> _categories = new List<CategoryViewModel>();
     private CategoryRequestModal _modal;
     private long? _id;
+    private FluentDialog MyFluentDialog;
+    private bool _isDialogHidden = true;
 
     private string ModalTitle => $"Kategória {(_id.HasValue ? "módosítás" : "létrehozás")}";
+
+    private IQueryable<CategoryViewModel> CategoryList => _categories.AsQueryable();
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,17 +61,17 @@ else
         await LoadCategoriesAsync();
     }
 
-    private async Task Add()
+    private void Add()
     {
         Data = new CategoryRequest();
         _id = null;
-        await _modal.OpenAsync();
+        _isDialogHidden = false;
     }
 
-    private async Task DeleteAsync(long id)
+    private async Task DeleteAsync(CategoryViewModel category)
     {
         await HandleRequestAsync(
-            () => Service.DeleteAsync(UriHelper.GetCategoryUriWith(id)),
+            () => Service.DeleteAsync(UriHelper.GetCategoryUriWith(category.Id)),
             onSuccess: LoadCategoriesAsync,
             errorMessage: "Hiba a kategória törlése közben!");
     }
@@ -87,11 +84,11 @@ else
             errorMessage: "Kategóriák betöltése sikertelen!");
     }
 
-    private async Task EditAsync(CategoryViewModel category)
+    private void Edit(CategoryViewModel category)
     {
         Data = new CategoryRequest { Name = category.Name };
         _id = category.Id;
-        await _modal.OpenAsync();
+        _isDialogHidden = false;
     }
 
     private async Task SaveAsync()

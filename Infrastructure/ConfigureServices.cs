@@ -9,6 +9,7 @@ using DevQuarter.Wallet.Infrastructure.Persistence;
 using DevQuarter.Wallet.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
@@ -28,6 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 {
                     options.UseNpgsql(dataSourceBuilder.Build(), builder => builder.MigrationsAssembly(typeof(WalletContext).Assembly.FullName));
                     options.UseLazyLoadingProxies();
+                    options.ConfigureWarnings(c => c.Ignore(CoreEventId.ManyServiceProvidersCreatedWarning)); //TODO: átnézni
                 });
 
             services.AddScoped<IWalletContext>(provider => provider.GetRequiredService<WalletContext>());
