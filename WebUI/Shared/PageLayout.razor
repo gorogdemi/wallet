@@ -1,0 +1,42 @@
+@inherits LayoutComponentBase
+@layout MainLayout
+
+<CascadingValue Value="this">
+    <Alert Closable="true" Show="_showError" ErrorMessage="@ErrorMessage" />
+    @Body
+</CascadingValue>
+
+@code {
+
+    private string _errorMessage;
+    private bool _isLoading;
+    private bool _showError;
+
+    public string ErrorMessage
+    {
+        get => _errorMessage;
+        set
+        {
+            _errorMessage = value;
+            _showError = !string.IsNullOrEmpty(value);
+            StateHasChanged();
+        }
+    }
+
+    public bool IsLoading
+    {
+        get => _isLoading;
+        set
+        {
+            _isLoading = value;
+            StateHasChanged();
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        IsLoading = true;
+        base.OnParametersSet();
+    }
+
+}

@@ -1,10 +1,7 @@
 ﻿@page "/transactions/edit/{TransactionId:int}"
-@inherits TransactionFormComponentBase
-@attribute [Authorize]
+@inherits TransactionBase<TransactionFormViewModel>
 
 <h1>Tranzakció Módosítás</h1>
-
-<Alert>@ErrorMessage</Alert>
 
 @if (IsLoading)
 {
@@ -12,50 +9,52 @@
 }
 else
 {
-    <TransactionForm ViewModel="Data" Categories="Categories" OnClose="NavigateToTransactions" OnSubmit="EditAsync" />
+    <TransactionForm ViewModel="ViewModel" Categories="_categories" OnClose="NavigateToTransactions" OnSubmit="EditAsync" />
 }
 
 @code {
 
+    private List<CategoryViewModel> _categories;
+
     [Parameter]
     public int TransactionId { get; set; }
+
+    protected override async Task SetViewModelAsync()
+    {
+        await HandleRequestAsync(
+            () => Service.GetAsync(TransactionId),
+            result =>
+            {
+                ViewModel.BankAmount = result.BankAmount;
+                ViewModel.CashAmount = result.CashAmount;
+                ViewModel.CategoryId = result.CategoryId.ToString();
+                ViewModel.Comment = result.Comment;
+                ViewModel.Date = result.Date;
+                ViewModel.Name = result.Name;
+                ViewModel.Type = result.Type;
+            });
+
+        await HandleRequestAsync(
+            () => CategoryService.GetAllAsync(),
+            result => _categories = result);
+    }
 
     private Task EditAsync()
     {
         var request = new TransactionRequest
         {
-            Name = Data.Name,
-            Comment = Data.Comment,
-            BankAmount = Data.BankAmount,
-            CashAmount = Data.CashAmount,
-            Date = Data.Date,
-            CategoryId = Data.CategoryId is not null ? Convert.ToInt64(Data.CategoryId) : null,
-            Type = Data.Type,
+            Name = ViewModel.Name,
+            Comment = ViewModel.Comment,
+            BankAmount = ViewModel.BankAmount,
+            CashAmount = ViewModel.CashAmount,
+            Date = ViewModel.Date,
+            CategoryId = ViewModel.CategoryId is not null ? Convert.ToInt64(ViewModel.CategoryId) : null,
+            Type = ViewModel.Type,
         };
 
         return HandleRequestAsync(
-            () => Service.UpdateAsync(UriHelper.GetTransactionUriWith(TransactionId), request),
-            onSuccess: NavigateToTransactions,
-            errorMessage: "Tranzakció módosítás sikertelen!");
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-
-        await HandleRequestAsync(
-            () => Service.GetAsync<TransactionViewModel>(UriHelper.GetTransactionUriWith(TransactionId)),
-            onSuccess: response =>
-            {
-                Data.BankAmount = response.BankAmount;
-                Data.CashAmount = response.CashAmount;
-                Data.CategoryId = response.CategoryId.ToString();
-                Data.Comment = response.Comment;
-                Data.Date = response.Date;
-                Data.Name = response.Name;
-                Data.Type = response.Type;
-            },
-            errorMessage: "Tranzakció lekérés sikertelen!");
+            () => Service.UpdateAsync(TransactionId, request),
+            NavigateToTransactions);
     }
 
 }

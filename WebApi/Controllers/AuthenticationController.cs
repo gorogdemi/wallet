@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using DevQuarter.Wallet.Application.Authentication;
+﻿using DevQuarter.Wallet.Application.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevQuarter.Wallet.WebApi.Controllers
@@ -22,7 +20,7 @@ namespace DevQuarter.Wallet.WebApi.Controllers
         }
 
         [HttpPost("refresh")]
-        public async Task<IActionResult> RefreshAsync(RefreshTokenRequest request, CancellationToken cancellationToken)
+        public async Task<ActionResult<AuthenticationResponse>> RefreshAsync(RefreshTokenRequest request, CancellationToken cancellationToken)
         {
             var result = await _authenticationService.RefreshTokenAsync(request, cancellationToken);
             return Ok(result);

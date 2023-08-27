@@ -1,16 +1,17 @@
-﻿using System.Threading.Tasks;
-using DevQuarter.Wallet.Application.Authentication;
+﻿using DevQuarter.Wallet.Application.Authentication;
+using Refit;
 
 namespace DevQuarter.Wallet.WebUI.Services
 {
     public interface IAuthenticationService
     {
-        Task LoginAsync(LoginRequest loginRequest);
+        [Post("/authentication/login")]
+        Task<AuthenticationResponse> LoginAsync(LoginRequest loginRequest);
 
-        Task LogoutAsync();
+        [Post("/authentication/refresh")]
+        Task<AuthenticationResponse> RefreshTokenAsync(RefreshTokenRequest refreshTokenRequest);
 
-        Task<string> RefreshTokenAsync();
-
+        [Post("/authentication/register")]
         Task RegisterAsync(RegistrationRequest registrationRequest);
     }
 }

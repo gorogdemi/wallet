@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using DevQuarter.Wallet.Domain.Common;
+﻿using DevQuarter.Wallet.Domain.Common;
 
 namespace DevQuarter.Wallet.Domain.Entities
 {

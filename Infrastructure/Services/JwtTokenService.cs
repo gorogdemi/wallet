@@ -15,6 +15,8 @@ namespace DevQuarter.Wallet.Infrastructure.Services
     public class JwtTokenService : ITokenService
     {
         private const string JwtUserId = "userid";
+        private const string JwtUserName = "username";
+        private const string JwtUserEmail = "useremail";
         private const string JwtFullName = "fullname";
         private readonly AuthenticationOptions _authenticationOptions;
         private readonly IWalletContext _walletContext;
@@ -33,8 +35,8 @@ namespace DevQuarter.Wallet.Infrastructure.Services
             var claims = new List<Claim>
             {
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new(JwtRegisteredClaimNames.Sub, user.UserName),
-                new(JwtRegisteredClaimNames.Email, user.Email),
+                new(JwtUserName, user.UserName),
+                new(JwtUserEmail, user.Email),
                 new(JwtUserId, user.Id),
                 new(JwtFullName, user.FullName),
             };
@@ -113,8 +115,8 @@ namespace DevQuarter.Wallet.Infrastructure.Services
             var user = new ApplicationUser
             {
                 Id = validatedToken.FindFirstValue(JwtUserId),
-                UserName = validatedToken.FindFirstValue(JwtRegisteredClaimNames.Sub),
-                Email = validatedToken.FindFirstValue(JwtRegisteredClaimNames.Email),
+                UserName = validatedToken.FindFirstValue(JwtUserName),
+                Email = validatedToken.FindFirstValue(JwtUserEmail),
                 FullName = validatedToken.FindFirstValue(JwtFullName),
             };
 

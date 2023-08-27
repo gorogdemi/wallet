@@ -1,4 +1,3 @@
-using System;
 using System.Text.Json.Serialization;
 using DevQuarter.Wallet.Application.Common.Exceptions;
 using DevQuarter.Wallet.Application.Common.Interfaces;
@@ -8,9 +7,7 @@ using DevQuarter.Wallet.WebApi.Helpers;
 using DevQuarter.Wallet.WebApi.Services;
 using FluentValidation.AspNetCore;
 using Hellang.Middleware.ProblemDetails;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 
 // ReSharper disable once CheckNamespace

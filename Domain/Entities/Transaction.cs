@@ -1,5 +1,4 @@
-﻿using System;
-using DevQuarter.Wallet.Domain.Common;
+﻿using DevQuarter.Wallet.Domain.Common;
 using DevQuarter.Wallet.Domain.Enums;
 
 namespace DevQuarter.Wallet.Domain.Entities

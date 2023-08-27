@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace DevQuarter.Wallet.WebUI.Helpers
 {
-    public static class JsonSerializerOptionsProvider
+    internal static class JsonSerializerOptionsProvider
     {
         static JsonSerializerOptionsProvider()
         {

@@ -1,15 +1,25 @@
-@if (ChildContent is null)
-{
-    <div class="alert alert-danger alert-dismissible" role="alert">
-        <FluentIcon Icon="@Icons.Filled.Size20.ErrorCircle" Color="Color.Error" />
-        @ChildContent
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
+<div class="alert alert-danger alert-dismissible @ShownClass" role="alert">
+    <FluentIcon Icon="@Icons.Filled.Size20.ErrorCircle" Color="Color.Error" />
+    @ErrorMessage
+    @if (Closable)
+    {
+        <button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
+    }
+</div>
 
 @code {
 
     [Parameter]
-    public RenderFragment<string> ChildContent { get; set; }
+    public string ErrorMessage { get; set; }
+
+    [Parameter]
+    public bool Closable { get; set; }
+
+    [Parameter]
+    public bool Show { get; set; }
+
+    private string ShownClass => !Closable || (Closable && Show) ? "show" : "collapse";
+
+    private void Close() => Show = false;
 
 }
