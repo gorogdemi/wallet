@@ -12,7 +12,7 @@ namespace DevQuarter.Wallet.Application.Transactions
 
         public string Comment { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
 
         public string Name { get; set; }
 

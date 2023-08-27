@@ -27,6 +27,9 @@ namespace DevQuarter.Wallet.Application.Transactions
 
             RuleFor(request => request.Type)
                 .NotNull();
+
+            RuleFor(request => request.Date)
+                .NotNull();
         }
     }
 }

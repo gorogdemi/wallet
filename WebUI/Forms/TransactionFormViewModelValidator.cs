@@ -27,6 +27,9 @@ namespace DevQuarter.Wallet.WebUI.Forms
 
             RuleFor(request => request.Type)
                 .NotNull();
+
+            RuleFor(request => request.Date)
+                .NotNull();
         }
     }
 }
