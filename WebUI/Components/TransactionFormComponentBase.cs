@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using DevQuarter.Wallet.Application.Categories;
-using DevQuarter.Wallet.Application.Transactions;
+﻿using DevQuarter.Wallet.Application.Categories;
+using DevQuarter.Wallet.WebUI.Forms;
 using DevQuarter.Wallet.WebUI.Helpers;
 
 namespace DevQuarter.Wallet.WebUI.Components
 {
-    public abstract class TransactionFormComponentBase : AuthenticationAwareComponentBase<TransactionRequest>
+    public abstract class TransactionFormComponentBase : AuthenticationAwareComponentBase<TransactionFormViewModel>
     {
         protected List<CategoryViewModel> Categories { get; private set; } = new();
 

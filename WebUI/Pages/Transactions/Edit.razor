@@ -4,7 +4,7 @@
 
 <h1>Tranzakció Módosítás</h1>
 
-<Alert Message="@ErrorMessage" />
+<Alert>@ErrorMessage</Alert>
 
 @if (IsLoading)
 {
@@ -12,7 +12,7 @@
 }
 else
 {
-    <TransactionForm Transaction="Data" Categories="Categories" OnClose="NavigateToTransactions" OnSubmit="EditAsync" />
+    <TransactionForm ViewModel="Data" Categories="Categories" OnClose="NavigateToTransactions" OnSubmit="EditAsync" />
 }
 
 @code {
@@ -20,11 +20,24 @@ else
     [Parameter]
     public int TransactionId { get; set; }
 
-    private Task EditAsync() =>
-        HandleRequestAsync(
-            () => Service.UpdateAsync(UriHelper.GetTransactionUriWith(TransactionId), Data),
+    private Task EditAsync()
+    {
+        var request = new TransactionRequest
+        {
+            Name = Data.Name,
+            Comment = Data.Comment,
+            BankAmount = Data.BankAmount,
+            CashAmount = Data.CashAmount,
+            Date = Data.Date,
+            CategoryId = Data.CategoryId is not null ? Convert.ToInt64(Data.CategoryId) : null,
+            Type = Data.Type,
+        };
+
+        return HandleRequestAsync(
+            () => Service.UpdateAsync(UriHelper.GetTransactionUriWith(TransactionId), request),
             onSuccess: NavigateToTransactions,
             errorMessage: "Tranzakció módosítás sikertelen!");
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -36,7 +49,7 @@ else
             {
                 Data.BankAmount = response.BankAmount;
                 Data.CashAmount = response.CashAmount;
-                Data.CategoryId = response.CategoryId;
+                Data.CategoryId = response.CategoryId.ToString();
                 Data.Comment = response.Comment;
                 Data.Date = response.Date;
                 Data.Name = response.Name;

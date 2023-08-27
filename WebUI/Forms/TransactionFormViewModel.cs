@@ -1,18 +1,18 @@
 ﻿using DevQuarter.Wallet.Domain.Enums;
 
-namespace DevQuarter.Wallet.Application.Transactions
+namespace DevQuarter.Wallet.WebUI.Forms
 {
-    public class TransactionRequest
+    public class TransactionFormViewModel
     {
         public double BankAmount { get; set; }
 
         public double CashAmount { get; set; }
 
-        public long? CategoryId { get; set; }
+        public string CategoryId { get; set; }
 
         public string Comment { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
 
         public string Name { get; set; }
 

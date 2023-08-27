@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>DevQuarter.Wallet.WebUI</RootNamespace>
         <AssemblyName>DevQuarter.Wallet.WebUI</AssemblyName>
         <NoWarn>$(NoWarn);IDISP025;CA2234;</NoWarn>
@@ -13,20 +14,15 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.5" PrivateAssets="all" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="7.0.5" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
-        <PackageReference Include="Microsoft.Fast.Components.FluentUI" Version="2.3.6" />
+        <PackageReference Include="Microsoft.Fast.Components.FluentUI" Version="3.0.0-RC.1" />
+        <PackageReference Include="Microsoft.Fast.Components.FluentUI.Icons" Version="3.0.0-RC.1" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.31.0" />
         <PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
-        <PackageReference Include="System.Reactive" Version="6.0.0" />
         <PackageReference Include="Toolbelt.Blazor.HttpClientInterceptor" Version="10.2.0" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Domain\Domain.csproj" />
         <ProjectReference Include="..\Application\Application.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\js\bootstrap.bundle.min.js" />
-        <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\js\bootstrap.bundle.min.js.map" />
     </ItemGroup>
 </Project>

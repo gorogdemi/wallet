@@ -4,39 +4,26 @@
 
 <h1>Kategóriák</h1>
 
-<Alert Message="@ErrorMessage" />
+<Alert>@ErrorMessage</Alert>
 
-@if (IsLoading)
+@if (IsLoading && Data is not null)
 {
     <div>Adatok betöltése...</div>
 }
 else
 {
-    <CategoryRequestModal @ref="                _modal" Title="@ModalTitle" Category="Data" OnSubmit="SaveAsync" />
-
-    <FluentDialog @ref="                MyFluentDialog" Hidden="_isDialogHidden" aria-label="Simple dialog" Modal="true" @ondialogdismiss="() => _isDialogHidden = true">
-        <h2>@ModalTitle</h2>
-        <p>The 'Close dialog' button is automatically focussed.</p>
-        <p>The 'Another button' doesn't do anything other than showing receiving focus.</p>
-        <FluentButton Appearance="Appearance.Accent" Autofocus="true" @onclick="SaveAsync">Mentés</FluentButton>
-        <FluentButton @onclick="() => _isDialogHidden = true">Bezárás</FluentButton>
-    </FluentDialog>
+    <CategoryRequestModal @ref="_modal" Title="@ModalTitle" Data="Data" OnSubmit="SaveAsync" />
 
     <FluentButton Class="mt-4 mb-3" Appearance="Appearance.Accent" @onclick="Add">
-        <i class="bi bi-plus-circle"></i>
         Új kategória
+        <FluentIcon Icon="@Icons.Filled.Size20.AddCircle" Slot="start" Color="Color.Fill" />
     </FluentButton>
 
     <div class="row">
-        <FluentDataGrid id="manualGrid" RowsData=@CategoryList GridTemplateColumns="1fr" TGridItem="CategoryViewModel">
-            <PropertyColumn Title="Name" Property="@(c => c.Name)" Sortable="true" Align=Align.Left />
-            <TemplateColumn>
-                <FluentButton Appearance="Appearance.Neutral" @onclick="@(() => Edit(context))">
-                    <i class="bi bi-pencil"></i>
-                </FluentButton>
-                <FluentButton Appearance="Appearance.Neutral" @onclick="@(() => DeleteAsync(context))">
-                    <i class="bi bi-trash"></i>
-                </FluentButton>
+        <FluentDataGrid Items="CategoryList" GridTemplateColumns="1fr">
+            <PropertyColumn Title="Megnevezés" Property="@(c => c.Name)" Sortable="true" Align=Align.Start />
+            <TemplateColumn Title="Művelet">
+                <EditorButtons OnEdit="() => Edit(context)" OnDelete="() => DeleteAsync(context)" />
             </TemplateColumn>
         </FluentDataGrid>
     </div>
@@ -47,8 +34,6 @@ else
     private IEnumerable<CategoryViewModel> _categories = new List<CategoryViewModel>();
     private CategoryRequestModal _modal;
     private long? _id;
-    private FluentDialog MyFluentDialog;
-    private bool _isDialogHidden = true;
 
     private string ModalTitle => $"Kategória {(_id.HasValue ? "módosítás" : "létrehozás")}";
 
@@ -65,7 +50,7 @@ else
     {
         Data = new CategoryRequest();
         _id = null;
-        _isDialogHidden = false;
+        _modal.Open();
     }
 
     private async Task DeleteAsync(CategoryViewModel category)
@@ -88,7 +73,7 @@ else
     {
         Data = new CategoryRequest { Name = category.Name };
         _id = category.Id;
-        _isDialogHidden = false;
+        _modal.Open();
     }
 
     private async Task SaveAsync()

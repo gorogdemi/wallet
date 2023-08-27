@@ -1,54 +1,21 @@
-@inherits Modal
+@inherits EditModal<CategoryRequest>
 
-<Modal @ref="_modal" Title="@Title" CloseButtonTitle="@CloseButtonTitle">
+<EditModal @ref="_modal" T="CategoryRequest" Data="Data" Title="@Title" CloseButtonTitle="@CloseButtonTitle" OnSubmit="OnSubmit" Class="category-modal">
     <Content>
-        <EditForm EditContext="_editContext" OnValidSubmit="SubmitAsync">
-            <FluentValidationValidator />
+        <FluentValidationValidator />
 
-            <FormInput For="name" Label="Név" ValidationFor="() => Category.Name">
-                <InputText id="name" class="form-control" @bind-Value="@Category.Name" />
-            </FormInput>
-        </EditForm>
+        <FormInput ValidationFor="() => Data.Name">
+            <FluentTextField @bind-Value="Data.Name">Név:</FluentTextField>
+        </FormInput>
     </Content>
-    <Footer>
-        <button type="submit" class="btn btn-primary" @onclick="SaveAsync">Mentés</button>
-    </Footer>
-</Modal>
+</EditModal>
 
 @code {
 
-    private Modal _modal;
-    private EditContext _editContext;
+    private EditModal<CategoryRequest> _modal;
 
-    [Parameter]
-    public EventCallback OnSubmit { get; set; }
+    public override void Open() => _modal.Open();
 
-    [Parameter]
-    public CategoryRequest Category { get; set; }
-
-    public override async Task OpenAsync() => await _modal.OpenAsync();
-
-    public override async Task CloseAsync() => await _modal.CloseAsync();
-
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
-        _editContext = new EditContext(Category);
-        _editContext.SetFieldCssClassProvider(new CustomFieldClassProvider());
-    }
-
-    private async Task SubmitAsync()
-    {
-        await CloseAsync();
-        await OnSubmit.InvokeAsync();
-    }
-
-    private async Task SaveAsync()
-    {
-        if (_editContext.Validate())
-        {
-            await SubmitAsync();
-        }
-    }
+    public override void Close() => _modal.Close();
 
 }

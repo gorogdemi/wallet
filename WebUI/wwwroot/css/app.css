@@ -2,16 +2,29 @@
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-a, .btn-link {
-    color: #0366d6;
-}
-
 .content {
     padding-top: 1.1rem;
 }
 
 .validation-message {
     color: red;
+}
+
+.category-modal > fluent-dialog {
+    --dialog-width: 350px;
+    --dialog-height: 250px;
+}
+
+fluent-text-field {
+    width: 100%;
+}
+
+fluent-number-field {
+    width: 100%;
+}
+
+fluent-select {
+    width: 100%;
 }
 
 #blazor-error-ui {

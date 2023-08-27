@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace DevQuarter.Wallet.Application.Transactions
+namespace DevQuarter.Wallet.WebUI.Forms
 {
-    public class TransactionRequestValidator : AbstractValidator<TransactionRequest>
+    public class TransactionFormViewModelValidator : AbstractValidator<TransactionFormViewModel>
     {
-        public TransactionRequestValidator()
+        public TransactionFormViewModelValidator()
         {
             RuleFor(request => request.Comment)
                 .MaximumLength(255);

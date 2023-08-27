@@ -29,6 +29,8 @@ namespace DevQuarter.Wallet.Application.Transactions
 
         public async Task<TransactionViewModel> CreateAsync(TransactionRequest request, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("CreateTransaction request received: {@Request}", request);
+
             var userId = _currentUserService.UserId;
             var transaction = _mapper.Map<Transaction>(request);
             transaction.UserId = userId;
@@ -66,7 +68,10 @@ namespace DevQuarter.Wallet.Application.Transactions
             var transactions = await _walletContextService.Context.Transactions.Where(t => t.UserId == userId).ToListAsync(cancellationToken);
             _logger.LogInformation("Transactions retrieved from database");
 
-            return _mapper.Map<IEnumerable<TransactionViewModel>>(transactions);
+            var mapped = _mapper.Map<IEnumerable<TransactionViewModel>>(transactions).ToList();
+            mapped.ForEach(x => x.SumAmount = x.BankAmount + x.CashAmount);
+
+            return mapped;
         }
 
         public async Task<TransactionViewModel> GetAsync(long id, CancellationToken cancellationToken)
@@ -87,7 +92,10 @@ namespace DevQuarter.Wallet.Application.Transactions
 
             _logger.LogInformation("Transaction '{Id}' retrieved from database", transaction.Id);
 
-            return _mapper.Map<TransactionViewModel>(transaction);
+            var mapped = _mapper.Map<TransactionViewModel>(transaction);
+            mapped.SumAmount = mapped.BankAmount + mapped.CashAmount;
+
+            return mapped;
         }
 
         public async Task<BalanceViewModel> GetBalanceAsync(CancellationToken cancellationToken)

@@ -1,61 +1,49 @@
 ﻿<section class="mt-5">
-    <EditForm EditContext="_editContext" OnValidSubmit="OnSubmit">
+    <EditForm EditContext="_editContext" OnSubmit="SubmitAsync">
         <FluentValidationValidator />
 
-        <FormInput For="name" Label="Név" ValidationFor="() => Transaction.Name">
-            <InputText id="name" class="form-control" @bind-Value="Transaction.Name" />
+        <FormInput ValidationFor="() => ViewModel.Name">
+            <FluentTextField @bind-Value="ViewModel.Name">Megnevezés:</FluentTextField>
         </FormInput>
 
-        <FormInput For="bank-amount" Label="Bankszámla" ValidationFor="() => Transaction.BankAmount">
-            <InputNumber id="bank-amount" class="form-control" @bind-Value="@Transaction.BankAmount" />
+        <FormInput ValidationFor="() => ViewModel.BankAmount">
+            <FluentNumberField @bind-Value="ViewModel.BankAmount">Bank:</FluentNumberField>
         </FormInput>
 
-        <FormInput For="cash-amount" Label="Készpénz" ValidationFor="() => Transaction.CashAmount">
-            <InputNumber id="cash-amount" class="form-control" @bind-Value="@Transaction.CashAmount" />
+        <FormInput ValidationFor="() => ViewModel.CashAmount">
+            <FluentNumberField @bind-Value="ViewModel.CashAmount">Készpénz:</FluentNumberField>
         </FormInput>
 
-        <FormInput For="comment" Label="Komment" ValidationFor="() => Transaction.Comment">
-            <InputText id="comment" class="form-control" @bind-Value="@Transaction.Comment" />
+        <FormInput ValidationFor="() => ViewModel.Comment">
+            <FluentTextField @bind-Value="ViewModel.Comment">Megjegyzés:</FluentTextField>
         </FormInput>
 
-        <FormInput For="date" Label="Dátum" ValidationFor="() => Transaction.Date">
-            <InputDate id="date" class="form-control" @bind-Value="@Transaction.Date" />
+        <FormInput Label="Dátum:" ValidationFor="() => ViewModel.Date">
+            <FluentDatePicker @bind-Value="ViewModel.Date" />
         </FormInput>
 
-        <FormInput For="type" Label="Tranzakció típus" ValidationFor="() => Transaction.Type">
-            <InputSelect id="type" class="form-control" @bind-Value="@Transaction.Type">
-                @foreach (var item in Enum.GetValues<TransactionType>())
-                {
-                    <option value="@item">@item.ToTransactionTypeText()</option>
-                }
-            </InputSelect>
+        <FormInput Label="Típus:" ValidationFor="() => ViewModel.Type">
+            <FluentSelect @bind-SelectedOption="ViewModel.Type" Items="_transactionTypes" OptionText="type => type.ToTransactionTypeText()" />
         </FormInput>
 
-        <FormInput For="category" Label="Kategória" ValidationFor="() => Transaction.CategoryId">
-            <InputSelect id="category" class="form-control" @bind-Value="@Transaction.CategoryId">
-                <option value="">Nincs</option>
-                @foreach (var category in Categories)
-                {
-                    <option value="@category.Id">@category.Name</option>
-                }
-            </InputSelect>
+        <FormInput Label="Kategória:" ValidationFor="() => ViewModel.CategoryId">
+            <FluentSelect
+                @bind-Value="ViewModel.CategoryId"
+                Items="_categoryList"
+                OptionText="option => option?.Name.ToCategoryText()"
+                OptionValue="option => option?.Id.ToString()" />
         </FormInput>
 
-        <button type="submit" class="btn btn-primary">Küldés</button>
-        <a class="btn btn-secondary" @onclick="OnClose">Vissza</a>
+        <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Küldés</FluentButton>
+        <FluentButton @onclick="OnClose">Mégsem</FluentButton>
     </EditForm>
 </section>
 
 @code {
 
     private EditContext _editContext;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        _editContext = new EditContext(Transaction);
-        _editContext.SetFieldCssClassProvider(new CustomFieldClassProvider());
-    }
+    private List<TransactionType?> _transactionTypes;
+    private List<CategoryViewModel> _categoryList;
 
     [Parameter]
     public IEnumerable<CategoryViewModel> Categories { get; set; }
@@ -67,6 +55,32 @@
     public EventCallback OnSubmit { get; set; }
 
     [Parameter]
-    public TransactionRequest Transaction { get; set; }
+    public TransactionFormViewModel ViewModel { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ViewModel.Type = TransactionType.Expense;
+
+        _transactionTypes = Enum.GetValues<TransactionType>().Cast<TransactionType?>().ToList();
+        _categoryList = Categories.ToList();
+        _categoryList.Insert(0, new CategoryViewModel { Id = -1, Name = "Nincs" });
+
+        _editContext = new EditContext(ViewModel);
+    }
+
+    private async Task SubmitAsync()
+    {
+        if (!_editContext.Validate())
+        {
+            return;
+        }
+
+        if (ViewModel.CategoryId == "-1")
+        {
+            ViewModel.CategoryId = null;
+        }
+
+        await OnSubmit.InvokeAsync();
+    }
 
 }

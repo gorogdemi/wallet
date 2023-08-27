@@ -1,0 +1,54 @@
+@inherits ComponentBase
+@typeparam T
+
+<EditForm Model="Data" OnValidSubmit="SubmitAsync" class="@Class">
+    <FluentDialog @ref="_dialog" Hidden="_isDialogHidden" Modal="true" @ondialogdismiss="Close">
+        <div class="card h-100">
+            <div class="card-header justify-content-end">
+                <h5 class="card-title">@Title</h5>
+            </div>
+            <div class="card-body">
+                @Content
+            </div>
+            <div class="card-footer">
+                <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Mentés</FluentButton>
+                <FluentButton @onclick="Close">@CloseButtonTitle</FluentButton>
+            </div>
+        </div>
+    </FluentDialog>
+</EditForm>
+
+@code {
+
+    private FluentDialog _dialog;
+    private bool _isDialogHidden = true;
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public T Data { get; set; }
+
+    [Parameter]
+    public string CloseButtonTitle { get; set; } = "Mégsem";
+
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+
+    [Parameter]
+    public RenderFragment Content { get; set; }
+
+    [Parameter]
+    public string Class { get; set; }
+
+    public virtual void Close() => _isDialogHidden = true;
+
+    public virtual void Open() => _isDialogHidden = false;
+
+    private async Task SubmitAsync()
+    {
+        Close();
+        await OnSubmit.InvokeAsync();
+    }
+
+}

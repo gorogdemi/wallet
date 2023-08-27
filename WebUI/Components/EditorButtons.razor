@@ -1,0 +1,15 @@
+<FluentButton Appearance="Appearance.Neutral" @onclick="OnEdit">
+    <FluentIcon Icon="@Icons.Regular.Size20.Pen" Color="Color.Neutral" />
+</FluentButton>
+<FluentButton Appearance="Appearance.Neutral" @onclick="OnDelete">
+    <FluentIcon Icon="@Icons.Regular.Size20.BinRecycle" Color="Color.Neutral" />
+</FluentButton>
+
+@code
+{
+    [Parameter]
+    public EventCallback OnEdit { get; set; }
+
+    [Parameter]
+    public EventCallback OnDelete { get; set; }
+}

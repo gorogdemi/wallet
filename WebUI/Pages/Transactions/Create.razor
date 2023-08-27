@@ -4,7 +4,7 @@
 
 <h1>Új Tranzakció</h1>
 
-<Alert Message="@ErrorMessage" />
+<Alert>@ErrorMessage</Alert>
 
 @if (IsLoading)
 {
@@ -12,15 +12,28 @@
 }
 else
 {
-    <TransactionForm Transaction="@Data" Categories="@Categories" OnClose="NavigateToTransactions" OnSubmit="CreateAsync" />
+    <TransactionForm ViewModel="@Data" Categories="@Categories" OnClose="NavigateToTransactions" OnSubmit="CreateAsync" />
 }
 
 @code {
 
-    private Task CreateAsync() =>
-        HandleRequestAsync(
-            () => Service.CreateAsync(UriHelper.TransactionUri, Data),
+    private Task CreateAsync()
+    {
+        var request = new TransactionRequest
+        {
+            Name = Data.Name,
+            Comment = Data.Comment,
+            BankAmount = Data.BankAmount,
+            CashAmount = Data.CashAmount,
+            Date = Data.Date,
+            CategoryId = Data.CategoryId is not null ? Convert.ToInt64(Data.CategoryId) : null,
+            Type = Data.Type,
+        };
+
+        return HandleRequestAsync(
+            () => Service.CreateAsync(UriHelper.TransactionUri, request),
             onSuccess: NavigateToTransactions,
             errorMessage: "Tranzakció létrehozása sikertelen!");
+    }
 
 }

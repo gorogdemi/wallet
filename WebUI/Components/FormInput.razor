@@ -1,8 +1,11 @@
 @if (IsVisible)
 {
-    <div class="row mb-3">
-        <label for="@For" class="col-sm-2 col-form-label">@Label:</label>
-        <div class="col-sm-10">
+    <div class="row mb-2">
+        <div class="col">
+            @if (!string.IsNullOrEmpty(Label))
+            {
+                <label class="label">@Label</label>
+            }
             @ChildContent
             @if (ValidationFor is not null)
             {
@@ -15,16 +18,13 @@
 @code {
 
     [Parameter]
-    public string For { get; set; }
-
-    [Parameter]
-    public string Label { get; set; }
-
-    [Parameter]
     public Expression<Func<object>> ValidationFor { get; set; }
 
     [Parameter]
     public bool IsVisible { get; set; } = true;
+
+    [Parameter]
+    public string Label { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }

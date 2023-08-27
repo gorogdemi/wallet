@@ -29,7 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 {
                     options.UseNpgsql(dataSourceBuilder.Build(), builder => builder.MigrationsAssembly(typeof(WalletContext).Assembly.FullName));
                     options.UseLazyLoadingProxies();
-                    options.ConfigureWarnings(c => c.Ignore(CoreEventId.ManyServiceProvidersCreatedWarning)); //TODO: átnézni
+                    options.ConfigureWarnings(c => c.Ignore(CoreEventId.ManyServiceProvidersCreatedWarning)); // TODO: átnézni
                 });
 
             services.AddScoped<IWalletContext>(provider => provider.GetRequiredService<WalletContext>());
