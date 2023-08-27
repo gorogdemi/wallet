@@ -1,0 +1,7 @@
+[*]
+resharper_place_simple_anonymousmethod_on_single_line = false
+
+[*.razor]
+
+# ReSharper properties
+resharper_place_simple_anonymousmethod_on_single_line = true
