@@ -1,6 +1,6 @@
 ﻿namespace DevQuarter.Wallet.WebUI.Helpers
 {
-    public static class UriHelper
+    internal static class UriHelper
     {
         public const string BalanceUri = "api/balance";
         public const string CategoryUri = "api/categories";

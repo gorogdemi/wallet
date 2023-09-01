@@ -1,29 +1,24 @@
 @inherits ComponentBase
 
-<div class="modal fade @_modalClass" tabindex="-1" role="dialog" style="display: @_modalDisplay">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">@Title</h5>
-                <button type="button" class="btn-close" @onclick="CloseAsync"></button>
-            </div>
-            <div class="modal-body">
-                @Content
-            </div>
-            <div class="modal-footer">
-                @Footer
-                <button type="button" class="btn btn-secondary" @onclick="CloseAsync">@CloseButtonTitle</button>
-            </div>
+<FluentDialog @ref="_dialog" Hidden="_isDialogHidden" Modal="true" @ondialogdismiss="Close">
+    <div class="card h-100">
+        <div class="card-header">
+            <h5 class="card-title">@Title</h5>
+        </div>
+        <div class="card-body">
+            @Content
+        </div>
+        <div class="card-footer">
+            @Footer
+            <FluentButton @onclick="Close">@CloseButtonTitle</FluentButton>
         </div>
     </div>
-</div>
-
-<div class="modal-backdrop fade @_modalClass" style="display: @_modalDisplay"></div>
+</FluentDialog>
 
 @code {
 
-    private string _modalDisplay = "none;";
-    private string _modalClass = "";
+    private FluentDialog _dialog;
+    private bool _isDialogHidden = true;
 
     [Parameter]
     public string Title { get; set; }
@@ -37,18 +32,8 @@
     [Parameter]
     public string CloseButtonTitle { get; set; } = "Mégsem";
 
-    public virtual async Task OpenAsync()
-    {
-        _modalDisplay = "block;";
-        await Task.Delay(100);
-        _modalClass = "show";
-    }
+    public virtual void Close() => _isDialogHidden = true;
 
-    public virtual async Task CloseAsync()
-    {
-        _modalClass = "";
-        await Task.Delay(250);
-        _modalDisplay = "none;";
-    }
+    public virtual void Open() => _isDialogHidden = false;
 
 }

@@ -23,8 +23,16 @@ namespace DevQuarter.Wallet.WebUI.Components
 
         public void Dispose()
         {
-            InterceptorService.DisposeEvent();
+            Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool isDisposing)
+        {
+            if (isDisposing)
+            {
+                InterceptorService.DisposeEvent();
+            }
         }
 
         protected override async Task OnInitializedAsync()

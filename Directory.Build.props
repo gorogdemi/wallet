@@ -1,12 +1,12 @@
 <Project>
     <PropertyGroup>
         <AdditionalFileItemNames>$(AdditionalFileItemNames);CodeAnalysisDictionary</AdditionalFileItemNames>
-        <NoWarn>LRT001;CA1812;CA1716;</NoWarn>
+        <NoWarn>LRT001;CA1812;CA1716;CA1054;CA1002;</NoWarn>
         <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="NI.CSharp.Analyzers" Version="2.0.10" />
-        <PackageReference Include="IDisposableAnalyzers" Version="4.0.2" PrivateAssets="all" />
-        <AdditionalFiles Include="..\CodeAnalysisDictionary.xml" Visible="False" />
+        <PackageReference Include="NI.CSharp.Analyzers" Version="2.0.11"/>
+        <PackageReference Include="IDisposableAnalyzers" Version="4.0.6" PrivateAssets="all"/>
+        <AdditionalFiles Include="..\CodeAnalysisDictionary.xml" Visible="False"/>
     </ItemGroup>
 </Project>
