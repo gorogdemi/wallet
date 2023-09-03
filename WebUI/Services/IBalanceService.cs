@@ -5,7 +5,7 @@ namespace DevQuarter.Wallet.WebUI.Services
 {
     public interface IBalanceService
     {
-        [Get("/balance")]
+        [Get("/")]
         Task<BalanceViewModel> GetAsync();
     }
 }

@@ -5,13 +5,13 @@ namespace DevQuarter.Wallet.WebUI.Services
 {
     public interface IAuthenticationService
     {
-        [Post("/authentication/login")]
+        [Post("/login")]
         Task<AuthenticationResponse> LoginAsync(LoginRequest loginRequest);
 
-        [Post("/authentication/refresh")]
+        [Post("/refresh")]
         Task<AuthenticationResponse> RefreshTokenAsync(RefreshTokenRequest refreshTokenRequest);
 
-        [Post("/authentication/register")]
+        [Post("/register")]
         Task RegisterAsync(RegistrationRequest registrationRequest);
     }
 }

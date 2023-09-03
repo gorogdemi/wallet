@@ -22,19 +22,19 @@ var baseUri = builder.HostEnvironment.IsDevelopment()
 var refitSettings = new RefitSettings(new SystemTextJsonContentSerializer(JsonSerializerOptionsProvider.DefaultOptions));
 
 builder.Services.AddRefitClient<ITransactionService>(refitSettings)
-    .ConfigureHttpClient(c => c.BaseAddress = baseUri)
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUri, "transactions"))
     .AddHttpMessageHandler<AuthorizationHeaderHandler>();
 
 builder.Services.AddRefitClient<ICategoryService>(refitSettings)
-    .ConfigureHttpClient(c => c.BaseAddress = baseUri)
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUri, "categories"))
     .AddHttpMessageHandler<AuthorizationHeaderHandler>();
 
 builder.Services.AddRefitClient<IBalanceService>(refitSettings)
-    .ConfigureHttpClient(c => c.BaseAddress = baseUri)
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUri, "balance"))
     .AddHttpMessageHandler<AuthorizationHeaderHandler>();
 
 builder.Services.AddRefitClient<IAuthenticationService>(refitSettings)
-    .ConfigureHttpClient(c => c.BaseAddress = baseUri);
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUri, "authentication"));
 
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();

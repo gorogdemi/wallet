@@ -23,15 +23,15 @@ else
     {
         await HandleRequestAsync(
             () => Service.GetAsync(TransactionId),
-            result =>
+            result => ViewModel = new TransactionFormViewModel
             {
-                ViewModel.BankAmount = result.BankAmount;
-                ViewModel.CashAmount = result.CashAmount;
-                ViewModel.CategoryId = result.CategoryId.ToString();
-                ViewModel.Comment = result.Comment;
-                ViewModel.Date = result.Date;
-                ViewModel.Name = result.Name;
-                ViewModel.Type = result.Type;
+                BankAmount = result.BankAmount,
+                CashAmount = result.CashAmount,
+                CategoryId = result.CategoryId.ToString(),
+                Comment = result.Comment,
+                Date = result.Date,
+                Name = result.Name,
+                Type = result.Type,
             });
 
         await HandleRequestAsync(
