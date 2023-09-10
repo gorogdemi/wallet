@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-@inject IAuthenticationService AuthenticationService
+@inject IUserService UserService
 @inject NavigationManager NavigationManager
 
 <div class="page">
@@ -31,7 +31,7 @@
 
     private async Task LogoutAsync()
     {
-        await AuthenticationService.LogoutAsync();
+        await UserService.LogoutAsync();
         NavigationManager.NavigateTo("/");
     }
 

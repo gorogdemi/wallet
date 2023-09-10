@@ -1,10 +1,7 @@
 ﻿@page "/transactions/create"
-@inherits TransactionFormComponentBase
-@attribute [Authorize]
+@inherits TransactionBase<TransactionFormViewModel>
 
 <h1>Új Tranzakció</h1>
-
-<Alert>@ErrorMessage</Alert>
 
 @if (IsLoading)
 {
@@ -12,28 +9,38 @@
 }
 else
 {
-    <TransactionForm ViewModel="@Data" Categories="@Categories" OnClose="NavigateToTransactions" OnSubmit="CreateAsync" />
+    <TransactionForm ViewModel="ViewModel" Categories="_categories" OnClose="NavigateToTransactions" OnSubmit="CreateAsync" />
 }
 
 @code {
+
+    private List<CategoryViewModel> _categories;
+
+    protected override async Task SetViewModelAsync()
+    {
+        ViewModel = new TransactionFormViewModel();
+
+        await HandleRequestAsync(
+            () => CategoryService.GetAllAsync(),
+            result => _categories = result);
+    }
 
     private Task CreateAsync()
     {
         var request = new TransactionRequest
         {
-            Name = Data.Name,
-            Comment = Data.Comment,
-            BankAmount = Data.BankAmount,
-            CashAmount = Data.CashAmount,
-            Date = Data.Date,
-            CategoryId = Data.CategoryId is not null ? Convert.ToInt64(Data.CategoryId) : null,
-            Type = Data.Type,
+            Name = ViewModel.Name,
+            Comment = ViewModel.Comment,
+            BankAmount = ViewModel.BankAmount,
+            CashAmount = ViewModel.CashAmount,
+            Date = ViewModel.Date,
+            CategoryId = ViewModel.CategoryId is not null ? Convert.ToInt64(ViewModel.CategoryId) : null,
+            Type = ViewModel.Type,
         };
 
         return HandleRequestAsync(
-            () => Service.CreateAsync(UriHelper.TransactionUri, request),
-            onSuccess: NavigateToTransactions,
-            errorMessage: "Tranzakció létrehozása sikertelen!");
+            () => Service.CreateAsync(request),
+            NavigateToTransactions);
     }
 
 }

@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using DevQuarter.Wallet.Application.Common.Interfaces;
-using Microsoft.AspNetCore.Http;
 
 namespace DevQuarter.Wallet.WebApi.Services
 {

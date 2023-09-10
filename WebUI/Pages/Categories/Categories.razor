@@ -1,0 +1,76 @@
+﻿@page "/categories"
+@inherits CategoryBase
+
+<h1>Kategóriák</h1>
+
+@if (IsLoading)
+{
+    <div>Adatok betöltése...</div>
+}
+else
+{
+    <CategoryRequestModal @ref="_modal" Title="@ModalTitle" Data="_request" OnSubmit="SaveAsync" />
+
+    <FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" @onclick="Add">
+        Új kategória
+        <FluentIcon Icon="@Icons.Filled.Size20.AddCircle" Slot="start" Color="Color.Fill" />
+    </FluentButton>
+
+    <FluentDataGrid Items="CategoryList" GridTemplateColumns="1fr">
+        <PropertyColumn Title="Megnevezés" Property="@(c => c.Name)" Sortable="true" Align=Align.Start />
+        <TemplateColumn Title="Művelet">
+            <EditorButtons OnEdit="() => Edit(context)" OnDelete="() => DeleteAsync(context)" />
+        </TemplateColumn>
+    </FluentDataGrid>
+}
+
+@code {
+
+    private CategoryRequest _request = new();
+    private CategoryRequestModal _modal;
+    private long? _id;
+
+    private string ModalTitle => $"Kategória {(_id.HasValue ? "módosítás" : "létrehozás")}";
+
+    private IQueryable<CategoryViewModel> CategoryList => ViewModel.AsQueryable();
+
+    protected override Task SetViewModelAsync() => LoadCategoriesAsync();
+
+    private void Add()
+    {
+        _request = new CategoryRequest();
+        _id = null;
+        _modal.Open();
+    }
+
+    private async Task DeleteAsync(CategoryViewModel category)
+    {
+        await HandleRequestAsync(
+            () => Service.DeleteAsync(category.Id),
+            LoadCategoriesAsync);
+    }
+
+    private async Task LoadCategoriesAsync()
+    {
+        await HandleRequestAsync(
+            () => Service.GetAllAsync(),
+            result => ViewModel = result);
+    }
+
+    private void Edit(CategoryViewModel category)
+    {
+        _request = new CategoryRequest { Name = category.Name };
+        _id = category.Id;
+        _modal.Open();
+    }
+
+    private async Task SaveAsync()
+    {
+        var isEdit = _id.HasValue;
+
+        await HandleRequestAsync(
+            () => isEdit ? Service.UpdateAsync(_id!.Value, _request) : Service.CreateAsync(_request),
+            LoadCategoriesAsync);
+    }
+
+}

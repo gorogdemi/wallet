@@ -1,8 +1,5 @@
 using DevQuarter.Wallet.Infrastructure.Persistence;
 using Hellang.Middleware.ProblemDetails;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);

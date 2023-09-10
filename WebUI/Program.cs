@@ -8,24 +8,41 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Fast.Components.FluentUI;
-using Toolbelt.Blazor.Extensions.DependencyInjection;
+using Refit;
+using ITransactionService = DevQuarter.Wallet.WebUI.Services.ITransactionService;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddHttpClient("WebApi", client => client.BaseAddress = new Uri("https://localhost:5001/"));
-builder.Services.AddHttpClientInterceptor();
+var baseUri = builder.HostEnvironment.IsDevelopment()
+    ? new Uri("https://localhost:5001")
+    : new Uri($"{builder.HostEnvironment.BaseAddress}api");
+
+var refitSettings = new RefitSettings(new SystemTextJsonContentSerializer(JsonSerializerOptionsProvider.DefaultOptions));
+
+builder.Services.AddRefitClient<ITransactionService>(refitSettings)
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUri, "transactions"))
+    .AddHttpMessageHandler<AuthorizationHeaderHandler>();
+
+builder.Services.AddRefitClient<ICategoryService>(refitSettings)
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUri, "categories"))
+    .AddHttpMessageHandler<AuthorizationHeaderHandler>();
+
+builder.Services.AddRefitClient<IBalanceService>(refitSettings)
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUri, "balance"))
+    .AddHttpMessageHandler<AuthorizationHeaderHandler>();
+
+builder.Services.AddRefitClient<IAuthenticationService>(refitSettings)
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUri, "authentication"));
+
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddValidatorsFromAssembly(typeof(TransactionRequestValidator).Assembly);
 builder.Services.AddFluentUIComponents(options => options.HostingModel = BlazorHostingModel.WebAssembly);
 
-// TODO: Refit
-builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WebApi").EnableIntercept(sp));
+builder.Services.AddTransient<AuthorizationHeaderHandler>();
 builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
-builder.Services.AddScoped<IHttpInterceptorService, HttpInterceptorService>();
-builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-builder.Services.AddScoped<IWalletDataService, WalletDataService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 await builder.Build().RunAsync();

@@ -1,0 +1,35 @@
+﻿@page "/login"
+@inherits UserBase<LoginRequest>
+
+<h1>Bejelentkezés</h1>
+
+<EditForm Model="ViewModel" OnValidSubmit="LoginAsync" class="card card-body bg-light mt-5">
+    <FluentValidationValidator />
+
+    <FormInput ValidationFor="() => ViewModel.UserName">
+        <FluentTextField @bind-Value="ViewModel.UserName">Név:</FluentTextField>
+    </FormInput>
+
+    <FormInput ValidationFor="() => ViewModel.Password">
+        <FluentTextField TextFieldType="TextFieldType.Password" @bind-Value="ViewModel.Password">Jelszó:</FluentTextField>
+    </FormInput>
+
+    <FormSubmit Title="Bejelentkezés" />
+</EditForm>
+
+@code {
+
+    protected override Task SetViewModelAsync()
+    {
+        ViewModel = new LoginRequest();
+        return Task.CompletedTask;
+    }
+
+    private async Task LoginAsync()
+    {
+        await HandleRequestAsync(
+            () => Service.LoginAsync(ViewModel),
+            () => NavigationManager.NavigateTo("/"));
+    }
+
+}

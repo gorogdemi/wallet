@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using DevQuarter.Wallet.Application.Categories;
+﻿using DevQuarter.Wallet.Application.Categories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

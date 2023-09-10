@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DevQuarter.Wallet.Domain.Entities
+﻿namespace DevQuarter.Wallet.Domain.Entities
 {
     public class RefreshToken
     {

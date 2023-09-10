@@ -1,22 +1,17 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace DevQuarter.Wallet.WebUI.Helpers
 {
-    public class JwtAuthenticationStateProvider : AuthenticationStateProvider
+    public sealed class JwtAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly AuthenticationState _anonymous;
-        private readonly HttpClient _httpClient;
         private readonly ILocalStorageService _localStorage;
 
-        public JwtAuthenticationStateProvider(HttpClient httpClient, ILocalStorageService localStorage)
+        public JwtAuthenticationStateProvider(ILocalStorageService localStorage)
         {
-            _httpClient = httpClient;
             _localStorage = localStorage;
             _anonymous = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
@@ -31,8 +26,6 @@ namespace DevQuarter.Wallet.WebUI.Helpers
             }
 
             var token = new JwtSecurityToken(tokenString);
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", tokenString);
-
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwtAuthType")));
         }
 

@@ -1,12 +1,10 @@
 ﻿@page "/transactions"
-@inherits AuthenticationAwareComponentBase<List<TransactionViewModel>>
+@inherits TransactionBase<List<TransactionViewModel>>
 @attribute [Authorize]
 
 <h1>Tranzakciók</h1>
 
-<Alert>@ErrorMessage</Alert>
-
-<FluentButton Appearance="Appearance.Accent" @onclick="@(() => NavigationManager.NavigateTo("transactions/create"))">
+<FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" @onclick="@(() => NavigationManager.NavigateTo("transactions/create"))">
     Új
     <FluentIcon Icon="@Icons.Filled.Size20.AddCircle" Slot="start" Color="Color.Fill" />
 </FluentButton>
@@ -44,27 +42,23 @@ else
 
     private string _searchTerm = string.Empty;
 
-    private IQueryable<TransactionViewModel> FilteredItems => Data?.Where(x => x.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase)).AsQueryable();
+    private IQueryable<TransactionViewModel> FilteredItems => ViewModel?.Where(x => x.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase)).AsQueryable();
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        await LoadTransactionsAsync();
-    }
+    protected override Task SetViewModelAsync() => LoadTransactionsAsync();
 
     private async Task DeleteAsync(long id)
     {
         await HandleRequestAsync(
-            () => Service.DeleteAsync(UriHelper.GetTransactionUriWith(id)),
-            onSuccess: async () => { await LoadTransactionsAsync(); },
-            errorMessage: "Tranzakció törlése sikertelen!");
+            () => Service.DeleteAsync(id),
+            async () => await LoadTransactionsAsync());
     }
 
-    private Task LoadTransactionsAsync() =>
-        HandleRequestAsync(
-            () => Service.GetAsync<List<TransactionViewModel>>(UriHelper.TransactionUri),
-            onSuccess: response => Data = response,
-            errorMessage: "Tranzakciók betöltése sikertelen!");
+    private Task LoadTransactionsAsync()
+    {
+        return HandleRequestAsync(
+            () => Service.GetAllAsync(),
+            result => ViewModel = result);
+    }
 
     private void HandleFilter(ChangeEventArgs args)
     {
