@@ -18,7 +18,7 @@
         <PackageReference Include="Microsoft.Fast.Components.FluentUI" Version="3.0.0" />
         <PackageReference Include="Microsoft.Fast.Components.FluentUI.Icons" Version="3.0.0" />
         <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.32.2" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.34.0" />
     </ItemGroup>
 
     <ItemGroup>
