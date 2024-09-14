@@ -2,7 +2,7 @@
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Wallet.Domain.Enums;
 
-namespace DevQuarter.Wallet.Infrastructure.Persistence.Migrations;
+namespace Wallet.Infrastructure.Persistence.Migrations;
 
 public partial class Initial : Migration
 {

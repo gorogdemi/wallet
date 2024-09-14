@@ -11,7 +11,7 @@ using Wallet.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace DevQuarter.Wallet.Infrastructure.Persistence.Migrations
+namespace Wallet.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(WalletContext))]
     [Migration("20230226204818_Initial")]
