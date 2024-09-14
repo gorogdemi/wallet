@@ -1,6 +1,6 @@
 ﻿namespace Wallet.Shared.Categories;
 
-public class CategoryViewModel
+public class CategoryDto
 {
     public long Id { get; set; }
 

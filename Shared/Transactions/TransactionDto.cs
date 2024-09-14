@@ -2,7 +2,7 @@
 
 namespace Wallet.Shared.Transactions;
 
-public class TransactionViewModel
+public class TransactionDto
 {
     public double BankAmount { get; set; }
 

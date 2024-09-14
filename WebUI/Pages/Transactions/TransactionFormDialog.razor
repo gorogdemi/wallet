@@ -1,0 +1,53 @@
+﻿@inherits EditDialog<TransactionFormViewModel>
+
+<EditDialog Content="Content">
+    <FluentValidationValidator />
+
+    <FormInput ValidationFor="() => Content.Name">
+        <FluentTextField @bind-Value="Content.Name">Megnevezés:</FluentTextField>
+    </FormInput>
+
+    <FormInput ValidationFor="() => Content.BankAmount">
+        <FluentNumberField @bind-Value="Content.BankAmount">Bank:</FluentNumberField>
+    </FormInput>
+
+    <FormInput ValidationFor="() => Content.CashAmount">
+        <FluentNumberField @bind-Value="Content.CashAmount">Készpénz:</FluentNumberField>
+    </FormInput>
+
+    <FormInput ValidationFor="() => Content.Comment">
+        <FluentTextField @bind-Value="Content.Comment">Megjegyzés:</FluentTextField>
+    </FormInput>
+
+    <FormInput ValidationFor="() => Content.Date">
+        <FluentDatePicker @bind-Value="Content.Date" Label="Dátum:" />
+    </FormInput>
+
+    <FormInput ValidationFor="() => Content.Type">
+        <FluentSelect @bind-SelectedOption="Content.Type" Label="Típus:" Items="_transactionTypes" OptionText="type => type.ToTransactionTypeText()" />
+    </FormInput>
+
+    <FormInput ValidationFor="() => Content.CategoryId">
+        <FluentSelect
+            @bind-Value="Content.CategoryId"
+            Label="Kategória:"
+            Placeholder="Nincs"
+            Items="Content.Categories"
+            OptionText="option => option?.Name.ToCategoryText()"
+            OptionValue="option => option?.Id.ToString()" />
+    </FormInput>
+</EditDialog>
+
+@code {
+
+    private List<TransactionType?> _transactionTypes;
+
+    protected override void OnInitialized()
+    {
+        Content.Type = TransactionType.Expense;
+        Content.Date = DateTime.Now;
+
+        _transactionTypes = Enum.GetValues<TransactionType>().Cast<TransactionType?>().ToList();
+    }
+
+}

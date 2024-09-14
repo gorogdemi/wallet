@@ -4,15 +4,15 @@ namespace Wallet.Application.Categories;
 
 public interface ICategoryService
 {
-    Task<CategoryViewModel> CreateAsync(CategoryRequest request, CancellationToken cancellationToken);
+    Task<CategoryDto> CreateAsync(CategoryRequest request, CancellationToken cancellationToken);
 
     Task DeleteAsync(long id, CancellationToken cancellationToken);
 
-    Task<IEnumerable<CategoryViewModel>> GetAllAsync(CancellationToken cancellationToken);
+    Task<IEnumerable<CategoryDto>> GetAllAsync(CancellationToken cancellationToken);
 
-    Task<CategoryViewModel> GetAsync(long id, CancellationToken cancellationToken);
+    Task<CategoryDto> GetAsync(long id, CancellationToken cancellationToken);
 
-    Task<IEnumerable<CategoryViewModel>> SearchAsync(string searchText, CancellationToken cancellationToken);
+    Task<IEnumerable<CategoryDto>> SearchAsync(string searchText, CancellationToken cancellationToken);
 
-    Task<CategoryViewModel> UpdateAsync(long id, CategoryRequest request, CancellationToken cancellationToken);
+    Task<CategoryDto> UpdateAsync(long id, CategoryRequest request, CancellationToken cancellationToken);
 }

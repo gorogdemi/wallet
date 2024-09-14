@@ -11,10 +11,10 @@ public class EntityProfile : Profile
     public EntityProfile()
     {
         CreateMap<TransactionRequest, Transaction>();
-        CreateMap<Transaction, TransactionViewModel>();
+        CreateMap<Transaction, TransactionDto>();
 
         CreateMap<CategoryRequest, Category>();
-        CreateMap<Category, CategoryViewModel>();
+        CreateMap<Category, CategoryDto>();
 
         CreateMap<Balance, BalanceViewModel>();
     }

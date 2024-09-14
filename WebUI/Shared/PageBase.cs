@@ -48,6 +48,14 @@ public abstract class PageBase : ComponentBase
                 onSuccess(result);
             });
 
+    protected Task HandleRequestAsync<T>(Func<Task<T>> request, Func<T, Task> onSuccess) =>
+        HandleRequestErrorsAsync(
+            async () =>
+            {
+                var result = await request();
+                await onSuccess(result);
+            });
+
     protected override void OnInitialized()
     {
         IsLoading = true;

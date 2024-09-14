@@ -27,7 +27,7 @@ public class CategoryService : ICategoryService
         _mapper = mapper;
     }
 
-    public async Task<CategoryViewModel> CreateAsync(CategoryRequest request, CancellationToken cancellationToken)
+    public async Task<CategoryDto> CreateAsync(CategoryRequest request, CancellationToken cancellationToken)
     {
         var userId = _currentUserService.UserId;
         var transaction = _mapper.Map<Category>(request);
@@ -36,7 +36,7 @@ public class CategoryService : ICategoryService
         transaction = await _walletContextService.CreateAsync(transaction, cancellationToken);
         _logger.LogInformation("Category created with ID '{Id}'", transaction.Id);
 
-        return _mapper.Map<CategoryViewModel>(transaction);
+        return _mapper.Map<CategoryDto>(transaction);
     }
 
     public async Task DeleteAsync(long id, CancellationToken cancellationToken)
@@ -53,17 +53,17 @@ public class CategoryService : ICategoryService
         _logger.LogInformation("Category '{Id}' deleted", transaction.Id);
     }
 
-    public async Task<IEnumerable<CategoryViewModel>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<CategoryDto>> GetAllAsync(CancellationToken cancellationToken)
     {
         var userId = _currentUserService.UserId;
 
         var transactions = await _walletContextService.Context.Categories.Where(t => t.UserId == userId).ToListAsync(cancellationToken);
         _logger.LogInformation("Categories retrieved from database");
 
-        return _mapper.Map<IEnumerable<CategoryViewModel>>(transactions);
+        return _mapper.Map<IEnumerable<CategoryDto>>(transactions);
     }
 
-    public async Task<CategoryViewModel> GetAsync(long id, CancellationToken cancellationToken)
+    public async Task<CategoryDto> GetAsync(long id, CancellationToken cancellationToken)
     {
         var transaction = await _walletContextService.GetAsync<Category>(id, cancellationToken) ?? throw new EntityNotFoundException();
         var userId = _currentUserService.UserId;
@@ -75,20 +75,20 @@ public class CategoryService : ICategoryService
 
         _logger.LogInformation("Category '{Id}' retrieved from database", transaction.Id);
 
-        return _mapper.Map<CategoryViewModel>(transaction);
+        return _mapper.Map<CategoryDto>(transaction);
     }
 
-    public async Task<IEnumerable<CategoryViewModel>> SearchAsync(string searchText, CancellationToken cancellationToken)
+    public async Task<IEnumerable<CategoryDto>> SearchAsync(string searchText, CancellationToken cancellationToken)
     {
         var userId = _currentUserService.UserId;
         var transactions = await _walletContextService.Context.Categories.Where(t => t.UserId == userId && EF.Functions.ILike(t.Name, $"%{searchText}%"))
             .ToListAsync(cancellationToken);
         _logger.LogInformation("Categories retrieved from database by search text '{SearchText}'", searchText);
 
-        return _mapper.Map<IEnumerable<CategoryViewModel>>(transactions);
+        return _mapper.Map<IEnumerable<CategoryDto>>(transactions);
     }
 
-    public async Task<CategoryViewModel> UpdateAsync(long id, CategoryRequest request, CancellationToken cancellationToken)
+    public async Task<CategoryDto> UpdateAsync(long id, CategoryRequest request, CancellationToken cancellationToken)
     {
         var transaction = await _walletContextService.GetAsync<Category>(id, cancellationToken) ?? throw new EntityNotFoundException();
         var userId = _currentUserService.UserId;
@@ -104,6 +104,6 @@ public class CategoryService : ICategoryService
         transaction = await _walletContextService.UpdateAsync(transaction, cancellationToken);
         _logger.LogInformation("Category '{Id}' updated", transaction.Id);
 
-        return _mapper.Map<CategoryViewModel>(transaction);
+        return _mapper.Map<CategoryDto>(transaction);
     }
 }
