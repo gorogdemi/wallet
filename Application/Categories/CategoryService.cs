@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Wallet.Application.Common.Exceptions;
 using Wallet.Application.Common.Interfaces;
 using Wallet.Domain.Entities;
+using Wallet.Shared.Categories;
 
 namespace Wallet.Application.Categories;
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Wallet.Application.Categories;
+using Wallet.Shared.Categories;
 
 namespace Wallet.WebApi.Controllers;
 

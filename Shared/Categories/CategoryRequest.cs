@@ -1,4 +1,4 @@
-﻿namespace Wallet.Application.Categories;
+﻿namespace Wallet.Shared.Categories;
 
 public class CategoryRequest
 {

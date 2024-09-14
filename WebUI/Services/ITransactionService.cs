@@ -1,4 +1,4 @@
-﻿using Wallet.Application.Transactions;
+﻿using Wallet.Shared.Transactions;
 
 namespace Wallet.WebUI.Services;
 

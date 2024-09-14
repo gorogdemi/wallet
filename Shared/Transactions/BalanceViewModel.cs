@@ -1,4 +1,4 @@
-﻿namespace Wallet.Application.Transactions;
+﻿namespace Wallet.Shared.Transactions;
 
 public class BalanceViewModel
 {

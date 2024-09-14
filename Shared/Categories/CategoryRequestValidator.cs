@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Wallet.Application.Categories;
+namespace Wallet.Shared.Categories;
 
 public class CategoryRequestValidator : AbstractValidator<CategoryRequest>
 {

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Refit;
-using Wallet.Application.Transactions;
+using Wallet.Shared.Transactions;
 using Wallet.WebUI;
 using Wallet.WebUI.Helpers;
 using Wallet.WebUI.Services;

@@ -1,4 +1,4 @@
-﻿using Wallet.Domain.Enums;
+﻿using Wallet.Shared.Common.Enums;
 
 namespace Wallet.WebUI.Forms;
 

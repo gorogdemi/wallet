@@ -1,6 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
-using Wallet.Application.Authentication;
+using Wallet.Shared.Authentication;
 using Wallet.WebUI.Helpers;
 
 namespace Wallet.WebUI.Services;

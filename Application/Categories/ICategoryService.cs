@@ -1,3 +1,5 @@
+using Wallet.Shared.Categories;
+
 namespace Wallet.Application.Categories;
 
 public interface ICategoryService

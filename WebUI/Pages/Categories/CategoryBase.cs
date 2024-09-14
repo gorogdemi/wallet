@@ -1,9 +1,9 @@
-using Wallet.Application.Categories;
+using Wallet.Shared.Categories;
+using Wallet.WebUI.Services;
 using Wallet.WebUI.Shared;
-using Services_ICategoryService = Wallet.WebUI.Services.ICategoryService;
 
 namespace Wallet.WebUI.Pages.Categories;
 
-public abstract class CategoryBase : AuthenticationAwarePageBase<List<CategoryViewModel>, Services_ICategoryService>
+public abstract class CategoryBase : AuthenticationAwarePageBase<List<CategoryViewModel>, ICategoryService>
 {
 }

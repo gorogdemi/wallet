@@ -1,5 +1,5 @@
 using System.Globalization;
-using Wallet.Domain.Enums;
+using Wallet.Shared.Common.Enums;
 
 namespace Wallet.WebUI.Extensions;
 

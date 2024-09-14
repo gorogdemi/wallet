@@ -1,4 +1,6 @@
-﻿namespace Wallet.Application.Authentication;
+﻿using Wallet.Shared.Authentication;
+
+namespace Wallet.Application.Authentication;
 
 public interface IAuthenticationService
 {

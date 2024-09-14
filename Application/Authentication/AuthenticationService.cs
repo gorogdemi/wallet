@@ -1,5 +1,6 @@
 ﻿using Wallet.Application.Common.Exceptions;
 using Wallet.Application.Common.Interfaces;
+using Wallet.Shared.Authentication;
 
 namespace Wallet.Application.Authentication;
 
