@@ -1,13 +1,12 @@
-﻿using DevQuarter.Wallet.Domain.Common;
+﻿using Wallet.Domain.Common;
 
-namespace DevQuarter.Wallet.Domain.Entities
+namespace Wallet.Domain.Entities;
+
+public class Category : EntityBase
 {
-    public class Category : EntityBase
-    {
-        public string Name { get; set; }
+    public string Name { get; set; }
 
-        public virtual ICollection<Transaction> Transactions { get; set; }
+    public virtual ICollection<Transaction> Transactions { get; set; }
 
-        public string UserId { get; set; }
-    }
+    public string UserId { get; set; }
 }

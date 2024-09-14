@@ -1,18 +1,17 @@
 ﻿using FluentValidation;
 
-namespace DevQuarter.Wallet.Application.Authentication
-{
-    public class RefreshTokenRequestValidator : AbstractValidator<RefreshTokenRequest>
-    {
-        public RefreshTokenRequestValidator()
-        {
-            RuleFor(request => request.RefreshToken)
-                .NotEmpty()
-                .MaximumLength(100);
+namespace Wallet.Application.Authentication;
 
-            RuleFor(request => request.Token)
-                .NotEmpty()
-                .MaximumLength(500);
-        }
+public class RefreshTokenRequestValidator : AbstractValidator<RefreshTokenRequest>
+{
+    public RefreshTokenRequestValidator()
+    {
+        RuleFor(request => request.RefreshToken)
+            .NotEmpty()
+            .MaximumLength(100);
+
+        RuleFor(request => request.Token)
+            .NotEmpty()
+            .MaximumLength(500);
     }
 }

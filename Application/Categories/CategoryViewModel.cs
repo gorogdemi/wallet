@@ -1,9 +1,8 @@
-﻿namespace DevQuarter.Wallet.Application.Categories
-{
-    public class CategoryViewModel
-    {
-        public long Id { get; set; }
+﻿namespace Wallet.Application.Categories;
 
-        public string Name { get; set; }
-    }
+public class CategoryViewModel
+{
+    public long Id { get; set; }
+
+    public string Name { get; set; }
 }

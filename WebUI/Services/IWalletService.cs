@@ -1,22 +1,21 @@
 ﻿using Refit;
 
-namespace DevQuarter.Wallet.WebUI.Services
+namespace Wallet.WebUI.Services;
+
+public interface IWalletService<in TRequest, TResponse>
 {
-    public interface IWalletService<in TRequest, TResponse>
-    {
-        [Post("/")]
-        Task CreateAsync(TRequest request);
+    [Post("/")]
+    Task CreateAsync(TRequest request);
 
-        [Delete("/{id}")]
-        Task DeleteAsync(long id);
+    [Delete("/{id}")]
+    Task DeleteAsync(long id);
 
-        [Get("/")]
-        Task<List<TResponse>> GetAllAsync();
+    [Get("/")]
+    Task<List<TResponse>> GetAllAsync();
 
-        [Get("/{id}")]
-        Task<TResponse> GetAsync(long id);
+    [Get("/{id}")]
+    Task<TResponse> GetAsync(long id);
 
-        [Put("/{id}")]
-        Task UpdateAsync(long id, TRequest request);
-    }
+    [Put("/{id}")]
+    Task UpdateAsync(long id, TRequest request);
 }

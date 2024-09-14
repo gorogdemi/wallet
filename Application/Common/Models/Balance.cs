@@ -1,11 +1,10 @@
-namespace DevQuarter.Wallet.Application.Common.Models
+namespace Wallet.Application.Common.Models;
+
+public class Balance
 {
-    public class Balance
-    {
-        public double BankAccount { get; set; }
+    public double BankAccount { get; set; }
 
-        public double Cash { get; set; }
+    public double Cash { get; set; }
 
-        public double Full { get; set; }
-    }
+    public double Full { get; set; }
 }

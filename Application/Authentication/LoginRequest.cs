@@ -1,9 +1,8 @@
-﻿namespace DevQuarter.Wallet.Application.Authentication
-{
-    public class LoginRequest
-    {
-        public string Password { get; set; }
+﻿namespace Wallet.Application.Authentication;
 
-        public string UserName { get; set; }
-    }
+public class LoginRequest
+{
+    public string Password { get; set; }
+
+    public string UserName { get; set; }
 }

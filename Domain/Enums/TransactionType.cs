@@ -1,8 +1,7 @@
-﻿namespace DevQuarter.Wallet.Domain.Enums
+﻿namespace Wallet.Domain.Enums;
+
+public enum TransactionType
 {
-    public enum TransactionType
-    {
-        Expense,
-        Income,
-    }
+    Expense,
+    Income,
 }

@@ -1,8 +1,7 @@
-﻿using DevQuarter.Wallet.Application.Transactions;
+﻿using Wallet.Application.Transactions;
 
-namespace DevQuarter.Wallet.WebUI.Services
+namespace Wallet.WebUI.Services;
+
+public interface ITransactionService : IWalletService<TransactionRequest, TransactionViewModel>
 {
-    public interface ITransactionService : IWalletService<TransactionRequest, TransactionViewModel>
-    {
-    }
 }

@@ -1,10 +1,9 @@
-using DevQuarter.Wallet.Application.Categories;
-using DevQuarter.Wallet.WebUI.Shared;
-using ICategoryService = DevQuarter.Wallet.WebUI.Services.ICategoryService;
+using Wallet.Application.Categories;
+using Wallet.WebUI.Shared;
+using Services_ICategoryService = Wallet.WebUI.Services.ICategoryService;
 
-namespace DevQuarter.Wallet.WebUI.Pages.Categories
+namespace Wallet.WebUI.Pages.Categories;
+
+public abstract class CategoryBase : AuthenticationAwarePageBase<List<CategoryViewModel>, Services_ICategoryService>
 {
-    public abstract class CategoryBase : AuthenticationAwarePageBase<List<CategoryViewModel>, ICategoryService>
-    {
-    }
 }

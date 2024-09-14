@@ -1,23 +1,22 @@
-using DevQuarter.Wallet.Application.Common.Models;
+using Wallet.Application.Common.Models;
 
-namespace DevQuarter.Wallet.Application.Common.Interfaces
+namespace Wallet.Application.Common.Interfaces;
+
+public interface IIdentityService
 {
-    public interface IIdentityService
-    {
-        Task<bool> AuthorizeAsync(string userId, string policyName);
+    Task<bool> AuthorizeAsync(string userId, string policyName);
 
-        Task<bool> CheckPasswordAsync(string userName, string password);
+    Task<bool> CheckPasswordAsync(string userName, string password);
 
-        Task<Result> CreateUserAsync(string userName, string password, string email, string fullName);
+    Task<Result> CreateUserAsync(string userName, string password, string email, string fullName);
 
-        Task<Result> DeleteUserAsync(string userId);
+    Task<Result> DeleteUserAsync(string userId);
 
-        Task<IUser> GetUserByIdAsync(string userId);
+    Task<IUser> GetUserByIdAsync(string userId);
 
-        Task<IUser> GetUserByUserNameAsync(string userName);
+    Task<IUser> GetUserByUserNameAsync(string userName);
 
-        Task<string> GetUserNameAsync(string userId);
+    Task<string> GetUserNameAsync(string userId);
 
-        Task<bool> IsInRoleAsync(string userId, string role);
-    }
+    Task<bool> IsInRoleAsync(string userId, string role);
 }

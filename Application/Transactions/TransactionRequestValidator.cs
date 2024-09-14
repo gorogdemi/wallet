@@ -1,35 +1,34 @@
 ﻿using FluentValidation;
 
-namespace DevQuarter.Wallet.Application.Transactions
+namespace Wallet.Application.Transactions;
+
+public class TransactionRequestValidator : AbstractValidator<TransactionRequest>
 {
-    public class TransactionRequestValidator : AbstractValidator<TransactionRequest>
+    public TransactionRequestValidator()
     {
-        public TransactionRequestValidator()
-        {
-            RuleFor(request => request.Comment)
-                .MaximumLength(255);
+        RuleFor(request => request.Comment)
+            .MaximumLength(255);
 
-            RuleFor(request => request.Name)
-                .NotEmpty()
-                .MaximumLength(100);
+        RuleFor(request => request.Name)
+            .NotEmpty()
+            .MaximumLength(100);
 
-            RuleFor(request => request.BankAmount)
-                .GreaterThan(0)
-                .When(request => request.CashAmount == 0)
-                .WithMessage("A tranzakció nem lehet nulla összegű.")
-                .GreaterThanOrEqualTo(0);
+        RuleFor(request => request.BankAmount)
+            .GreaterThan(0)
+            .When(request => request.CashAmount == 0)
+            .WithMessage("A tranzakció nem lehet nulla összegű.")
+            .GreaterThanOrEqualTo(0);
 
-            RuleFor(request => request.CashAmount)
-                .GreaterThan(0)
-                .When(request => request.BankAmount == 0)
-                .WithMessage("A tranzakció nem lehet nulla összegű.")
-                .GreaterThanOrEqualTo(0);
+        RuleFor(request => request.CashAmount)
+            .GreaterThan(0)
+            .When(request => request.BankAmount == 0)
+            .WithMessage("A tranzakció nem lehet nulla összegű.")
+            .GreaterThanOrEqualTo(0);
 
-            RuleFor(request => request.Type)
-                .NotNull();
+        RuleFor(request => request.Type)
+            .NotNull();
 
-            RuleFor(request => request.Date)
-                .NotNull();
-        }
+        RuleFor(request => request.Date)
+            .NotNull();
     }
 }

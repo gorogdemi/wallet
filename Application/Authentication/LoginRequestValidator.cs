@@ -1,18 +1,17 @@
 ﻿using FluentValidation;
 
-namespace DevQuarter.Wallet.Application.Authentication
-{
-    public class LoginRequestValidator : AbstractValidator<LoginRequest>
-    {
-        public LoginRequestValidator()
-        {
-            RuleFor(request => request.Password)
-                .NotEmpty()
-                .MaximumLength(100);
+namespace Wallet.Application.Authentication;
 
-            RuleFor(request => request.UserName)
-                .NotEmpty()
-                .MaximumLength(100);
-        }
+public class LoginRequestValidator : AbstractValidator<LoginRequest>
+{
+    public LoginRequestValidator()
+    {
+        RuleFor(request => request.Password)
+            .NotEmpty()
+            .MaximumLength(100);
+
+        RuleFor(request => request.UserName)
+            .NotEmpty()
+            .MaximumLength(100);
     }
 }

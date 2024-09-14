@@ -1,17 +1,16 @@
-﻿using DevQuarter.Wallet.Application.Common.Interfaces;
-using DevQuarter.Wallet.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Wallet.Application.Common.Interfaces;
+using Wallet.Domain.Entities;
 
-namespace DevQuarter.Wallet.Infrastructure.Identity
+namespace Wallet.Infrastructure.Identity;
+
+public class ApplicationUser : IdentityUser, IUser
 {
-    public class ApplicationUser : IdentityUser, IUser
-    {
-        public virtual ICollection<Category> Categories { get; set; }
+    public virtual ICollection<Category> Categories { get; set; }
 
-        public string FullName { get; set; }
+    public string FullName { get; set; }
 
-        public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
+    public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
 
-        public virtual ICollection<Transaction> Transactions { get; set; }
-    }
+    public virtual ICollection<Transaction> Transactions { get; set; }
 }

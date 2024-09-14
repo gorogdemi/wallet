@@ -1,15 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <AssemblyName>DevQuarter.Wallet.Application</AssemblyName>
-        <RootNamespace>DevQuarter.Wallet.Application</RootNamespace>
+        <AssemblyName>Wallet.Application</AssemblyName>
+        <RootNamespace>Wallet.Application</RootNamespace>
+        <NoWarn>CA1812;</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
+        <PackageReference Include="AutoMapper" Version="13.0.1" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.2" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
     </ItemGroup>
 
     <ItemGroup>

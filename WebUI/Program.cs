@@ -1,15 +1,15 @@
 using Blazored.LocalStorage;
-using DevQuarter.Wallet.Application.Transactions;
-using DevQuarter.Wallet.WebUI;
-using DevQuarter.Wallet.WebUI.Helpers;
-using DevQuarter.Wallet.WebUI.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Fast.Components.FluentUI;
 using Refit;
-using ITransactionService = DevQuarter.Wallet.WebUI.Services.ITransactionService;
+using Wallet.Application.Transactions;
+using Wallet.WebUI;
+using Wallet.WebUI.Helpers;
+using Wallet.WebUI.Services;
+using ITransactionService = Wallet.WebUI.Services.ITransactionService;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

@@ -1,6 +1,6 @@
-using DevQuarter.Wallet.Infrastructure.Persistence;
 using Hellang.Middleware.ProblemDetails;
 using Serilog;
+using Wallet.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
