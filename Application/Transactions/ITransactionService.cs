@@ -1,3 +1,5 @@
+using Wallet.Shared.Transactions;
+
 namespace Wallet.Application.Transactions;
 
 public interface ITransactionService

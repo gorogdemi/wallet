@@ -1,5 +1,5 @@
 ﻿using Refit;
-using Wallet.Application.Authentication;
+using Wallet.Shared.Authentication;
 
 namespace Wallet.WebUI.Services;
 

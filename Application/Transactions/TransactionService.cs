@@ -5,6 +5,7 @@ using Wallet.Application.Common.Exceptions;
 using Wallet.Application.Common.Interfaces;
 using Wallet.Domain.Entities;
 using Wallet.Domain.Enums;
+using Wallet.Shared.Transactions;
 
 namespace Wallet.Application.Transactions;
 

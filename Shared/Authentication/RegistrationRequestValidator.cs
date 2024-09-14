@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Wallet.Application.Authentication;
+namespace Wallet.Shared.Authentication;
 
 public class RegistrationRequestValidator : AbstractValidator<RegistrationRequest>
 {

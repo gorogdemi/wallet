@@ -1,4 +1,4 @@
-﻿namespace Wallet.Application.Authentication;
+﻿namespace Wallet.Shared.Authentication;
 
 public class AuthenticationResponse
 {

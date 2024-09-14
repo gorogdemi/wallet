@@ -1,6 +1,6 @@
-﻿using Wallet.Domain.Enums;
+﻿using Wallet.Shared.Common.Enums;
 
-namespace Wallet.Application.Transactions;
+namespace Wallet.Shared.Transactions;
 
 public class TransactionViewModel
 {

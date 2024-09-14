@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Wallet.Application.Categories;
 using Wallet.Application.Common.Models;
-using Wallet.Application.Transactions;
 using Wallet.Domain.Entities;
+using Wallet.Shared.Categories;
+using Wallet.Shared.Transactions;
 
 namespace Wallet.Application.Common.Mappings;
 

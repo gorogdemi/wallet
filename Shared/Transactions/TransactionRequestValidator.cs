@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Wallet.Application.Transactions;
+namespace Wallet.Shared.Transactions;
 
 public class TransactionRequestValidator : AbstractValidator<TransactionRequest>
 {

@@ -1,4 +1,4 @@
-﻿using Wallet.Application.Categories;
+﻿using Wallet.Shared.Categories;
 
 namespace Wallet.WebUI.Services;
 

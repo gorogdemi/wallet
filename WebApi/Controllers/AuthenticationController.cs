@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Wallet.Application.Authentication;
+using Wallet.Shared.Authentication;
 
 namespace Wallet.WebApi.Controllers;
 
