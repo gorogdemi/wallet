@@ -1,7 +1,8 @@
 <Project>
     <PropertyGroup>
         <AdditionalFileItemNames>$(AdditionalFileItemNames);CodeAnalysisDictionary</AdditionalFileItemNames>
-        <NoWarn>LRT001;CA1812;CA1848;CA1716;CA1054;CA1002;</NoWarn>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
         <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
     </PropertyGroup>
     <ItemGroup>

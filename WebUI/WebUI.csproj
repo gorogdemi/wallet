@@ -4,7 +4,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>DevQuarter.Wallet.WebUI</RootNamespace>
         <AssemblyName>DevQuarter.Wallet.WebUI</AssemblyName>
-        <NoWarn>$(NoWarn);IDISP025;CA2234;</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

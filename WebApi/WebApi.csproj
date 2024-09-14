@@ -4,7 +4,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>DevQuarter.Wallet.WebApi</RootNamespace>
         <AssemblyName>DevQuarter.Wallet.WebApi</AssemblyName>
-        <NoWarn>$(NoWarn);</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

@@ -4,6 +4,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <AssemblyName>DevQuarter.Wallet.Application</AssemblyName>
         <RootNamespace>DevQuarter.Wallet.Application</RootNamespace>
+        <NoWarn>CA1812;</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
