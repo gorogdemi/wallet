@@ -1,0 +1,28 @@
+@typeparam T
+@implements IDialogContentComponent<T>
+
+<EditForm Model="Content" OnValidSubmit="SaveAsync">
+    @ChildContent
+
+    <FluentDialogFooter>
+        <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Mentés</FluentButton>
+        <FluentButton OnClick="@CloseAsync">Bezárás</FluentButton>
+    </FluentDialogFooter>
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public T Content { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [CascadingParameter]
+    public FluentDialog Dialog { get; set; }
+
+    private async Task SaveAsync() => await Dialog.CloseAsync(Content);
+
+    private async Task CloseAsync() => await Dialog.CancelAsync();
+
+}

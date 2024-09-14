@@ -1,3 +1,5 @@
+#pragma warning disable IDE0130
+
 using System.Text.Json.Serialization;
 using DevQuarter.Wallet.Application.Common.Exceptions;
 using DevQuarter.Wallet.Application.Common.Interfaces;

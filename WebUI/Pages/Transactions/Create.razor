@@ -9,7 +9,9 @@
 }
 else
 {
-    <TransactionForm ViewModel="ViewModel" Categories="_categories" OnClose="NavigateToTransactions" OnSubmit="CreateAsync" />
+    <FluentCard Width="100%" Height="auto">
+        <TransactionForm ViewModel="ViewModel" Categories="_categories" OnClose="NavigateToTransactions" OnSubmit="CreateAsync" />
+    </FluentCard>
 }
 
 @code {

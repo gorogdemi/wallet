@@ -3,9 +3,10 @@ using Hellang.Middleware.ProblemDetails;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
 
 // Add services to the container
+builder.Services.AddSerilog(loggerConfiguration => loggerConfiguration.ReadFrom.Configuration(builder.Configuration));
+
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddWebApiServices(builder.Configuration);
@@ -35,4 +36,4 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHealthChecks("/health");
 
-app.Run();
+await app.RunAsync();

@@ -1,46 +1,69 @@
 ﻿@page "/categories"
 @inherits CategoryBase
+@inject IDialogService DialogService
 
 <h1>Kategóriák</h1>
 
-@if (IsLoading)
-{
-    <div>Adatok betöltése...</div>
-}
-else
-{
-    <CategoryRequestModal @ref="_modal" Title="@ModalTitle" Data="_request" OnSubmit="SaveAsync" />
+<FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" OnClick="@AddAsync">
+    Új kategória
+    <FluentIcon Icon="@Icons.Filled.Size20.AddCircle" Slot="start" Color="Color.Fill" />
+</FluentButton>
 
-    <FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" @onclick="Add">
-        Új kategória
-        <FluentIcon Icon="@Icons.Filled.Size20.AddCircle" Slot="start" Color="Color.Fill" />
-    </FluentButton>
-
+<FluentCard Style="display: grid; padding: 0; min-height: 250px;" Width="100%" Height="auto">
     <FluentDataGrid Items="CategoryList" GridTemplateColumns="1fr">
-        <PropertyColumn Title="Megnevezés" Property="@(c => c.Name)" Sortable="true" Align=Align.Start />
-        <TemplateColumn Title="Művelet">
-            <EditorButtons OnEdit="() => Edit(context)" OnDelete="() => DeleteAsync(context)" />
-        </TemplateColumn>
+        <ChildContent>
+            <PropertyColumn Title="Megnevezés" Property="@(c => c.Name)" Sortable="true" Align="Align.Start" />
+            <TemplateColumn Title="Művelet">
+                <EditorButtons OnEdit="() => EditAsync(context)" OnDelete="() => DeleteAsync(context)" />
+            </TemplateColumn>
+        </ChildContent>
+        <EmptyContent>
+            @if (IsLoading)
+            {
+                <div>Adatok betöltése...</div>
+            }
+            else
+            {
+                <div>Nincs megjeleníthető adat.</div>
+            }
+        </EmptyContent>
     </FluentDataGrid>
-}
+</FluentCard>
 
 @code {
 
-    private CategoryRequest _request = new();
-    private CategoryRequestModal _modal;
-    private long? _id;
-
-    private string ModalTitle => $"Kategória {(_id.HasValue ? "módosítás" : "létrehozás")}";
-
-    private IQueryable<CategoryViewModel> CategoryList => ViewModel.AsQueryable();
+    private IQueryable<CategoryViewModel> CategoryList => ViewModel?.AsQueryable();
 
     protected override Task SetViewModelAsync() => LoadCategoriesAsync();
 
-    private void Add()
+    private async Task AddAsync() => await HandleDialogAsync(null, new CategoryRequest());
+
+    private async Task EditAsync(CategoryViewModel category) => await HandleDialogAsync(category.Id, new CategoryRequest { Name = category.Name });
+
+    private async Task HandleDialogAsync(long? id, CategoryRequest categoryRequest)
     {
-        _request = new CategoryRequest();
-        _id = null;
-        _modal.Open();
+        var isEdit = id.HasValue;
+
+        DialogParameters parameters = new()
+        {
+            Title = $"Kategória {(isEdit ? "módosítás" : "létrehozás")}",
+            Width = "500px",
+            TrapFocus = true,
+            Modal = true,
+            PreventScroll = true,
+        };
+
+        var dialog = await DialogService.ShowDialogAsync<CategoryRequestDialog>(categoryRequest, parameters);
+        var result = await dialog.Result;
+
+        if (result.Data is not null)
+        {
+            var request = result.Data as CategoryRequest;
+
+            await HandleRequestAsync(
+                () => isEdit ? Service.UpdateAsync(id!.Value, request) : Service.CreateAsync(request),
+                LoadCategoriesAsync);
+        }
     }
 
     private async Task DeleteAsync(CategoryViewModel category)
@@ -55,22 +78,6 @@ else
         await HandleRequestAsync(
             () => Service.GetAllAsync(),
             result => ViewModel = result);
-    }
-
-    private void Edit(CategoryViewModel category)
-    {
-        _request = new CategoryRequest { Name = category.Name };
-        _id = category.Id;
-        _modal.Open();
-    }
-
-    private async Task SaveAsync()
-    {
-        var isEdit = _id.HasValue;
-
-        await HandleRequestAsync(
-            () => isEdit ? Service.UpdateAsync(_id!.Value, _request) : Service.CreateAsync(_request),
-            LoadCategoriesAsync);
     }
 
 }

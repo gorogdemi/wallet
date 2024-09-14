@@ -1,4 +1,5 @@
 #pragma warning disable IDISP004
+#pragma warning disable IDE0130
 
 using System.Text;
 using DevQuarter.Wallet.Application.Common.Interfaces;
