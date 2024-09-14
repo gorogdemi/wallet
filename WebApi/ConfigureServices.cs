@@ -1,16 +1,16 @@
 #pragma warning disable IDE0130
 
 using System.Text.Json.Serialization;
-using DevQuarter.Wallet.Application.Common.Exceptions;
-using DevQuarter.Wallet.Application.Common.Interfaces;
-using DevQuarter.Wallet.Infrastructure.Options;
-using DevQuarter.Wallet.Infrastructure.Persistence;
-using DevQuarter.Wallet.WebApi.Helpers;
-using DevQuarter.Wallet.WebApi.Services;
 using FluentValidation.AspNetCore;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.OpenApi.Models;
+using Wallet.Application.Common.Exceptions;
+using Wallet.Application.Common.Interfaces;
+using Wallet.Infrastructure.Options;
+using Wallet.Infrastructure.Persistence;
+using Wallet.WebApi.Helpers;
+using Wallet.WebApi.Services;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;

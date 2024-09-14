@@ -1,9 +1,9 @@
-﻿using DevQuarter.Wallet.Application.Common.Exceptions;
-using DevQuarter.Wallet.Application.Common.Interfaces;
-using DevQuarter.Wallet.Domain.Common;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Wallet.Application.Common.Exceptions;
+using Wallet.Application.Common.Interfaces;
+using Wallet.Domain.Common;
 
-namespace DevQuarter.Wallet.Application.Common.Services;
+namespace Wallet.Application.Common.Services;
 
 public class WalletContextService : IWalletContextService
 {

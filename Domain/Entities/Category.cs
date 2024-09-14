@@ -1,6 +1,6 @@
-﻿using DevQuarter.Wallet.Domain.Common;
+﻿using Wallet.Domain.Common;
 
-namespace DevQuarter.Wallet.Domain.Entities;
+namespace Wallet.Domain.Entities;
 
 public class Category : EntityBase
 {

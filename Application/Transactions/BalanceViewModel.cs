@@ -1,4 +1,4 @@
-﻿namespace DevQuarter.Wallet.Application.Transactions;
+﻿namespace Wallet.Application.Transactions;
 
 public class BalanceViewModel
 {

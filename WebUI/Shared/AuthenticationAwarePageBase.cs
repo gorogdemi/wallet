@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace DevQuarter.Wallet.WebUI.Shared;
+namespace Wallet.WebUI.Shared;
 
 [Authorize]
 public abstract class AuthenticationAwarePageBase<TViewModel, TService> : ViewModelAwarePageBase<TViewModel, TService>

@@ -1,4 +1,4 @@
-﻿namespace DevQuarter.Wallet.Domain.Entities;
+﻿namespace Wallet.Domain.Entities;
 
 public class RefreshToken
 {

@@ -1,4 +1,4 @@
-﻿namespace DevQuarter.Wallet.Application.Authentication;
+﻿namespace Wallet.Application.Authentication;
 
 public class RegistrationRequest
 {

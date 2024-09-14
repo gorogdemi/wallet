@@ -1,8 +1,8 @@
-﻿using DevQuarter.Wallet.Application.Transactions;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Wallet.Application.Transactions;
 
-namespace DevQuarter.Wallet.WebApi.Controllers;
+namespace Wallet.WebApi.Controllers;
 
 [Authorize]
 public class BalanceController : ApiControllerBase

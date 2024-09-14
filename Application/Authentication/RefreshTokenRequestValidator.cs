@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace DevQuarter.Wallet.Application.Authentication;
+namespace Wallet.Application.Authentication;
 
 public class RefreshTokenRequestValidator : AbstractValidator<RefreshTokenRequest>
 {

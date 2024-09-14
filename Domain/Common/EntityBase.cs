@@ -1,4 +1,4 @@
-﻿namespace DevQuarter.Wallet.Domain.Common;
+﻿namespace Wallet.Domain.Common;
 
 public abstract class EntityBase
 {

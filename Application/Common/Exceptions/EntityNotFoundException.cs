@@ -1,4 +1,4 @@
-﻿namespace DevQuarter.Wallet.Application.Common.Exceptions;
+﻿namespace Wallet.Application.Common.Exceptions;
 
 public class EntityNotFoundException : WalletServiceException
 {

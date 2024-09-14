@@ -1,6 +1,6 @@
-﻿using DevQuarter.Wallet.Domain.Enums;
+﻿using Wallet.Domain.Enums;
 
-namespace DevQuarter.Wallet.WebUI.Forms;
+namespace Wallet.WebUI.Forms;
 
 public class TransactionFormViewModel
 {

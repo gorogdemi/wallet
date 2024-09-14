@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace DevQuarter.Wallet.Infrastructure.Persistence;
+namespace Wallet.Infrastructure.Persistence;
 
 public class WalletContextInitializer
 {

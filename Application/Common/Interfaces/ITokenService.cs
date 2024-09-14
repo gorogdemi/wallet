@@ -1,6 +1,6 @@
-using DevQuarter.Wallet.Application.Common.Models;
+using Wallet.Application.Common.Models;
 
-namespace DevQuarter.Wallet.Application.Common.Interfaces;
+namespace Wallet.Application.Common.Interfaces;
 
 public interface ITokenService
 {

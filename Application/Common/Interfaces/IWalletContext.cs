@@ -1,7 +1,7 @@
-using DevQuarter.Wallet.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Wallet.Domain.Entities;
 
-namespace DevQuarter.Wallet.Application.Common.Interfaces;
+namespace Wallet.Application.Common.Interfaces;
 
 public interface IWalletContext
 {

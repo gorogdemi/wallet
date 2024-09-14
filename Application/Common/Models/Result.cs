@@ -1,4 +1,4 @@
-namespace DevQuarter.Wallet.Application.Common.Models;
+namespace Wallet.Application.Common.Models;
 
 public class Result
 {

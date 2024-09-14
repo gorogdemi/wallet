@@ -2,7 +2,7 @@
 using Microsoft.Fast.Components.FluentUI;
 using Refit;
 
-namespace DevQuarter.Wallet.WebUI.Shared;
+namespace Wallet.WebUI.Shared;
 
 public abstract class PageBase : ComponentBase
 {

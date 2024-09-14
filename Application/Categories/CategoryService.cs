@@ -1,11 +1,11 @@
 using AutoMapper;
-using DevQuarter.Wallet.Application.Common.Exceptions;
-using DevQuarter.Wallet.Application.Common.Interfaces;
-using DevQuarter.Wallet.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Wallet.Application.Common.Exceptions;
+using Wallet.Application.Common.Interfaces;
+using Wallet.Domain.Entities;
 
-namespace DevQuarter.Wallet.Application.Categories;
+namespace Wallet.Application.Categories;
 
 public class CategoryService : ICategoryService
 {

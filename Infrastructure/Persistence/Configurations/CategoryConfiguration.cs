@@ -1,9 +1,9 @@
-using DevQuarter.Wallet.Domain.Entities;
-using DevQuarter.Wallet.Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Wallet.Domain.Entities;
+using Wallet.Infrastructure.Identity;
 
-namespace DevQuarter.Wallet.Infrastructure.Persistence.Configurations;
+namespace Wallet.Infrastructure.Persistence.Configurations;
 
 public class CategoryConfiguration : IEntityTypeConfiguration<Category>
 {

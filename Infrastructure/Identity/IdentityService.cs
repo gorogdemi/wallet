@@ -1,9 +1,9 @@
-using DevQuarter.Wallet.Application.Common.Interfaces;
-using DevQuarter.Wallet.Application.Common.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Wallet.Application.Common.Interfaces;
+using Wallet.Application.Common.Models;
 
-namespace DevQuarter.Wallet.Infrastructure.Identity;
+namespace Wallet.Infrastructure.Identity;
 
 public class IdentityService : IIdentityService
 {

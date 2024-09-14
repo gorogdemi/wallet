@@ -1,4 +1,4 @@
-﻿namespace DevQuarter.Wallet.Infrastructure.Options;
+﻿namespace Wallet.Infrastructure.Options;
 
 public class AuthenticationOptions
 {

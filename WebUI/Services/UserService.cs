@@ -1,9 +1,9 @@
 ﻿using Blazored.LocalStorage;
-using DevQuarter.Wallet.Application.Authentication;
-using DevQuarter.Wallet.WebUI.Helpers;
 using Microsoft.AspNetCore.Components.Authorization;
+using Wallet.Application.Authentication;
+using Wallet.WebUI.Helpers;
 
-namespace DevQuarter.Wallet.WebUI.Services;
+namespace Wallet.WebUI.Services;
 
 public sealed class UserService : IUserService
 {

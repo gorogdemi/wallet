@@ -1,6 +1,6 @@
-﻿using DevQuarter.Wallet.Application.Authentication;
+﻿using Wallet.Application.Authentication;
 
-namespace DevQuarter.Wallet.WebUI.Services;
+namespace Wallet.WebUI.Services;
 
 public interface IUserService
 {

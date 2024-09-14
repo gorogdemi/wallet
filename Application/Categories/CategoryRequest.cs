@@ -1,4 +1,4 @@
-﻿namespace DevQuarter.Wallet.Application.Categories;
+﻿namespace Wallet.Application.Categories;
 
 public class CategoryRequest
 {

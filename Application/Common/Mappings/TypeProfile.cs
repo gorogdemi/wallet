@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace DevQuarter.Wallet.Application.Common.Mappings;
+namespace Wallet.Application.Common.Mappings;
 
 public class TypeProfile : Profile
 {

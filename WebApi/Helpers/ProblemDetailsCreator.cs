@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace DevQuarter.Wallet.WebApi.Helpers;
+namespace Wallet.WebApi.Helpers;
 
 public static class ProblemDetailsCreator
 {

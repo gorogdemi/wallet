@@ -1,6 +1,6 @@
-﻿using DevQuarter.Wallet.Domain.Enums;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Wallet.Domain.Enums;
 
 namespace DevQuarter.Wallet.Infrastructure.Persistence.Migrations;
 

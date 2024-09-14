@@ -3,7 +3,7 @@ using System.Security.Claims;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace DevQuarter.Wallet.WebUI.Helpers;
+namespace Wallet.WebUI.Helpers;
 
 public sealed class JwtAuthenticationStateProvider : AuthenticationStateProvider
 {

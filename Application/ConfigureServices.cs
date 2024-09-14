@@ -1,12 +1,12 @@
 #pragma warning disable IDE0130
 
 using System.Reflection;
-using DevQuarter.Wallet.Application.Authentication;
-using DevQuarter.Wallet.Application.Categories;
-using DevQuarter.Wallet.Application.Common.Interfaces;
-using DevQuarter.Wallet.Application.Common.Services;
-using DevQuarter.Wallet.Application.Transactions;
 using FluentValidation;
+using Wallet.Application.Authentication;
+using Wallet.Application.Categories;
+using Wallet.Application.Common.Interfaces;
+using Wallet.Application.Common.Services;
+using Wallet.Application.Transactions;
 
 // ReSharper disable CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;

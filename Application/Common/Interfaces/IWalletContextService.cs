@@ -1,6 +1,6 @@
-using DevQuarter.Wallet.Domain.Common;
+using Wallet.Domain.Common;
 
-namespace DevQuarter.Wallet.Application.Common.Interfaces;
+namespace Wallet.Application.Common.Interfaces;
 
 public interface IWalletContextService
 {

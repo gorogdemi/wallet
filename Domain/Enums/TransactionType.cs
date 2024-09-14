@@ -1,4 +1,4 @@
-﻿namespace DevQuarter.Wallet.Domain.Enums;
+﻿namespace Wallet.Domain.Enums;
 
 public enum TransactionType
 {

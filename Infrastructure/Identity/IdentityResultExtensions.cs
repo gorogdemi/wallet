@@ -1,7 +1,7 @@
-using DevQuarter.Wallet.Application.Common.Models;
 using Microsoft.AspNetCore.Identity;
+using Wallet.Application.Common.Models;
 
-namespace DevQuarter.Wallet.Infrastructure.Identity;
+namespace Wallet.Infrastructure.Identity;
 
 public static class IdentityResultExtensions
 {

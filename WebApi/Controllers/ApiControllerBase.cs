@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace DevQuarter.Wallet.WebApi.Controllers;
+namespace Wallet.WebApi.Controllers;
 
 [Produces("application/json")]
 [Route("[controller]")]

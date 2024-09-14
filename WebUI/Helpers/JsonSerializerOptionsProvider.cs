@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace DevQuarter.Wallet.WebUI.Helpers;
+namespace Wallet.WebUI.Helpers;
 
 internal static class JsonSerializerOptionsProvider
 {

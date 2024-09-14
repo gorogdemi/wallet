@@ -1,7 +1,7 @@
-﻿using DevQuarter.Wallet.Application.Common.Exceptions;
-using DevQuarter.Wallet.Application.Common.Interfaces;
+﻿using Wallet.Application.Common.Exceptions;
+using Wallet.Application.Common.Interfaces;
 
-namespace DevQuarter.Wallet.Application.Authentication;
+namespace Wallet.Application.Authentication;
 
 internal sealed class AuthenticationService : IAuthenticationService
 {

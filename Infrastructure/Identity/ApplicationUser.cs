@@ -1,8 +1,8 @@
-﻿using DevQuarter.Wallet.Application.Common.Interfaces;
-using DevQuarter.Wallet.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Wallet.Application.Common.Interfaces;
+using Wallet.Domain.Entities;
 
-namespace DevQuarter.Wallet.Infrastructure.Identity;
+namespace Wallet.Infrastructure.Identity;
 
 public class ApplicationUser : IdentityUser, IUser
 {

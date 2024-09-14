@@ -1,7 +1,7 @@
-﻿using DevQuarter.Wallet.Domain.Common;
-using DevQuarter.Wallet.Domain.Enums;
+﻿using Wallet.Domain.Common;
+using Wallet.Domain.Enums;
 
-namespace DevQuarter.Wallet.Domain.Entities;
+namespace Wallet.Domain.Entities;
 
 public class Transaction : EntityBase
 {

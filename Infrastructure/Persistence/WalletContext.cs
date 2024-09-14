@@ -1,12 +1,12 @@
 ﻿using System.Reflection;
-using DevQuarter.Wallet.Application.Common.Interfaces;
-using DevQuarter.Wallet.Domain.Entities;
-using DevQuarter.Wallet.Domain.Enums;
-using DevQuarter.Wallet.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Wallet.Application.Common.Interfaces;
+using Wallet.Domain.Entities;
+using Wallet.Domain.Enums;
+using Wallet.Infrastructure.Identity;
 
-namespace DevQuarter.Wallet.Infrastructure.Persistence;
+namespace Wallet.Infrastructure.Persistence;
 
 public class WalletContext : IdentityDbContext<ApplicationUser>, IWalletContext
 {

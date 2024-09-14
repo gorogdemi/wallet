@@ -1,7 +1,7 @@
 using System.Globalization;
-using DevQuarter.Wallet.Domain.Enums;
+using Wallet.Domain.Enums;
 
-namespace DevQuarter.Wallet.WebUI.Extensions;
+namespace Wallet.WebUI.Extensions;
 
 public static class ConverterExtensions
 {

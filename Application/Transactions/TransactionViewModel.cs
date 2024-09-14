@@ -1,6 +1,6 @@
-﻿using DevQuarter.Wallet.Domain.Enums;
+﻿using Wallet.Domain.Enums;
 
-namespace DevQuarter.Wallet.Application.Transactions;
+namespace Wallet.Application.Transactions;
 
 public class TransactionViewModel
 {

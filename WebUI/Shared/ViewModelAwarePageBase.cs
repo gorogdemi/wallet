@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace DevQuarter.Wallet.WebUI.Shared;
+namespace Wallet.WebUI.Shared;
 
 public abstract class ViewModelAwarePageBase<TViewModel, TService> : PageBase
 {

@@ -2,8 +2,8 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <RootNamespace>DevQuarter.Wallet.WebUI</RootNamespace>
-        <AssemblyName>DevQuarter.Wallet.WebUI</AssemblyName>
+        <RootNamespace>Wallet.WebUI</RootNamespace>
+        <AssemblyName>Wallet.WebUI</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>

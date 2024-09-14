@@ -1,8 +1,8 @@
-﻿using DevQuarter.Wallet.Application.Categories;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Wallet.Application.Categories;
 
-namespace DevQuarter.Wallet.WebApi.Controllers;
+namespace Wallet.WebApi.Controllers;
 
 [Authorize]
 public class CategoriesController : ApiControllerBase

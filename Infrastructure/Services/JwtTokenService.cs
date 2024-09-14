@@ -2,15 +2,15 @@ using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using DevQuarter.Wallet.Application.Common.Interfaces;
-using DevQuarter.Wallet.Application.Common.Models;
-using DevQuarter.Wallet.Domain.Entities;
-using DevQuarter.Wallet.Infrastructure.Identity;
-using DevQuarter.Wallet.Infrastructure.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Wallet.Application.Common.Interfaces;
+using Wallet.Application.Common.Models;
+using Wallet.Domain.Entities;
+using Wallet.Infrastructure.Identity;
+using Wallet.Infrastructure.Options;
 
-namespace DevQuarter.Wallet.Infrastructure.Services;
+namespace Wallet.Infrastructure.Services;
 
 public class JwtTokenService : ITokenService
 {

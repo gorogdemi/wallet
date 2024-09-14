@@ -2,18 +2,18 @@
 #pragma warning disable IDE0130
 
 using System.Text;
-using DevQuarter.Wallet.Application.Common.Interfaces;
-using DevQuarter.Wallet.Domain.Enums;
-using DevQuarter.Wallet.Infrastructure.Identity;
-using DevQuarter.Wallet.Infrastructure.Options;
-using DevQuarter.Wallet.Infrastructure.Persistence;
-using DevQuarter.Wallet.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
+using Wallet.Application.Common.Interfaces;
+using Wallet.Domain.Enums;
+using Wallet.Infrastructure.Identity;
+using Wallet.Infrastructure.Options;
+using Wallet.Infrastructure.Persistence;
+using Wallet.Infrastructure.Services;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;

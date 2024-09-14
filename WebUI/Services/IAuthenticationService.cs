@@ -1,7 +1,7 @@
-﻿using DevQuarter.Wallet.Application.Authentication;
-using Refit;
+﻿using Refit;
+using Wallet.Application.Authentication;
 
-namespace DevQuarter.Wallet.WebUI.Services;
+namespace Wallet.WebUI.Services;
 
 public interface IAuthenticationService
 {

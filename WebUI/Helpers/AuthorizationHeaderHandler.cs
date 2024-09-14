@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Net.Http.Headers;
-using DevQuarter.Wallet.WebUI.Services;
 using Microsoft.AspNetCore.Components.Authorization;
+using Wallet.WebUI.Services;
 
-namespace DevQuarter.Wallet.WebUI.Helpers;
+namespace Wallet.WebUI.Helpers;
 
 public sealed class AuthorizationHeaderHandler : DelegatingHandler
 {

@@ -1,6 +1,6 @@
 ﻿using Refit;
 
-namespace DevQuarter.Wallet.WebUI.Services;
+namespace Wallet.WebUI.Services;
 
 public interface IWalletService<in TRequest, TResponse>
 {

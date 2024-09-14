@@ -1,12 +1,12 @@
 using AutoMapper;
-using DevQuarter.Wallet.Application.Common.Exceptions;
-using DevQuarter.Wallet.Application.Common.Interfaces;
-using DevQuarter.Wallet.Domain.Entities;
-using DevQuarter.Wallet.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Wallet.Application.Common.Exceptions;
+using Wallet.Application.Common.Interfaces;
+using Wallet.Domain.Entities;
+using Wallet.Domain.Enums;
 
-namespace DevQuarter.Wallet.Application.Transactions;
+namespace Wallet.Application.Transactions;
 
 public class TransactionService : ITransactionService
 {

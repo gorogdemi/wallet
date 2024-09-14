@@ -1,7 +1,7 @@
-﻿using DevQuarter.Wallet.Application.Authentication;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Wallet.Application.Authentication;
 
-namespace DevQuarter.Wallet.WebApi.Controllers;
+namespace Wallet.WebApi.Controllers;
 
 public class AuthenticationController : ApiControllerBase
 {

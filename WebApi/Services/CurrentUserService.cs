@@ -1,7 +1,7 @@
 using System.Security.Claims;
-using DevQuarter.Wallet.Application.Common.Interfaces;
+using Wallet.Application.Common.Interfaces;
 
-namespace DevQuarter.Wallet.WebApi.Services;
+namespace Wallet.WebApi.Services;
 
 public class CurrentUserService : ICurrentUserService
 {
