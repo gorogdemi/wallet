@@ -1,3 +1,5 @@
+#pragma warning disable IDE0130
+
 using System.Reflection;
 using DevQuarter.Wallet.Application.Authentication;
 using DevQuarter.Wallet.Application.Categories;

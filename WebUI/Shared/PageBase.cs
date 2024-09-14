@@ -1,72 +1,57 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Fast.Components.FluentUI;
 using Refit;
 
 namespace DevQuarter.Wallet.WebUI.Shared
 {
     public abstract class PageBase : ComponentBase
     {
-        protected abstract string ErrorMessage { get; set; }
+        private bool _isLoading;
 
-        protected abstract bool IsLoading { get; set; }
+        protected bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                StateHasChanged();
+            }
+        }
+
+        [Inject]
+        protected IMessageService MessageService { get; set; }
 
         [Inject]
         protected NavigationManager NavigationManager { get; set; }
 
-        protected async Task HandleRequestAsync(Func<Task> request, Action onSuccess)
+        protected Task HandleRequestAsync(Func<Task> request, Action onSuccess) =>
+            HandleRequestErrorsAsync(
+                async () =>
+                {
+                    await request();
+                    onSuccess();
+                });
+
+        protected Task HandleRequestAsync(Func<Task> request, Func<Task> onSuccess) =>
+            HandleRequestErrorsAsync(
+                async () =>
+                {
+                    await request();
+                    await onSuccess();
+                });
+
+        protected Task HandleRequestAsync<T>(Func<Task<T>> request, Action<T> onSuccess) =>
+            HandleRequestErrorsAsync(
+                async () =>
+                {
+                    var result = await request();
+                    onSuccess(result);
+                });
+
+        protected override void OnInitialized()
         {
-            ErrorMessage = null;
-
-            try
-            {
-                await request();
-                onSuccess();
-            }
-            catch (ValidationApiException e)
-            {
-                ErrorMessage = e.Content?.Detail ?? e.Content?.Title;
-            }
-            catch (Exception e)
-            {
-                ErrorMessage = e.Message;
-            }
-        }
-
-        protected async Task HandleRequestAsync(Func<Task> request, Func<Task> onSuccess)
-        {
-            ErrorMessage = null;
-
-            try
-            {
-                await request();
-                await onSuccess();
-            }
-            catch (ValidationApiException e)
-            {
-                ErrorMessage = e.Content?.Detail ?? e.Content?.Title;
-            }
-            catch (Exception e)
-            {
-                ErrorMessage = e.Message;
-            }
-        }
-
-        protected async Task HandleRequestAsync<T>(Func<Task<T>> request, Action<T> onSuccess)
-        {
-            ErrorMessage = null;
-
-            try
-            {
-                var result = await request();
-                onSuccess(result);
-            }
-            catch (ValidationApiException e)
-            {
-                ErrorMessage = e.Content?.Detail ?? e.Content?.Title;
-            }
-            catch (Exception e)
-            {
-                ErrorMessage = e.Message;
-            }
+            IsLoading = true;
+            base.OnInitialized();
         }
 
         protected override async Task OnInitializedAsync()
@@ -74,5 +59,29 @@ namespace DevQuarter.Wallet.WebUI.Shared
             await base.OnInitializedAsync();
             IsLoading = false;
         }
+
+        private async Task HandleRequestErrorsAsync(Func<Task> request)
+        {
+            try
+            {
+                await request();
+            }
+            catch (ValidationApiException e)
+            {
+                await ShowErrorMessageAlertAsync(e.Content?.Detail ?? e.Content?.Title);
+            }
+            catch (ApiException e)
+            {
+                var problem = await e.GetContentAsAsync<ProblemDetails>();
+
+                await ShowErrorMessageAlertAsync(problem is not null ? $"{problem.Title}: {problem.Detail}" : e.Message);
+            }
+            catch (Exception e)
+            {
+                await ShowErrorMessageAlertAsync(e.Message);
+            }
+        }
+
+        private async Task ShowErrorMessageAlertAsync(string message) => await MessageService.ShowMessageBarAsync(message, MessageIntent.Error, "TOP");
     }
 }

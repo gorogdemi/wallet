@@ -4,23 +4,18 @@
 
 <h1>Tranzakciók</h1>
 
-<FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" @onclick="@(() => NavigationManager.NavigateTo("transactions/create"))">
-    Új
+<FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" OnClick="@(() => NavigationManager.NavigateTo("transactions/create"))">
+    Új tranzakció
     <FluentIcon Icon="@Icons.Filled.Size20.AddCircle" Slot="start" Color="Color.Fill" />
 </FluentButton>
 
-@if (IsLoading)
-{
-    <div>Adatok betöltése...</div>
-}
-else
-{
-    <FluentCard Style="display: grid; min-height: 200px;">
-        <FluentDataGrid Items="FilteredItems" GridTemplateColumns="0.5fr 0.2fr 0.2fr 0.2fr 0.4fr 0.2fr 0.2fr 0.2fr 0.2fr" ResizableColumns="true" Style="overflow: auto;">
+<FluentCard Style="display: grid; padding: 0; min-height: 250px;" Width="100%" Height="auto">
+    <FluentDataGrid Items="FilteredItems" GridTemplateColumns="0.5fr 0.2fr 0.2fr 0.2fr 0.4fr 0.2fr 0.2fr 0.2fr 0.2fr" ResizableColumns="true" Style="overflow: auto;">
+        <ChildContent>
             <PropertyColumn Title="Megnevezés" Property="@(c => c.Name)" Sortable="true" Align="Align.Start" IsDefaultSortColumn="true">
                 <ColumnOptions>
                     <div class="search-box">
-                        <FluentSearch Autofocus="true" @oninput="HandleFilter" AfterBindValue="HandleClear" Placeholder="Keresés..." />
+                        <FluentSearch @bind-Value="_searchTerm" Autofocus="true" Placeholder="Keresés..." Immediate="true" ImmediateDelay="200" />
                     </div>
                 </ColumnOptions>
             </PropertyColumn>
@@ -34,9 +29,19 @@ else
             <TemplateColumn Title="Művelet" TGridItem="TransactionViewModel">
                 <EditorButtons OnEdit="@(() => NavigationManager.NavigateTo($"transactions/edit/{context.Id}"))" OnDelete="() => DeleteAsync(context.Id)" />
             </TemplateColumn>
-        </FluentDataGrid>
-    </FluentCard>
-}
+        </ChildContent>
+        <EmptyContent>
+            @if (IsLoading)
+            {
+                <div>Adatok betöltése...</div>
+            }
+            else
+            {
+                <div>Nincs megjelentíthető adat.</div>
+            }
+        </EmptyContent>
+    </FluentDataGrid>
+</FluentCard>
 
 @code {
 
@@ -59,15 +64,5 @@ else
             () => Service.GetAllAsync(),
             result => ViewModel = result);
     }
-
-    private void HandleFilter(ChangeEventArgs args)
-    {
-        if (args.Value is string value)
-        {
-            _searchTerm = value;
-        }
-    }
-
-    private void HandleClear(string value) => _searchTerm = value ?? string.Empty;
 
 }

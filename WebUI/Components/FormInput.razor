@@ -1,11 +1,7 @@
 @if (IsVisible)
 {
-    <div class="row mb-2">
+    <div class="form-input row mb-2">
         <div class="col">
-            @if (!string.IsNullOrEmpty(Label))
-            {
-                <label class="label">@Label</label>
-            }
             @ChildContent
             @if (ValidationFor is not null)
             {
@@ -22,9 +18,6 @@
 
     [Parameter]
     public bool IsVisible { get; set; } = true;
-
-    [Parameter]
-    public string Label { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }

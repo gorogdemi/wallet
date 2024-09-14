@@ -3,7 +3,7 @@ using DevQuarter.Wallet.Application.Common.Interfaces;
 
 namespace DevQuarter.Wallet.Application.Authentication
 {
-    internal class AuthenticationService : IAuthenticationService
+    internal sealed class AuthenticationService : IAuthenticationService
     {
         private readonly IIdentityService _identityService;
         private readonly ITokenService _tokenService;

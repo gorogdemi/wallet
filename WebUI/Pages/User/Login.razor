@@ -3,19 +3,21 @@
 
 <h1>Bejelentkezés</h1>
 
-<EditForm Model="ViewModel" OnValidSubmit="LoginAsync" class="card card-body bg-light mt-5">
-    <FluentValidationValidator />
+<FluentCard Width="100%" Height="auto">
+    <EditForm Model="ViewModel" OnValidSubmit="LoginAsync">
+        <FluentValidationValidator />
 
-    <FormInput ValidationFor="() => ViewModel.UserName">
-        <FluentTextField @bind-Value="ViewModel.UserName">Név:</FluentTextField>
-    </FormInput>
+        <FormInput ValidationFor="() => ViewModel.UserName">
+            <FluentTextField @bind-Value="ViewModel.UserName">Felhasználónév:</FluentTextField>
+        </FormInput>
 
-    <FormInput ValidationFor="() => ViewModel.Password">
-        <FluentTextField TextFieldType="TextFieldType.Password" @bind-Value="ViewModel.Password">Jelszó:</FluentTextField>
-    </FormInput>
+        <FormInput ValidationFor="() => ViewModel.Password">
+            <FluentTextField TextFieldType="TextFieldType.Password" @bind-Value="ViewModel.Password">Jelszó:</FluentTextField>
+        </FormInput>
 
-    <FormSubmit Title="Bejelentkezés" />
-</EditForm>
+        <FormSubmit Title="Bejelentkezés" />
+    </EditForm>
+</FluentCard>
 
 @code {
 

@@ -1,0 +1,9 @@
+@inherits EditDialog<CategoryRequest>
+
+<EditDialog Content="Content">
+    <FluentValidationValidator />
+
+    <FormInput ValidationFor="() => Content.Name">
+        <FluentTextField @bind-Value="Content.Name">Megnevezés:</FluentTextField>
+    </FormInput>
+</EditDialog>

@@ -3,28 +3,30 @@
 @inject NavigationManager NavigationManager
 
 <div class="page">
-    <div class="sidebar">
+    <nav>
         <NavMenu />
-    </div>
+    </nav>
 
-    <div class="main">
+    <main>
         <div class="top-row px-4">
             <AuthorizeView>
                 <Authorized>
                     <span style="margin-right:10px">@context.User.FindFirst("fullname")?.Value</span>
-                    <FluentButton Appearance="Appearance.Accent" @onclick="LogoutAsync">Kijelentkezés</FluentButton>
+                    <FluentButton Appearance="Appearance.Outline" @onclick="LogoutAsync">Kijelentkezés</FluentButton>
                 </Authorized>
                 <NotAuthorized>
-                    <NavLink class="nav-link" href="login">Bejelentkezés</NavLink>
-                    <NavLink class="nav-link" href="register">Regisztráció</NavLink>
+                    <FluentAnchor Href="login">Bejelentkezés</FluentAnchor>
+                    <FluentAnchor Href="register">Regisztráció</FluentAnchor>
                 </NotAuthorized>
             </AuthorizeView>
         </div>
 
         <div class="content px-4">
+            <FluentMessageBarContainer Section="TOP" ClearAfterNavigation="true" NewestOnTop="true" MaxMessageCount="3" Type="MessageType.MessageBar" />
             @Body
         </div>
-    </div>
+        <FluentDialogProvider />
+    </main>
 </div>
 
 @code {

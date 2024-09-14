@@ -39,7 +39,7 @@ builder.Services.AddRefitClient<IAuthenticationService>(refitSettings)
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddValidatorsFromAssembly(typeof(TransactionRequestValidator).Assembly);
-builder.Services.AddFluentUIComponents(options => options.HostingModel = BlazorHostingModel.WebAssembly);
+builder.Services.AddFluentUIComponents();
 
 builder.Services.AddTransient<AuthorizationHeaderHandler>();
 builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();

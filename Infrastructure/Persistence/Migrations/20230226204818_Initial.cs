@@ -3,8 +3,6 @@ using DevQuarter.Wallet.Domain.Enums;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-#nullable disable
-
 namespace DevQuarter.Wallet.Infrastructure.Persistence.Migrations
 {
     public partial class Initial : Migration

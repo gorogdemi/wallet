@@ -40,13 +40,7 @@ namespace DevQuarter.Wallet.Application.Categories
 
         public async Task DeleteAsync(long id, CancellationToken cancellationToken)
         {
-            var transaction = await _walletContextService.GetAsync<Category>(id, cancellationToken);
-
-            if (transaction is null)
-            {
-                throw new EntityNotFoundException();
-            }
-
+            var transaction = await _walletContextService.GetAsync<Category>(id, cancellationToken) ?? throw new EntityNotFoundException();
             var userId = _currentUserService.UserId;
 
             if (transaction.UserId != userId)
@@ -70,13 +64,7 @@ namespace DevQuarter.Wallet.Application.Categories
 
         public async Task<CategoryViewModel> GetAsync(long id, CancellationToken cancellationToken)
         {
-            var transaction = await _walletContextService.GetAsync<Category>(id, cancellationToken);
-
-            if (transaction is null)
-            {
-                throw new EntityNotFoundException();
-            }
-
+            var transaction = await _walletContextService.GetAsync<Category>(id, cancellationToken) ?? throw new EntityNotFoundException();
             var userId = _currentUserService.UserId;
 
             if (transaction.UserId != userId)
@@ -101,13 +89,7 @@ namespace DevQuarter.Wallet.Application.Categories
 
         public async Task<CategoryViewModel> UpdateAsync(long id, CategoryRequest request, CancellationToken cancellationToken)
         {
-            var transaction = await _walletContextService.GetAsync<Category>(id, cancellationToken);
-
-            if (transaction is null)
-            {
-                throw new EntityNotFoundException();
-            }
-
+            var transaction = await _walletContextService.GetAsync<Category>(id, cancellationToken) ?? throw new EntityNotFoundException();
             var userId = _currentUserService.UserId;
 
             if (transaction.UserId != userId)

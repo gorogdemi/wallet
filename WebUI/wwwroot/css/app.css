@@ -10,20 +10,15 @@
     color: red;
 }
 
-.category-modal > fluent-dialog {
-    --dialog-width: 350px;
-    --dialog-height: 250px;
-}
-
-fluent-text-field {
+.form-input fluent-text-field {
     width: 100%;
 }
 
-fluent-number-field {
+.form-input fluent-number-field {
     width: 100%;
 }
 
-fluent-select {
+.form-input fluent-select {
     width: 100%;
 }
 
