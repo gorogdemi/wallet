@@ -1,8 +1,7 @@
 ﻿using DevQuarter.Wallet.Application.Categories;
 
-namespace DevQuarter.Wallet.WebUI.Services
+namespace DevQuarter.Wallet.WebUI.Services;
+
+public interface ICategoryService : IWalletService<CategoryRequest, CategoryViewModel>
 {
-    public interface ICategoryService : IWalletService<CategoryRequest, CategoryViewModel>
-    {
-    }
 }

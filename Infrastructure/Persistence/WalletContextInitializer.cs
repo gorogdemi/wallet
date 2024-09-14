@@ -1,30 +1,29 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace DevQuarter.Wallet.Infrastructure.Persistence
+namespace DevQuarter.Wallet.Infrastructure.Persistence;
+
+public class WalletContextInitializer
 {
-    public class WalletContextInitializer
+    private readonly WalletContext _context;
+    private readonly ILogger<WalletContextInitializer> _logger;
+
+    public WalletContextInitializer(WalletContext context, ILogger<WalletContextInitializer> logger)
     {
-        private readonly WalletContext _context;
-        private readonly ILogger<WalletContextInitializer> _logger;
+        _context = context;
+        _logger = logger;
+    }
 
-        public WalletContextInitializer(WalletContext context, ILogger<WalletContextInitializer> logger)
+    public async Task InitializeAsync()
+    {
+        try
         {
-            _context = context;
-            _logger = logger;
+            await _context.Database.MigrateAsync();
         }
-
-        public async Task InitializeAsync()
+        catch (Exception ex)
         {
-            try
-            {
-                await _context.Database.MigrateAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while initializing the database");
-                throw;
-            }
+            _logger.LogError(ex, "An error occurred while initializing the database");
+            throw;
         }
     }
 }

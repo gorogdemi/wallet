@@ -1,15 +1,53 @@
-[*.cs]
-
-dotnet_diagnostic.IDE0005.severity = none
+[{*.cs,*.razor}]
+dotnet_diagnostic.IDE0010.severity = none
+dotnet_diagnostic.IDE0045.severity = none
 dotnet_diagnostic.IDE0046.severity = none
 dotnet_diagnostic.IDE0058.severity = none
+dotnet_diagnostic.IDE0059.severity = none
 dotnet_diagnostic.IDE0072.severity = none
+dotnet_diagnostic.IDE0305.severity = none
+
+dotnet_diagnostic.CS1591.severity = none
+
+dotnet_diagnostic.CA1016.severity = none
+dotnet_diagnostic.CA1848.severity = none
+dotnet_diagnostic.CA1851.severity = suggestion
+dotnet_diagnostic.CA1859.severity = none
+dotnet_diagnostic.CA1860.severity = none
+dotnet_diagnostic.CA1861.severity = none
+dotnet_diagnostic.CA1863.severity = none
+
+dotnet_diagnostic.SA1010.severity = none
+dotnet_diagnostic.SA1101.severity = none
+dotnet_diagnostic.SA1201.severity = warning
+dotnet_diagnostic.SA1202.severity = warning
+dotnet_diagnostic.SA1203.severity = warning
+dotnet_diagnostic.SA1204.severity = warning
+dotnet_diagnostic.SA1206.severity = none
+dotnet_diagnostic.SA1214.severity = warning
+dotnet_diagnostic.SA1215.severity = warning
+dotnet_diagnostic.SA1611.severity = none
+
+dotnet_diagnostic.RCS1031.severity = none
+dotnet_diagnostic.RCS1241.severity = none
+
+dotnet_diagnostic.SYSLIB1045.severity = suggestion
 
 csharp_style_var_for_built_in_types = true
 csharp_style_var_when_type_is_apparent = true
+csharp_style_prefer_primary_constructors = false
 csharp_style_var_elsewhere = true
 csharp_style_expression_bodied_methods = when_on_single_line
+csharp_style_expression_bodied_operators = when_on_single_line
 csharp_style_expression_bodied_local_functions = when_on_single_line
 csharp_style_deconstructed_variable_declaration = false
-csharp_style_namespace_declarations = block_scoped
-dotnet_style_qualification_for_field = false
+csharp_style_namespace_declarations = file_scoped
+csharp_indent_case_contents_when_block = false
+
+max_line_length = 160
+
+[*]
+indent_style = space
+
+[*.csproj]
+indent_size = 4

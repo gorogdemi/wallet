@@ -1,14 +1,13 @@
 ﻿using FluentValidation;
 
-namespace DevQuarter.Wallet.Application.Categories
+namespace DevQuarter.Wallet.Application.Categories;
+
+public class CategoryRequestValidator : AbstractValidator<CategoryRequest>
 {
-    public class CategoryRequestValidator : AbstractValidator<CategoryRequest>
+    public CategoryRequestValidator()
     {
-        public CategoryRequestValidator()
-        {
-            RuleFor(request => request.Name)
-                .NotEmpty()
-                .MaximumLength(100);
-        }
+        RuleFor(request => request.Name)
+            .NotEmpty()
+            .MaximumLength(100);
     }
 }

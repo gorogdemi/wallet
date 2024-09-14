@@ -3,86 +3,85 @@ using DevQuarter.Wallet.Application.Common.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
-namespace DevQuarter.Wallet.Infrastructure.Identity
+namespace DevQuarter.Wallet.Infrastructure.Identity;
+
+public class IdentityService : IIdentityService
 {
-    public class IdentityService : IIdentityService
+    private readonly IAuthorizationService _authorizationService;
+    private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory;
+    private readonly UserManager<ApplicationUser> _userManager;
+
+    public IdentityService(
+        UserManager<ApplicationUser> userManager,
+        IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
+        IAuthorizationService authorizationService)
     {
-        private readonly IAuthorizationService _authorizationService;
-        private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory;
-        private readonly UserManager<ApplicationUser> _userManager;
+        _userManager = userManager;
+        _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
+        _authorizationService = authorizationService;
+    }
 
-        public IdentityService(
-            UserManager<ApplicationUser> userManager,
-            IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
-            IAuthorizationService authorizationService)
+    public async Task<bool> AuthorizeAsync(string userId, string policyName)
+    {
+        var user = (ApplicationUser)await GetUserByIdAsync(userId);
+
+        if (user is null)
         {
-            _userManager = userManager;
-            _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
-            _authorizationService = authorizationService;
+            return false;
         }
 
-        public async Task<bool> AuthorizeAsync(string userId, string policyName)
+        var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
+        var result = await _authorizationService.AuthorizeAsync(principal, policyName);
+
+        return result.Succeeded;
+    }
+
+    public async Task<bool> CheckPasswordAsync(string userName, string password)
+    {
+        var user = (ApplicationUser)await GetUserByUserNameAsync(userName);
+        return user != null && await _userManager.CheckPasswordAsync(user, password);
+    }
+
+    public async Task<Result> CreateUserAsync(string userName, string password, string email, string fullName)
+    {
+        var user = new ApplicationUser
         {
-            var user = (ApplicationUser)await GetUserByIdAsync(userId);
+            UserName = userName,
+            Email = email,
+            FullName = fullName,
+            EmailConfirmed = true,
+        };
 
-            if (user is null)
-            {
-                return false;
-            }
+        var result = await _userManager.CreateAsync(user, password);
 
-            var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
-            var result = await _authorizationService.AuthorizeAsync(principal, policyName);
+        return result.ToApplicationResult();
+    }
 
-            return result.Succeeded;
-        }
+    public async Task<Result> DeleteUserAsync(string userId)
+    {
+        var user = (ApplicationUser)await GetUserByIdAsync(userId);
+        return user != null ? await DeleteUserAsync(user) : Result.Success();
+    }
 
-        public async Task<bool> CheckPasswordAsync(string userName, string password)
-        {
-            var user = (ApplicationUser)await GetUserByUserNameAsync(userName);
-            return user != null && await _userManager.CheckPasswordAsync(user, password);
-        }
+    public async Task<IUser> GetUserByIdAsync(string userId) => await _userManager.FindByIdAsync(userId);
 
-        public async Task<Result> CreateUserAsync(string userName, string password, string email, string fullName)
-        {
-            var user = new ApplicationUser
-            {
-                UserName = userName,
-                Email = email,
-                FullName = fullName,
-                EmailConfirmed = true,
-            };
+    public async Task<IUser> GetUserByUserNameAsync(string userName) => await _userManager.FindByNameAsync(userName);
 
-            var result = await _userManager.CreateAsync(user, password);
+    public async Task<string> GetUserNameAsync(string userId)
+    {
+        var user = await GetUserByIdAsync(userId);
+        return user.UserName;
+    }
 
-            return result.ToApplicationResult();
-        }
+    public async Task<bool> IsInRoleAsync(string userId, string role)
+    {
+        var user = (ApplicationUser)await GetUserByIdAsync(userId);
+        return user != null && await _userManager.IsInRoleAsync(user, role);
+    }
 
-        public async Task<Result> DeleteUserAsync(string userId)
-        {
-            var user = (ApplicationUser)await GetUserByIdAsync(userId);
-            return user != null ? await DeleteUserAsync(user) : Result.Success();
-        }
-
-        public async Task<IUser> GetUserByIdAsync(string userId) => await _userManager.FindByIdAsync(userId);
-
-        public async Task<IUser> GetUserByUserNameAsync(string userName) => await _userManager.FindByNameAsync(userName);
-
-        public async Task<string> GetUserNameAsync(string userId)
-        {
-            var user = await GetUserByIdAsync(userId);
-            return user.UserName;
-        }
-
-        public async Task<bool> IsInRoleAsync(string userId, string role)
-        {
-            var user = (ApplicationUser)await GetUserByIdAsync(userId);
-            return user != null && await _userManager.IsInRoleAsync(user, role);
-        }
-
-        private async Task<Result> DeleteUserAsync(ApplicationUser user)
-        {
-            var result = await _userManager.DeleteAsync(user);
-            return result.ToApplicationResult();
-        }
+    private async Task<Result> DeleteUserAsync(ApplicationUser user)
+    {
+        var result = await _userManager.DeleteAsync(user);
+        return result.ToApplicationResult();
     }
 }

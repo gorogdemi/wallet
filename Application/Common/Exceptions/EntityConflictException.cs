@@ -1,19 +1,18 @@
-﻿namespace DevQuarter.Wallet.Application.Common.Exceptions
+﻿namespace DevQuarter.Wallet.Application.Common.Exceptions;
+
+public class EntityConflictException : WalletServiceException
 {
-    public class EntityConflictException : WalletServiceException
+    public EntityConflictException(string message)
+        : base(message)
     {
-        public EntityConflictException(string message)
-            : base(message)
-        {
-        }
+    }
 
-        public EntityConflictException()
-        {
-        }
+    public EntityConflictException()
+    {
+    }
 
-        public EntityConflictException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+    public EntityConflictException(string message, Exception innerException)
+        : base(message, innerException)
+    {
     }
 }

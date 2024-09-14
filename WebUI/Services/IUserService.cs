@@ -1,17 +1,16 @@
 ﻿using DevQuarter.Wallet.Application.Authentication;
 
-namespace DevQuarter.Wallet.WebUI.Services
+namespace DevQuarter.Wallet.WebUI.Services;
+
+public interface IUserService
 {
-    public interface IUserService
-    {
-        Task<string> GetJwtTokenAsync();
+    Task<string> GetJwtTokenAsync();
 
-        Task LoginAsync(LoginRequest loginRequest);
+    Task LoginAsync(LoginRequest loginRequest);
 
-        Task LogoutAsync();
+    Task LogoutAsync();
 
-        Task<string> RefreshTokenAsync();
+    Task<string> RefreshTokenAsync();
 
-        Task RegisterAsync(RegistrationRequest registrationRequest);
-    }
+    Task RegisterAsync(RegistrationRequest registrationRequest);
 }

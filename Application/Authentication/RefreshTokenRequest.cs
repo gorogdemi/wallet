@@ -1,9 +1,8 @@
-﻿namespace DevQuarter.Wallet.Application.Authentication
-{
-    public class RefreshTokenRequest
-    {
-        public string RefreshToken { get; set; }
+﻿namespace DevQuarter.Wallet.Application.Authentication;
 
-        public string Token { get; set; }
-    }
+public class RefreshTokenRequest
+{
+    public string RefreshToken { get; set; }
+
+    public string Token { get; set; }
 }

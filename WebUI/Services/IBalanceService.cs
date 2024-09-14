@@ -1,11 +1,10 @@
 ﻿using DevQuarter.Wallet.Application.Transactions;
 using Refit;
 
-namespace DevQuarter.Wallet.WebUI.Services
+namespace DevQuarter.Wallet.WebUI.Services;
+
+public interface IBalanceService
 {
-    public interface IBalanceService
-    {
-        [Get("/")]
-        Task<BalanceViewModel> GetAsync();
-    }
+    [Get("/")]
+    Task<BalanceViewModel> GetAsync();
 }

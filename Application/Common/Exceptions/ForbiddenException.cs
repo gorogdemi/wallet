@@ -1,19 +1,18 @@
-﻿namespace DevQuarter.Wallet.Application.Common.Exceptions
+﻿namespace DevQuarter.Wallet.Application.Common.Exceptions;
+
+public class ForbiddenException : WalletServiceException
 {
-    public class ForbiddenException : WalletServiceException
+    public ForbiddenException(string message)
+        : base(message)
     {
-        public ForbiddenException(string message)
-            : base(message)
-        {
-        }
+    }
 
-        public ForbiddenException()
-        {
-        }
+    public ForbiddenException()
+    {
+    }
 
-        public ForbiddenException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+    public ForbiddenException(string message, Exception innerException)
+        : base(message, innerException)
+    {
     }
 }
