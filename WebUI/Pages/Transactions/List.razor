@@ -34,7 +34,7 @@
         <EmptyContent>
             @if (IsLoading)
             {
-                <div>Adatok betöltése...</div>
+                <FluentProgressRing />
             }
             else
             {
@@ -72,7 +72,7 @@
         DialogParameters parameters = new()
         {
             Title = $"Tranzakció {(isEdit ? "módosítás" : "létrehozás")}",
-            Width = "600px",
+            Width = "500px",
             TrapFocus = true,
             Modal = true,
             PreventScroll = true,
@@ -128,10 +128,18 @@
             LoadTransactionsAsync);
     }
 
-    private async Task DeleteAsync(long id) =>
-        await HandleRequestAsync(
-            () => Service.DeleteAsync(id),
-            async () => await LoadTransactionsAsync());
+    private async Task DeleteAsync(long id)
+    {
+        var dialog = await DialogService.ShowConfirmationAsync("Biztosan törölni szeretné?", "Igen", "Nem", "Törlés");
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            await HandleRequestAsync(
+                () => Service.DeleteAsync(id),
+                async () => await LoadTransactionsAsync());
+        }
+    }
 
     private Task LoadTransactionsAsync() =>
         HandleRequestAsync(

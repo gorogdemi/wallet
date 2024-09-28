@@ -4,6 +4,6 @@
     <FluentValidationValidator />
 
     <FormInput ValidationFor="() => Content.Name">
-        <FluentTextField @bind-Value="Content.Name">Megnevezés:</FluentTextField>
+        <FluentTextField Label="Megnevezés:" Required @bind-Value="Content.Name" />
     </FormInput>
 </EditDialog>

@@ -20,7 +20,7 @@
         <EmptyContent>
             @if (IsLoading)
             {
-                <div>Adatok betöltése...</div>
+                <FluentProgressRing />
             }
             else
             {
@@ -66,10 +66,18 @@
         }
     }
 
-    private async Task DeleteAsync(CategoryDto category) =>
-        await HandleRequestAsync(
-            () => Service.DeleteAsync(category.Id),
-            LoadCategoriesAsync);
+    private async Task DeleteAsync(CategoryDto category)
+    {
+        var dialog = await DialogService.ShowConfirmationAsync("Biztosan törölni szeretné?", "Igen", "Nem", "Törlés");
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            await HandleRequestAsync(
+                () => Service.DeleteAsync(category.Id),
+                LoadCategoriesAsync);
+        }
+    }
 
     private async Task LoadCategoriesAsync() =>
         await HandleRequestAsync(

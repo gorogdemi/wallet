@@ -12,14 +12,17 @@
 
 .form-input fluent-text-field {
     width: 100%;
+    height: 34px;
 }
 
 .form-input fluent-number-field {
     width: 100%;
+    height: 34px;
 }
 
 .form-input fluent-select {
     width: 100%;
+    height: 34px;
 }
 
 #blazor-error-ui {

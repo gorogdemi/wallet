@@ -4,37 +4,45 @@
     <FluentValidationValidator />
 
     <FormInput ValidationFor="() => Content.Name">
-        <FluentTextField @bind-Value="Content.Name">Megnevezés:</FluentTextField>
+        <FluentTextField Label="Megnevezés:" Required @bind-Value="Content.Name" />
     </FormInput>
 
     <FormInput ValidationFor="() => Content.BankAmount">
-        <FluentNumberField @bind-Value="Content.BankAmount">Bank:</FluentNumberField>
+        <FluentNumberField Label="Bank összeg:" Required @bind-Value="Content.BankAmount" />
     </FormInput>
 
     <FormInput ValidationFor="() => Content.CashAmount">
-        <FluentNumberField @bind-Value="Content.CashAmount">Készpénz:</FluentNumberField>
+        <FluentNumberField Label="Készpénz összeg:" Required @bind-Value="Content.CashAmount" />
     </FormInput>
 
     <FormInput ValidationFor="() => Content.Comment">
-        <FluentTextField @bind-Value="Content.Comment">Megjegyzés:</FluentTextField>
+        <FluentTextField Label="Megjegyzés:" @bind-Value="Content.Comment" />
     </FormInput>
 
     <FormInput ValidationFor="() => Content.Date">
-        <FluentDatePicker @bind-Value="Content.Date" Label="Dátum:" />
+        <FluentDatePicker Label="Dátum:" Required @bind-Value="Content.Date" />
     </FormInput>
 
     <FormInput ValidationFor="() => Content.Type">
-        <FluentSelect @bind-SelectedOption="Content.Type" Label="Típus:" Items="_transactionTypes" OptionText="type => type.ToTransactionTypeText()" />
+        <FluentSelect Label="Típus:" Required Placeholder="Nincs" @bind-SelectedOption="Content.Type" Items="_transactionTypes" OptionText="type => type.ToTransactionTypeText()" />
     </FormInput>
 
     <FormInput ValidationFor="() => Content.CategoryId">
         <FluentSelect
-            @bind-Value="Content.CategoryId"
             Label="Kategória:"
             Placeholder="Nincs"
+            @bind-Value="Content.CategoryId"
             Items="Content.Categories"
-            OptionText="option => option?.Name.ToCategoryText()"
-            OptionValue="option => option?.Id.ToString()" />
+            OptionText="o => o?.Name.ToCategoryText()"
+            OptionValue="o => o?.Id.ToString()"
+            Width="@(Content.CategoryId is null ? "100%" : "calc(100% - 37px)")" />
+
+        @if (Content.CategoryId is not null)
+        {
+            <FluentButton OnClick="() => Content.CategoryId = null" Style="height: 34px">
+                <FluentIcon Icon="Icons.Regular.Size20.Dismiss" Color="Color.Neutral" />
+            </FluentButton>
+        }
     </FormInput>
 </EditDialog>
 
@@ -44,10 +52,8 @@
 
     protected override void OnInitialized()
     {
-        Content.Type = TransactionType.Expense;
-        Content.Date = DateTime.Now;
-
         _transactionTypes = Enum.GetValues<TransactionType>().Cast<TransactionType?>().ToList();
+        Content.Date = DateTime.Now;
     }
 
 }
