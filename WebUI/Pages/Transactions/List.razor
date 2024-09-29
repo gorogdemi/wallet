@@ -1,5 +1,5 @@
 ﻿@page "/transactions"
-@inherits TransactionBase<List<TransactionDto>>
+@inherits TransactionBase<TransactionViewModel>
 @attribute [Authorize]
 @inject IDialogService DialogService
 
@@ -46,19 +46,14 @@
 
 @code {
 
-    private List<CategoryDto> _categories;
     private string _searchTerm = string.Empty;
 
-    private IQueryable<TransactionDto> FilteredItems => ViewModel?.Where(x => x.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase)).AsQueryable();
+    private IQueryable<TransactionDto> FilteredItems => ViewModel?.Transactions.Where(x => x.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase)).AsQueryable();
 
-    protected override async Task SetViewModelAsync()
-    {
-        await LoadTransactionsAsync();
-
+    protected override async Task SetViewModelAsync() =>
         await HandleRequestAsync(
-            () => CategoryService.GetAllAsync(),
-            result => _categories = result);
-    }
+            () => Service.GetViewModelAsync(),
+            result => ViewModel = result);
 
     private async Task AddAsync() => await HandleDialogAsync(null);
 
@@ -92,12 +87,12 @@
     {
         var formViewModel = new TransactionFormViewModel
         {
-            Categories = _categories,
+            Categories = ViewModel.Categories,
         };
 
         if (isEdit)
         {
-            var transaction = ViewModel.FirstOrDefault(x => x.Id == id);
+            var transaction = ViewModel.Transactions.Find(x => x.Id == id);
             formViewModel.Name = transaction!.Name;
             formViewModel.Comment = transaction.Comment;
             formViewModel.BankAmount = transaction.BankAmount;
@@ -125,7 +120,7 @@
 
         await HandleRequestAsync(
             () => isEdit ? Service.UpdateAsync(id!.Value, request) : Service.CreateAsync(request),
-            LoadTransactionsAsync);
+            SetViewModelAsync);
     }
 
     private async Task DeleteAsync(long id)
@@ -137,13 +132,8 @@
         {
             await HandleRequestAsync(
                 () => Service.DeleteAsync(id),
-                async () => await LoadTransactionsAsync());
+                SetViewModelAsync);
         }
     }
-
-    private Task LoadTransactionsAsync() =>
-        HandleRequestAsync(
-            () => Service.GetAllAsync(),
-            result => ViewModel = result);
 
 }

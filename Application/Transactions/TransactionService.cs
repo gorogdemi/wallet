@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Wallet.Application.Common.Exceptions;
 using Wallet.Application.Common.Interfaces;
 using Wallet.Domain.Entities;
-using Wallet.Domain.Enums;
 using Wallet.Shared.Transactions;
 
 namespace Wallet.Application.Transactions;
@@ -56,7 +55,7 @@ public class TransactionService : ITransactionService
         _logger.LogInformation("Transaction '{Id}' deleted", transaction.Id);
     }
 
-    public async Task<IEnumerable<TransactionDto>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<List<TransactionDto>> GetAllAsync(CancellationToken cancellationToken)
     {
         var userId = _currentUserService.UserId;
 
@@ -87,31 +86,14 @@ public class TransactionService : ITransactionService
         return mapped;
     }
 
-    public async Task<BalanceViewModel> GetBalanceAsync(CancellationToken cancellationToken)
-    {
-        var userId = _currentUserService.UserId;
-
-        var cashBalance = await _walletContextService.Context.Transactions.Where(x => x.UserId == userId)
-            .Select(x => x.Type == TransactionType.Expense ? x.CashAmount * -1 : x.CashAmount)
-            .SumAsync(cancellationToken);
-
-        var bankBalance = await _walletContextService.Context.Transactions.Where(x => x.UserId == userId)
-            .Select(x => x.Type == TransactionType.Expense ? x.BankAmount * -1 : x.BankAmount)
-            .SumAsync(cancellationToken);
-
-        _logger.LogInformation("Balance retrieved from the database for user '{UserId}'", userId);
-
-        return new BalanceViewModel { Cash = cashBalance, BankAccount = bankBalance, Full = cashBalance + bankBalance };
-    }
-
-    public async Task<IEnumerable<TransactionDto>> SearchAsync(string searchText, CancellationToken cancellationToken)
+    public async Task<List<TransactionDto>> SearchAsync(string searchText, CancellationToken cancellationToken)
     {
         var userId = _currentUserService.UserId;
         var transactions = await _walletContextService.Context.Transactions.Where(t => t.UserId == userId && EF.Functions.ILike(t.Name, $"%{searchText}%"))
             .ToListAsync(cancellationToken);
         _logger.LogInformation("Transactions retrieved from database by search text '{SearchText}'", searchText);
 
-        return _mapper.Map<IEnumerable<TransactionDto>>(transactions);
+        return _mapper.Map<List<TransactionDto>>(transactions);
     }
 
     public async Task<TransactionDto> UpdateAsync(long id, TransactionRequest request, CancellationToken cancellationToken)

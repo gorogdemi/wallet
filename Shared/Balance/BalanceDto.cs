@@ -1,6 +1,6 @@
-namespace Wallet.Application.Common.Models;
+﻿namespace Wallet.Shared.Balance;
 
-public class Balance
+public class BalanceDto
 {
     public double BankAccount { get; set; }
 

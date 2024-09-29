@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Wallet.Application.Common.Models;
 using Wallet.Domain.Entities;
 using Wallet.Shared.Categories;
 using Wallet.Shared.Transactions;
@@ -15,7 +14,5 @@ public class EntityProfile : Profile
 
         CreateMap<CategoryRequest, Category>();
         CreateMap<Category, CategoryDto>();
-
-        CreateMap<Balance, BalanceViewModel>();
     }
 }

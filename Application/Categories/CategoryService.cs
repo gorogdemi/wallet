@@ -53,14 +53,14 @@ public class CategoryService : ICategoryService
         _logger.LogInformation("Category '{Id}' deleted", transaction.Id);
     }
 
-    public async Task<IEnumerable<CategoryDto>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<List<CategoryDto>> GetAllAsync(CancellationToken cancellationToken)
     {
         var userId = _currentUserService.UserId;
 
         var transactions = await _walletContextService.Context.Categories.Where(t => t.UserId == userId).ToListAsync(cancellationToken);
         _logger.LogInformation("Categories retrieved from database");
 
-        return _mapper.Map<IEnumerable<CategoryDto>>(transactions);
+        return _mapper.Map<List<CategoryDto>>(transactions);
     }
 
     public async Task<CategoryDto> GetAsync(long id, CancellationToken cancellationToken)
@@ -78,14 +78,14 @@ public class CategoryService : ICategoryService
         return _mapper.Map<CategoryDto>(transaction);
     }
 
-    public async Task<IEnumerable<CategoryDto>> SearchAsync(string searchText, CancellationToken cancellationToken)
+    public async Task<List<CategoryDto>> SearchAsync(string searchText, CancellationToken cancellationToken)
     {
         var userId = _currentUserService.UserId;
         var transactions = await _walletContextService.Context.Categories.Where(t => t.UserId == userId && EF.Functions.ILike(t.Name, $"%{searchText}%"))
             .ToListAsync(cancellationToken);
         _logger.LogInformation("Categories retrieved from database by search text '{SearchText}'", searchText);
 
-        return _mapper.Map<IEnumerable<CategoryDto>>(transactions);
+        return _mapper.Map<List<CategoryDto>>(transactions);
     }
 
     public async Task<CategoryDto> UpdateAsync(long id, CategoryRequest request, CancellationToken cancellationToken)

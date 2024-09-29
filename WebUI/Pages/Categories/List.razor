@@ -34,7 +34,10 @@
 
     private IQueryable<CategoryDto> CategoryList => ViewModel?.AsQueryable();
 
-    protected override Task SetViewModelAsync() => LoadCategoriesAsync();
+    protected override async Task SetViewModelAsync() =>
+        await HandleRequestAsync(
+            () => Service.GetAllAsync(),
+            result => ViewModel = result);
 
     private async Task AddAsync() => await HandleDialogAsync(null, new CategoryRequest());
 
@@ -62,7 +65,7 @@
 
             await HandleRequestAsync(
                 () => isEdit ? Service.UpdateAsync(id!.Value, request) : Service.CreateAsync(request),
-                LoadCategoriesAsync);
+                SetViewModelAsync);
         }
     }
 
@@ -75,13 +78,8 @@
         {
             await HandleRequestAsync(
                 () => Service.DeleteAsync(category.Id),
-                LoadCategoriesAsync);
+                SetViewModelAsync);
         }
     }
-
-    private async Task LoadCategoriesAsync() =>
-        await HandleRequestAsync(
-            () => Service.GetAllAsync(),
-            result => ViewModel = result);
 
 }

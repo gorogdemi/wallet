@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Wallet.Application.Categories;
 using Wallet.Application.Transactions;
 using Wallet.Shared.Transactions;
 
@@ -8,11 +9,13 @@ namespace Wallet.WebApi.Controllers;
 [Authorize]
 public class TransactionsController : ApiControllerBase
 {
+    private readonly ICategoryService _categoryService;
     private readonly ITransactionService _transactionService;
 
-    public TransactionsController(ITransactionService transactionService)
+    public TransactionsController(ITransactionService transactionService, ICategoryService categoryService)
     {
         _transactionService = transactionService;
+        _categoryService = categoryService;
     }
 
     [HttpPost]
@@ -30,7 +33,7 @@ public class TransactionsController : ApiControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAsync(CancellationToken cancellationToken)
+    public async Task<ActionResult<List<TransactionDto>>> GetAsync(CancellationToken cancellationToken)
     {
         var transactions = await _transactionService.GetAllAsync(cancellationToken);
         return Ok(transactions);
@@ -43,8 +46,23 @@ public class TransactionsController : ApiControllerBase
         return Ok(transaction);
     }
 
+    [HttpGet("vm")]
+    public async Task<ActionResult<TransactionViewModel>> GetViewModelAsync(CancellationToken cancellationToken)
+    {
+        var transactions = await _transactionService.GetAllAsync(cancellationToken);
+        var categories = await _categoryService.GetAllAsync(cancellationToken);
+
+        var viewModel = new TransactionViewModel
+        {
+            Transactions = transactions,
+            Categories = categories,
+        };
+
+        return Ok(viewModel);
+    }
+
     [HttpGet("search/{text}")]
-    public async Task<IActionResult> SearchAsync(string text, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<TransactionDto>>> SearchAsync(string text, CancellationToken cancellationToken)
     {
         var transactions = await _transactionService.SearchAsync(text, cancellationToken);
         return Ok(transactions);
