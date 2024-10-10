@@ -1,12 +1,15 @@
-﻿using Wallet.Shared.Common.Enums;
+﻿using Wallet.Shared.Categories;
+using Wallet.Shared.Common.Enums;
 
-namespace Wallet.WebUI.Forms;
+namespace Wallet.WebUI.Pages.Transactions;
 
 public class TransactionFormViewModel
 {
     public double BankAmount { get; set; }
 
     public double CashAmount { get; set; }
+
+    public List<CategoryDto> Categories { get; set; }
 
     public string CategoryId { get; set; }
 

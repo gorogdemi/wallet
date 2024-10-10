@@ -1,23 +1,23 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Wallet.Application.Transactions;
+using Wallet.Application.Balance;
 
 namespace Wallet.WebApi.Controllers;
 
 [Authorize]
 public class BalanceController : ApiControllerBase
 {
-    private readonly ITransactionService _transactionContextService;
+    private readonly IBalanceService _balanceService;
 
-    public BalanceController(ITransactionService transactionService)
+    public BalanceController(IBalanceService balanceService)
     {
-        _transactionContextService = transactionService;
+        _balanceService = balanceService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAsync(CancellationToken cancellationToken)
     {
-        var balance = await _transactionContextService.GetBalanceAsync(cancellationToken);
+        var balance = await _balanceService.GetAsync(cancellationToken);
         return Ok(balance);
     }
 }

@@ -2,6 +2,6 @@
 
 namespace Wallet.WebUI.Services;
 
-public interface ICategoryService : IWalletService<CategoryRequest, CategoryViewModel>
+public interface ICategoryService : IWalletService<CategoryRequest, CategoryDto>
 {
 }

@@ -1,0 +1,59 @@
+﻿@inherits EditDialog<TransactionFormViewModel>
+
+<EditDialog Content="Content">
+    <FluentValidationValidator />
+
+    <FormInput ValidationFor="() => Content.Name">
+        <FluentTextField Label="Megnevezés:" Required @bind-Value="Content.Name" />
+    </FormInput>
+
+    <FormInput ValidationFor="() => Content.BankAmount">
+        <FluentNumberField Label="Bank összeg:" Required @bind-Value="Content.BankAmount" />
+    </FormInput>
+
+    <FormInput ValidationFor="() => Content.CashAmount">
+        <FluentNumberField Label="Készpénz összeg:" Required @bind-Value="Content.CashAmount" />
+    </FormInput>
+
+    <FormInput ValidationFor="() => Content.Comment">
+        <FluentTextField Label="Megjegyzés:" @bind-Value="Content.Comment" />
+    </FormInput>
+
+    <FormInput ValidationFor="() => Content.Date">
+        <FluentDatePicker Label="Dátum:" Required @bind-Value="Content.Date" />
+    </FormInput>
+
+    <FormInput ValidationFor="() => Content.Type">
+        <FluentSelect Label="Típus:" Required Placeholder="Nincs" @bind-SelectedOption="Content.Type" Items="_transactionTypes" OptionText="type => type.ToTransactionTypeText()" />
+    </FormInput>
+
+    <FormInput ValidationFor="() => Content.CategoryId">
+        <FluentSelect
+            Label="Kategória:"
+            Placeholder="Nincs"
+            @bind-Value="Content.CategoryId"
+            Items="Content.Categories"
+            OptionText="o => o?.Name.ToCategoryText()"
+            OptionValue="o => o?.Id.ToString()"
+            Width="@(Content.CategoryId is null ? "100%" : "calc(100% - 37px)")" />
+
+        @if (Content.CategoryId is not null)
+        {
+            <FluentButton OnClick="() => Content.CategoryId = null" Style="height: 34px">
+                <FluentIcon Icon="Icons.Regular.Size20.Dismiss" Color="Color.Neutral" />
+            </FluentButton>
+        }
+    </FormInput>
+</EditDialog>
+
+@code {
+
+    private List<TransactionType?> _transactionTypes;
+
+    protected override void OnInitialized()
+    {
+        _transactionTypes = Enum.GetValues<TransactionType>().Cast<TransactionType?>().ToList();
+        Content.Date = DateTime.Now;
+    }
+
+}

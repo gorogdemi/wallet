@@ -1,10 +1,10 @@
 ﻿using Refit;
-using Wallet.Shared.Transactions;
+using Wallet.Shared.Balance;
 
 namespace Wallet.WebUI.Services;
 
 public interface IBalanceService
 {
     [Get("/")]
-    Task<BalanceViewModel> GetAsync();
+    Task<BalanceDto> GetAsync();
 }

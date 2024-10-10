@@ -3,6 +3,7 @@
 using System.Reflection;
 using FluentValidation;
 using Wallet.Application.Authentication;
+using Wallet.Application.Balance;
 using Wallet.Application.Categories;
 using Wallet.Application.Common.Interfaces;
 using Wallet.Application.Common.Services;
@@ -22,6 +23,7 @@ public static class ConfigureServices
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ITransactionService, TransactionService>();
         services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<IBalanceService, BalanceService>();
 
         return services;
     }

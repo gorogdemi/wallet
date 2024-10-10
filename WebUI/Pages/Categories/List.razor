@@ -4,7 +4,7 @@
 
 <h1>Kategóriák</h1>
 
-<FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" OnClick="@AddAsync">
+<FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" OnClick="AddAsync">
     Új kategória
     <FluentIcon Icon="@Icons.Filled.Size20.AddCircle" Slot="start" Color="Color.Fill" />
 </FluentButton>
@@ -20,7 +20,7 @@
         <EmptyContent>
             @if (IsLoading)
             {
-                <div>Adatok betöltése...</div>
+                <FluentProgressRing />
             }
             else
             {
@@ -32,13 +32,16 @@
 
 @code {
 
-    private IQueryable<CategoryViewModel> CategoryList => ViewModel?.AsQueryable();
+    private IQueryable<CategoryDto> CategoryList => ViewModel?.AsQueryable();
 
-    protected override Task SetViewModelAsync() => LoadCategoriesAsync();
+    protected override async Task SetViewModelAsync() =>
+        await HandleRequestAsync(
+            () => Service.GetAllAsync(),
+            result => ViewModel = result);
 
     private async Task AddAsync() => await HandleDialogAsync(null, new CategoryRequest());
 
-    private async Task EditAsync(CategoryViewModel category) => await HandleDialogAsync(category.Id, new CategoryRequest { Name = category.Name });
+    private async Task EditAsync(CategoryDto category) => await HandleDialogAsync(category.Id, new CategoryRequest { Name = category.Name });
 
     private async Task HandleDialogAsync(long? id, CategoryRequest categoryRequest)
     {
@@ -53,7 +56,7 @@
             PreventScroll = true,
         };
 
-        var dialog = await DialogService.ShowDialogAsync<CategoryRequestDialog>(categoryRequest, parameters);
+        var dialog = await DialogService.ShowDialogAsync<CategoryFormDialog>(categoryRequest, parameters);
         var result = await dialog.Result;
 
         if (result.Data is not null)
@@ -62,22 +65,21 @@
 
             await HandleRequestAsync(
                 () => isEdit ? Service.UpdateAsync(id!.Value, request) : Service.CreateAsync(request),
-                LoadCategoriesAsync);
+                SetViewModelAsync);
         }
     }
 
-    private async Task DeleteAsync(CategoryViewModel category)
+    private async Task DeleteAsync(CategoryDto category)
     {
-        await HandleRequestAsync(
-            () => Service.DeleteAsync(category.Id),
-            LoadCategoriesAsync);
-    }
+        var dialog = await DialogService.ShowConfirmationAsync("Biztosan törölni szeretné?", "Igen", "Nem", "Törlés");
+        var result = await dialog.Result;
 
-    private async Task LoadCategoriesAsync()
-    {
-        await HandleRequestAsync(
-            () => Service.GetAllAsync(),
-            result => ViewModel = result);
+        if (!result.Cancelled)
+        {
+            await HandleRequestAsync(
+                () => Service.DeleteAsync(category.Id),
+                SetViewModelAsync);
+        }
     }
 
 }

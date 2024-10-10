@@ -1,10 +1,11 @@
 ﻿@page "/transactions"
-@inherits TransactionBase<List<TransactionViewModel>>
+@inherits TransactionBase<TransactionViewModel>
 @attribute [Authorize]
+@inject IDialogService DialogService
 
 <h1>Tranzakciók</h1>
 
-<FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" OnClick="@(() => NavigationManager.NavigateTo("transactions/create"))">
+<FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" OnClick="AddAsync">
     Új tranzakció
     <FluentIcon Icon="@Icons.Filled.Size20.AddCircle" Slot="start" Color="Color.Fill" />
 </FluentButton>
@@ -26,14 +27,14 @@
             <PropertyColumn Title="Dátum" Property="@(c => c.Date.ToFormattedDate())" Sortable="true" Align="Align.Start" />
             <PropertyColumn Title="Típus" Property="@(c => c.Type.ToTransactionTypeText())" Sortable="true" Align="Align.Start" />
             <PropertyColumn Title="Kategória" Property="@(c => c.CategoryName.ToCategoryText())" Sortable="true" Align="Align.Start" />
-            <TemplateColumn Title="Művelet" TGridItem="TransactionViewModel">
-                <EditorButtons OnEdit="@(() => NavigationManager.NavigateTo($"transactions/edit/{context.Id}"))" OnDelete="() => DeleteAsync(context.Id)" />
+            <TemplateColumn Title="Művelet" TGridItem="TransactionDto">
+                <EditorButtons OnEdit="() => EditAsync(context)" OnDelete="() => DeleteAsync(context.Id)" />
             </TemplateColumn>
         </ChildContent>
         <EmptyContent>
             @if (IsLoading)
             {
-                <div>Adatok betöltése...</div>
+                <FluentProgressRing />
             }
             else
             {
@@ -47,22 +48,92 @@
 
     private string _searchTerm = string.Empty;
 
-    private IQueryable<TransactionViewModel> FilteredItems => ViewModel?.Where(x => x.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase)).AsQueryable();
+    private IQueryable<TransactionDto> FilteredItems => ViewModel?.Transactions.Where(x => x.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase)).AsQueryable();
 
-    protected override Task SetViewModelAsync() => LoadTransactionsAsync();
+    protected override async Task SetViewModelAsync() =>
+        await HandleRequestAsync(
+            () => Service.GetViewModelAsync(),
+            result => ViewModel = result);
+
+    private async Task AddAsync() => await HandleDialogAsync(null);
+
+    private async Task EditAsync(TransactionDto transaction) => await HandleDialogAsync(transaction.Id);
+
+    private async Task HandleDialogAsync(long? id)
+    {
+        var isEdit = id.HasValue;
+        var formViewModel = SetFormViewModel(id, isEdit);
+
+        DialogParameters parameters = new()
+        {
+            Title = $"Tranzakció {(isEdit ? "módosítás" : "létrehozás")}",
+            Width = "500px",
+            TrapFocus = true,
+            Modal = true,
+            PreventScroll = true,
+        };
+
+        var dialog = await DialogService.ShowDialogAsync<TransactionFormDialog>(formViewModel, parameters);
+        var result = await dialog.Result;
+
+        if (result.Data is not null)
+        {
+            var viewModel = result.Data as TransactionFormViewModel;
+            await SaveTransactionAsync(id, viewModel, isEdit);
+        }
+    }
+
+    private TransactionFormViewModel SetFormViewModel(long? id, bool isEdit)
+    {
+        var formViewModel = new TransactionFormViewModel
+        {
+            Categories = ViewModel.Categories,
+        };
+
+        if (isEdit)
+        {
+            var transaction = ViewModel.Transactions.Find(x => x.Id == id);
+            formViewModel.Name = transaction!.Name;
+            formViewModel.Comment = transaction.Comment;
+            formViewModel.BankAmount = transaction.BankAmount;
+            formViewModel.CashAmount = transaction.CashAmount;
+            formViewModel.Date = transaction.Date;
+            formViewModel.CategoryId = transaction.CategoryId?.ToString();
+            formViewModel.Type = transaction.Type;
+        }
+
+        return formViewModel;
+    }
+
+    private async Task SaveTransactionAsync(long? id, TransactionFormViewModel viewModel, bool isEdit)
+    {
+        var request = new TransactionRequest
+        {
+            Name = viewModel!.Name,
+            Comment = viewModel.Comment,
+            BankAmount = viewModel.BankAmount,
+            CashAmount = viewModel.CashAmount,
+            Date = viewModel.Date,
+            CategoryId = viewModel.CategoryId is not null ? Convert.ToInt64(viewModel.CategoryId) : null,
+            Type = viewModel.Type,
+        };
+
+        await HandleRequestAsync(
+            () => isEdit ? Service.UpdateAsync(id!.Value, request) : Service.CreateAsync(request),
+            SetViewModelAsync);
+    }
 
     private async Task DeleteAsync(long id)
     {
-        await HandleRequestAsync(
-            () => Service.DeleteAsync(id),
-            async () => await LoadTransactionsAsync());
-    }
+        var dialog = await DialogService.ShowConfirmationAsync("Biztosan törölni szeretné?", "Igen", "Nem", "Törlés");
+        var result = await dialog.Result;
 
-    private Task LoadTransactionsAsync()
-    {
-        return HandleRequestAsync(
-            () => Service.GetAllAsync(),
-            result => ViewModel = result);
+        if (!result.Cancelled)
+        {
+            await HandleRequestAsync(
+                () => Service.DeleteAsync(id),
+                SetViewModelAsync);
+        }
     }
 
 }

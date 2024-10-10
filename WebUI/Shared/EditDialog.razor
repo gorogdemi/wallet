@@ -1,7 +1,7 @@
 @typeparam T
 @implements IDialogContentComponent<T>
 
-<EditForm Model="Content" OnValidSubmit="SaveAsync">
+<EditForm Model="Content" OnValidSubmit="SaveAsync" novalidate>
     @ChildContent
 
     <FluentDialogFooter>

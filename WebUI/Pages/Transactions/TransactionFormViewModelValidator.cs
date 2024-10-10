@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Wallet.WebUI.Forms;
+namespace Wallet.WebUI.Pages.Transactions;
 
 public class TransactionFormViewModelValidator : AbstractValidator<TransactionFormViewModel>
 {

@@ -4,6 +4,6 @@ using Wallet.WebUI.Shared;
 
 namespace Wallet.WebUI.Pages.Categories;
 
-public abstract class CategoryBase : AuthenticationAwarePageBase<List<CategoryViewModel>, ICategoryService>
+public abstract class CategoryBase : AuthenticationAwarePageBase<List<CategoryDto>, ICategoryService>
 {
 }
