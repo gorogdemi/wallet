@@ -5,8 +5,8 @@
     @ChildContent
 
     <FluentDialogFooter>
-        <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Mentés</FluentButton>
-        <FluentButton OnClick="@CloseAsync">Bezárás</FluentButton>
+        <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Save</FluentButton>
+        <FluentButton OnClick="@CancelAsync">Cancel</FluentButton>
     </FluentDialogFooter>
 </EditForm>
 
@@ -23,6 +23,6 @@
 
     private async Task SaveAsync() => await Dialog.CloseAsync(Content);
 
-    private async Task CloseAsync() => await Dialog.CancelAsync();
+    private async Task CancelAsync() => await Dialog.CancelAsync();
 
 }

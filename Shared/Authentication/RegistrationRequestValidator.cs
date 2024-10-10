@@ -16,7 +16,7 @@ public class RegistrationRequestValidator : AbstractValidator<RegistrationReques
             .MaximumLength(100)
             .EmailAddress()
             .Equal(request => request.Email)
-            .WithMessage("Email Confirm field does not match with Email field.");
+            .WithMessage("Confirm Email address field does not match with Email address field.");
 
         RuleFor(request => request.FirstName)
             .NotEmpty()
@@ -34,7 +34,7 @@ public class RegistrationRequestValidator : AbstractValidator<RegistrationReques
             .NotEmpty()
             .MaximumLength(100)
             .Equal(request => request.Password)
-            .WithMessage("Password Confirm field does not match with Password field.");
+            .WithMessage("Confirm Password field does not match with Password field.");
 
         RuleFor(request => request.UserName)
             .NotEmpty()

@@ -1,28 +1,26 @@
 ﻿@page "/"
 @inherits WalletBase
 
-<h1>Egyenleg</h1>
+<h1>Balance</h1>
 
 @if (IsLoading)
 {
-    <div>Adatok betöltése...</div>
+    <div>Loading data...</div>
 }
 else
 {
     <div class="mt-4">
-        <p>Teljes: @ViewModel.Full Ft</p>
-        <p>Készpénz: @ViewModel.Cash Ft</p>
-        <p>Bankszámla: @ViewModel.BankAccount Ft</p>
+        <p>Full: @ViewModel.Full Ft</p>
+        <p>Cash: @ViewModel.Cash Ft</p>
+        <p>Bank account: @ViewModel.BankAccount Ft</p>
     </div>
 }
 
 @code {
 
-    protected override async Task SetViewModelAsync()
-    {
+    protected override async Task SetViewModelAsync() =>
         await HandleRequestAsync(
             () => Service.GetAsync(),
             result => ViewModel = result);
-    }
 
 }

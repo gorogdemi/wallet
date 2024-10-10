@@ -4,33 +4,33 @@
     <FluentValidationValidator />
 
     <FormInput ValidationFor="() => Content.Name">
-        <FluentTextField Label="Megnevezés:" Required @bind-Value="Content.Name" />
+        <FluentTextField Label="Name:" Required @bind-Value="Content.Name" />
     </FormInput>
 
     <FormInput ValidationFor="() => Content.BankAmount">
-        <FluentNumberField Label="Bank összeg:" Required @bind-Value="Content.BankAmount" />
+        <FluentNumberField Label="Bank amount:" Required @bind-Value="Content.BankAmount" />
     </FormInput>
 
     <FormInput ValidationFor="() => Content.CashAmount">
-        <FluentNumberField Label="Készpénz összeg:" Required @bind-Value="Content.CashAmount" />
+        <FluentNumberField Label="Cash amount:" Required @bind-Value="Content.CashAmount" />
     </FormInput>
 
     <FormInput ValidationFor="() => Content.Comment">
-        <FluentTextField Label="Megjegyzés:" @bind-Value="Content.Comment" />
+        <FluentTextField Label="Comment:" @bind-Value="Content.Comment" />
     </FormInput>
 
     <FormInput ValidationFor="() => Content.Date">
-        <FluentDatePicker Label="Dátum:" Required @bind-Value="Content.Date" />
+        <FluentDatePicker Label="Date:" Required @bind-Value="Content.Date" />
     </FormInput>
 
     <FormInput ValidationFor="() => Content.Type">
-        <FluentSelect Label="Típus:" Required Placeholder="Nincs" @bind-SelectedOption="Content.Type" Items="_transactionTypes" OptionText="type => type.ToTransactionTypeText()" />
+        <FluentSelect Label="Type:" Required Placeholder="Select a type..." @bind-SelectedOption="Content.Type" Items="_transactionTypes" OptionText="type => type.ToTransactionTypeText()" />
     </FormInput>
 
     <FormInput ValidationFor="() => Content.CategoryId">
         <FluentSelect
-            Label="Kategória:"
-            Placeholder="Nincs"
+            Label="Category:"
+            Placeholder="None"
             @bind-Value="Content.CategoryId"
             Items="Content.Categories"
             OptionText="o => o?.Name.ToCategoryText()"

@@ -3,31 +3,31 @@
 @attribute [Authorize]
 @inject IDialogService DialogService
 
-<h1>Tranzakciók</h1>
+<h1>Transactions</h1>
 
 <FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" OnClick="AddAsync">
-    Új tranzakció
+    New transaction
     <FluentIcon Icon="@Icons.Filled.Size20.AddCircle" Slot="start" Color="Color.Fill" />
 </FluentButton>
 
 <FluentCard Style="display: grid; padding: 0; min-height: 250px;" Width="100%" Height="auto">
     <FluentDataGrid Items="FilteredItems" GridTemplateColumns="0.5fr 0.2fr 0.2fr 0.2fr 0.4fr 0.2fr 0.2fr 0.2fr 0.2fr" ResizableColumns="true" Style="overflow: auto;">
         <ChildContent>
-            <PropertyColumn Title="Megnevezés" Property="@(c => c.Name)" Sortable="true" Align="Align.Start" IsDefaultSortColumn="true">
+            <PropertyColumn Title="Name" Property="@(c => c.Name)" Sortable="true" Align="Align.Start" IsDefaultSortColumn="true">
                 <ColumnOptions>
                     <div class="search-box">
-                        <FluentSearch @bind-Value="_searchTerm" Autofocus="true" Placeholder="Keresés..." Immediate="true" ImmediateDelay="200" />
+                        <FluentSearch @bind-Value="_searchTerm" Autofocus="true" Placeholder="Search..." Immediate="true" ImmediateDelay="200" />
                     </div>
                 </ColumnOptions>
             </PropertyColumn>
-            <PropertyColumn Title="Teljes" Property="@(c => c.SumAmount)" Format="0 Ft" Sortable="true" Align="Align.End" />
-            <PropertyColumn Title="Készpénz" Property="@(c => c.CashAmount)" Format="0 Ft" Sortable="true" Align="Align.End" />
+            <PropertyColumn Title="Full" Property="@(c => c.SumAmount)" Format="0 Ft" Sortable="true" Align="Align.End" />
+            <PropertyColumn Title="Cash" Property="@(c => c.CashAmount)" Format="0 Ft" Sortable="true" Align="Align.End" />
             <PropertyColumn Title="Bank" Property="@(c => c.BankAmount)" Format="0 Ft" Sortable="true" Align="Align.End" />
-            <PropertyColumn Title="Komment" Property="@(c => c.Comment)" Sortable="true" Align="Align.Start" />
-            <PropertyColumn Title="Dátum" Property="@(c => c.Date.ToFormattedDate())" Sortable="true" Align="Align.Start" />
-            <PropertyColumn Title="Típus" Property="@(c => c.Type.ToTransactionTypeText())" Sortable="true" Align="Align.Start" />
-            <PropertyColumn Title="Kategória" Property="@(c => c.CategoryName.ToCategoryText())" Sortable="true" Align="Align.Start" />
-            <TemplateColumn Title="Művelet" TGridItem="TransactionDto">
+            <PropertyColumn Title="Comment" Property="@(c => c.Comment)" Sortable="true" Align="Align.Start" />
+            <PropertyColumn Title="Date" Property="@(c => c.Date.ToFormattedDate())" Sortable="true" Align="Align.Start" />
+            <PropertyColumn Title="Type" Property="@(c => c.Type.ToTransactionTypeText())" Sortable="true" Align="Align.Start" />
+            <PropertyColumn Title="Category" Property="@(c => c.CategoryName.ToCategoryText())" Sortable="true" Align="Align.Start" />
+            <TemplateColumn Title="Action" TGridItem="TransactionDto">
                 <EditorButtons OnEdit="() => EditAsync(context)" OnDelete="() => DeleteAsync(context.Id)" />
             </TemplateColumn>
         </ChildContent>
@@ -38,7 +38,7 @@
             }
             else
             {
-                <div>Nincs megjelentíthető adat.</div>
+                <div>No data available.</div>
             }
         </EmptyContent>
     </FluentDataGrid>
@@ -66,7 +66,7 @@
 
         DialogParameters parameters = new()
         {
-            Title = $"Tranzakció {(isEdit ? "módosítás" : "létrehozás")}",
+            Title = $"{(isEdit ? "Edit" : "Create")} transaction",
             Width = "500px",
             TrapFocus = true,
             Modal = true,
@@ -125,7 +125,7 @@
 
     private async Task DeleteAsync(long id)
     {
-        var dialog = await DialogService.ShowConfirmationAsync("Biztosan törölni szeretné?", "Igen", "Nem", "Törlés");
+        var dialog = await DialogService.ShowConfirmationAsync("Are you sure about deleting the transaction?", title: "Delete transaction");
         var result = await dialog.Result;
 
         if (!result.Cancelled)

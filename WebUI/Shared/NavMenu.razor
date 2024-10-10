@@ -1,5 +1,5 @@
 ﻿<div class="top-row navbar navbar-dark">
-    <a class="navbar-brand" href="">Pénztárcák</a>
+    <a class="navbar-brand" href="">Wallets</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -9,16 +9,16 @@
     <ul class="nav flex-column">
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <FluentIcon Icon="@Icons.Regular.Size20.Wallet" Color="Color.Fill" /> Tárcák
+                <FluentIcon Icon="@Icons.Regular.Size20.Wallet" Color="Color.Fill" /> Wallets
             </NavLink>
             <NavLink class="nav-link" href="transactions">
-                <FluentIcon Icon="@Icons.Regular.Size20.ArrowsBidirectional" Color="Color.Fill" /> Tranzakciók
+                <FluentIcon Icon="@Icons.Regular.Size20.ArrowsBidirectional" Color="Color.Fill" /> Transactions
             </NavLink>
             <NavLink class="nav-link" href="favorites">
-                <FluentIcon Icon="@Icons.Regular.Size20.Star" Color="Color.Fill" /> Kedvencek
+                <FluentIcon Icon="@Icons.Regular.Size20.Star" Color="Color.Fill" /> Favorites
             </NavLink>
             <NavLink class="nav-link" href="categories">
-                <FluentIcon Icon="@Icons.Regular.Size20.Grid" Color="Color.Fill" /> Kategóriák
+                <FluentIcon Icon="@Icons.Regular.Size20.Grid" Color="Color.Fill" /> Categories
             </NavLink>
         </li>
     </ul>
@@ -30,9 +30,6 @@
 
     private string NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
 
-    private void ToggleNavMenu()
-    {
-        _collapseNavMenu = !_collapseNavMenu;
-    }
+    private void ToggleNavMenu() => _collapseNavMenu = !_collapseNavMenu;
 
 }

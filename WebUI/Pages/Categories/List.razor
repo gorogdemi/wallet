@@ -2,18 +2,18 @@
 @inherits CategoryBase
 @inject IDialogService DialogService
 
-<h1>Kategóriák</h1>
+<h1>Categories</h1>
 
 <FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" OnClick="AddAsync">
-    Új kategória
+    New category
     <FluentIcon Icon="@Icons.Filled.Size20.AddCircle" Slot="start" Color="Color.Fill" />
 </FluentButton>
 
 <FluentCard Style="display: grid; padding: 0; min-height: 250px;" Width="100%" Height="auto">
     <FluentDataGrid Items="CategoryList" GridTemplateColumns="1fr">
         <ChildContent>
-            <PropertyColumn Title="Megnevezés" Property="@(c => c.Name)" Sortable="true" Align="Align.Start" />
-            <TemplateColumn Title="Művelet">
+            <PropertyColumn Title="Name" Property="@(c => c.Name)" Sortable="true" Align="Align.Start" />
+            <TemplateColumn Title="Action">
                 <EditorButtons OnEdit="() => EditAsync(context)" OnDelete="() => DeleteAsync(context)" />
             </TemplateColumn>
         </ChildContent>
@@ -24,7 +24,7 @@
             }
             else
             {
-                <div>Nincs megjeleníthető adat.</div>
+                <div>No data available.</div>
             }
         </EmptyContent>
     </FluentDataGrid>
@@ -49,7 +49,7 @@
 
         DialogParameters parameters = new()
         {
-            Title = $"Kategória {(isEdit ? "módosítás" : "létrehozás")}",
+            Title = $"{(isEdit ? "Edit" : "Create")} category",
             Width = "500px",
             TrapFocus = true,
             Modal = true,
@@ -71,7 +71,7 @@
 
     private async Task DeleteAsync(CategoryDto category)
     {
-        var dialog = await DialogService.ShowConfirmationAsync("Biztosan törölni szeretné?", "Igen", "Nem", "Törlés");
+        var dialog = await DialogService.ShowConfirmationAsync("Are you sure about deleting the category?", title: "Delete category");
         var result = await dialog.Result;
 
         if (!result.Cancelled)
