@@ -12,12 +12,12 @@
             <AuthorizeView>
                 <Authorized>
                     <FluentIcon Icon="Icons.Filled.Size20.Person" />
-                    <span style="margin-right:10px">@context.User.FindFirst("fullname")?.Value</span>
-                    <FluentButton Appearance="Appearance.Outline" @onclick="LogoutAsync">Kijelentkezés</FluentButton>
+                    <span style="margin-right: 10px">@context.User.FindFirst("fullname")?.Value</span>
+                    <FluentButton Appearance="Appearance.Outline" @onclick="LogoutAsync">Log out</FluentButton>
                 </Authorized>
                 <NotAuthorized>
-                    <FluentAnchor Href="login">Bejelentkezés</FluentAnchor>
-                    <FluentAnchor Href="register">Regisztráció</FluentAnchor>
+                    <FluentAnchor Href="login">Log in</FluentAnchor>
+                    <FluentAnchor Href="register">Register</FluentAnchor>
                 </NotAuthorized>
             </AuthorizeView>
         </div>

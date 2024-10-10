@@ -1,41 +1,41 @@
 ﻿@page "/register"
 @inherits UserBase<RegistrationRequest>
 
-<h1>Regisztráció</h1>
+<h1>Registration</h1>
 
 <FluentCard Width="100%" Height="auto">
     <EditForm Model="ViewModel" OnValidSubmit="RegisterAsync">
         <FluentValidationValidator />
 
         <FormInput ValidationFor="() => ViewModel.UserName">
-            <FluentTextField @bind-Value="ViewModel.UserName">Felhasználónév:</FluentTextField>
-        </FormInput>
-
-        <FormInput ValidationFor="() => ViewModel.LastName">
-            <FluentTextField @bind-Value="ViewModel.LastName">Vezetéknév:</FluentTextField>
+            <FluentTextField @bind-Value="ViewModel.UserName">Username:</FluentTextField>
         </FormInput>
 
         <FormInput ValidationFor="() => ViewModel.FirstName">
-            <FluentTextField @bind-Value="ViewModel.FirstName">Keresztnév:</FluentTextField>
+            <FluentTextField @bind-Value="ViewModel.FirstName">Last name:</FluentTextField>
+        </FormInput>
+
+        <FormInput ValidationFor="() => ViewModel.LastName">
+            <FluentTextField @bind-Value="ViewModel.LastName">First name:</FluentTextField>
         </FormInput>
 
         <FormInput ValidationFor="() => ViewModel.Email">
-            <FluentTextField TextFieldType="TextFieldType.Email" @bind-Value="ViewModel.Email">E-mail cím:</FluentTextField>
+            <FluentTextField TextFieldType="TextFieldType.Email" @bind-Value="ViewModel.Email">E-mail address:</FluentTextField>
         </FormInput>
 
         <FormInput ValidationFor="() => ViewModel.EmailConfirm">
-            <FluentTextField TextFieldType="TextFieldType.Email" @bind-Value="ViewModel.EmailConfirm">Email cím megerősítése:</FluentTextField>
+            <FluentTextField TextFieldType="TextFieldType.Email" @bind-Value="ViewModel.EmailConfirm">Confirm Email address:</FluentTextField>
         </FormInput>
 
         <FormInput ValidationFor="() => ViewModel.Password">
-            <FluentTextField TextFieldType="TextFieldType.Password" @bind-Value="ViewModel.Password">Jelszó:</FluentTextField>
+            <FluentTextField TextFieldType="TextFieldType.Password" @bind-Value="ViewModel.Password">Password:</FluentTextField>
         </FormInput>
 
         <FormInput ValidationFor="() => ViewModel.PasswordConfirm">
-            <FluentTextField TextFieldType="TextFieldType.Password" @bind-Value="ViewModel.PasswordConfirm">Jelszó megerősítése:</FluentTextField>
+            <FluentTextField TextFieldType="TextFieldType.Password" @bind-Value="ViewModel.PasswordConfirm">Confirm password:</FluentTextField>
         </FormInput>
 
-        <FormSubmit Title="Regisztráció" />
+        <FormSubmit Title="Register" />
     </EditForm>
 </FluentCard>
 
@@ -47,11 +47,9 @@
         return Task.CompletedTask;
     }
 
-    private async Task RegisterAsync()
-    {
+    private async Task RegisterAsync() =>
         await HandleRequestAsync(
             () => Service.RegisterAsync(ViewModel),
             () => NavigationManager.NavigateTo("/"));
-    }
 
 }
