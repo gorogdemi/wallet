@@ -10,7 +10,7 @@ public class RefreshTokenRequestValidator : AbstractValidator<RefreshTokenReques
             .NotEmpty()
             .MaximumLength(100);
 
-        RuleFor(request => request.Token)
+        RuleFor(request => request.AccessToken)
             .NotEmpty()
             .MaximumLength(500);
     }

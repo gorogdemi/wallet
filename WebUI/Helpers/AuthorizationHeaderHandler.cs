@@ -1,51 +1,52 @@
 using System.Globalization;
+using System.Net;
 using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Components.Authorization;
+using System.Security.Claims;
 using Wallet.WebUI.Services;
 
 namespace Wallet.WebUI.Helpers;
 
 public sealed class AuthorizationHeaderHandler : DelegatingHandler
 {
-    private readonly AuthenticationStateProvider _authenticationStateProvider;
     private readonly IUserService _userService;
 
-    public AuthorizationHeaderHandler(IUserService userService, AuthenticationStateProvider authenticationStateProvider)
+    public AuthorizationHeaderHandler(IUserService userService)
     {
         _userService = userService;
-        _authenticationStateProvider = authenticationStateProvider;
     }
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        var token = await TryRefreshTokenAsync();
+        var user = await _userService.GetUserAsync();
 
-        if (string.IsNullOrEmpty(token))
+        if (IsUserAuthenticated(user))
         {
-            token = await _userService.GetJwtTokenAsync();
+            var expiryDateClaim = user.FindFirst(c => c.Type == "exp")?.Value;
+            var expiryDateTimeUtc = DateTime.UnixEpoch.AddSeconds(Convert.ToInt64(expiryDateClaim, CultureInfo.InvariantCulture));
+
+            string accessToken;
+
+            if (expiryDateTimeUtc < DateTime.UtcNow)
+            {
+                accessToken = await _userService.RefreshTokenAsync();
+            }
+            else
+            {
+                accessToken = await _userService.GetJwtTokenAsync();
+            }
+
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         }
 
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var response = await base.SendAsync(request, cancellationToken);
 
-        return await base.SendAsync(request, cancellationToken);
+        if (response.StatusCode is HttpStatusCode.Unauthorized)
+        {
+            await _userService.LogoutAsync();
+        }
+
+        return response;
     }
 
-    private async Task<string> TryRefreshTokenAsync()
-    {
-        var authenticationState = await _authenticationStateProvider.GetAuthenticationStateAsync();
-
-        if (authenticationState.User.Identity is { IsAuthenticated: false })
-        {
-            return null;
-        }
-
-        var expiryDateTimeUtc = DateTime.UnixEpoch.AddSeconds(Convert.ToInt64(authenticationState.User.FindFirst(c => c.Type == "exp")?.Value, CultureInfo.InvariantCulture));
-
-        if (expiryDateTimeUtc < DateTime.UtcNow)
-        {
-            return await _userService.RefreshTokenAsync();
-        }
-
-        return null;
-    }
+    private static bool IsUserAuthenticated(ClaimsPrincipal user) => user.Identity is { IsAuthenticated: true };
 }
