@@ -49,3 +49,7 @@ builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddScoped<AuthorizationHeaderHandler>();
 
 await builder.Build().RunAsync();
+
+// TODO: Blazilla
+// TODO: UI fixes
+// TODO: .NET 9 Blazor updates

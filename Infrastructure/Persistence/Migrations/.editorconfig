@@ -1,0 +1,7 @@
+[{*.cs,*.razor}]
+dotnet_diagnostic.LRT001.severity = none
+dotnet_diagnostic.IDE0005.severity = none
+dotnet_diagnostic.IDE0161.severity = none
+dotnet_diagnostic.IDE0240.severity = none
+dotnet_diagnostic.IDE0300.severity = none
+dotnet_diagnostic.SA1413.severity = none
