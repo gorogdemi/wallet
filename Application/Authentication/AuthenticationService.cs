@@ -43,7 +43,7 @@ internal sealed class AuthenticationService : IAuthenticationService
 
     public async Task<AuthenticationResponse> RefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken)
     {
-        var refreshResult = await _tokenService.RefreshTokenAsync(request.Token, request.RefreshToken, cancellationToken);
+        var refreshResult = await _tokenService.RefreshTokenAsync(request.AccessToken, request.RefreshToken, cancellationToken);
 
         if (!refreshResult.Result.Succeeded)
         {

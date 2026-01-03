@@ -10,7 +10,5 @@ public interface IUserService
 
     Task LogoutAsync();
 
-    Task<string> RefreshTokenAsync();
-
     Task RegisterAsync(RegistrationRequest registrationRequest);
 }

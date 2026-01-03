@@ -1,73 +1,118 @@
-﻿using Blazored.LocalStorage;
+﻿using System.Globalization;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Wallet.Shared.Authentication;
 using Wallet.WebUI.Helpers;
 
 namespace Wallet.WebUI.Services;
 
-public sealed class UserService : IUserService
+public sealed class UserService : IUserService, IDisposable
 {
-    private const string AuthenticationTokenKey = "authToken";
-    private const string RefreshTokenKey = "refreshToken";
+    private const string AccessTokenKey = "Wallet_AccessToken";
+    private const string RefreshTokenKey = "Wallet_RefreshToken";
     private readonly IAuthenticationService _authenticationService;
-    private readonly AuthenticationStateProvider _authenticationStateProvider;
-    private readonly ILocalStorageService _localStorage;
+    private readonly JwtAuthenticationStateProvider _authenticationStateProvider;
+    private readonly ILocalStorageService _localStorageService;
+    private readonly SemaphoreSlim _tokenSemaphore;
 
-    public UserService(IAuthenticationService authenticationService, ILocalStorageService localStorage, AuthenticationStateProvider authenticationStateProvider)
+    public UserService(
+        ILocalStorageService localStorageService,
+        AuthenticationStateProvider authenticationStateProvider,
+        IAuthenticationService authenticationService)
     {
+        _localStorageService = localStorageService;
         _authenticationService = authenticationService;
-        _localStorage = localStorage;
-        _authenticationStateProvider = authenticationStateProvider;
+        _authenticationStateProvider = (JwtAuthenticationStateProvider)authenticationStateProvider;
+        _tokenSemaphore = new SemaphoreSlim(initialCount: 1, maxCount: 1);
     }
 
-    public async Task<string> GetJwtTokenAsync() => await _localStorage.GetItemAsStringAsync(AuthenticationTokenKey);
+    public void Dispose() => _tokenSemaphore.Dispose();
 
-    public async Task LoginAsync(LoginRequest loginRequest)
+    public async Task<string> GetJwtTokenAsync()
     {
         try
         {
-            var response = await _authenticationService.LoginAsync(loginRequest);
-            await GetTokenFromResponseAsync(response);
+            await _tokenSemaphore.WaitAsync();
+
+            var token = await TryRefreshTokenAsync();
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return await _localStorageService.GetItemAsStringAsync(AccessTokenKey);
+            }
+
+            return token;
         }
-        catch
+        finally
         {
-            await LogoutAsync();
-            throw;
+            _tokenSemaphore.Release();
         }
+    }
+
+    public async Task LoginAsync(LoginRequest loginRequest)
+    {
+        var response = await _authenticationService.LoginAsync(loginRequest);
+        await UpdateAuthenticationStateAsync(response);
     }
 
     public async Task LogoutAsync()
     {
-        await _localStorage.RemoveItemAsync(AuthenticationTokenKey);
-        await _localStorage.RemoveItemAsync(RefreshTokenKey);
-        ((JwtAuthenticationStateProvider)_authenticationStateProvider).NotifyUserLogout();
-    }
-
-    public async Task<string> RefreshTokenAsync()
-    {
-        var token = await _localStorage.GetItemAsStringAsync(AuthenticationTokenKey);
-        var refreshToken = await _localStorage.GetItemAsStringAsync(RefreshTokenKey);
-
-        try
-        {
-            var response = await _authenticationService.RefreshTokenAsync(new RefreshTokenRequest { Token = token, RefreshToken = refreshToken });
-            return await GetTokenFromResponseAsync(response);
-        }
-        catch
-        {
-            await LogoutAsync();
-            throw;
-        }
+        await _localStorageService.RemoveItemAsync(AccessTokenKey);
+        await _localStorageService.RemoveItemAsync(RefreshTokenKey);
+        _authenticationStateProvider.NotifyLogout();
     }
 
     public async Task RegisterAsync(RegistrationRequest registrationRequest) => await _authenticationService.RegisterAsync(registrationRequest);
 
-    private async Task<string> GetTokenFromResponseAsync(AuthenticationResponse response)
+    private async Task<string> RefreshTokenAsync()
     {
-        await _localStorage.SetItemAsStringAsync(AuthenticationTokenKey, response.AccessToken);
-        await _localStorage.SetItemAsStringAsync(RefreshTokenKey, response.RefreshToken);
+        var accessToken = await _localStorageService.GetItemAsStringAsync(AccessTokenKey);
+        var refreshToken = await _localStorageService.GetItemAsStringAsync(RefreshTokenKey);
 
-        ((JwtAuthenticationStateProvider)_authenticationStateProvider).NotifyUserAuthentication(response.AccessToken);
-        return response.AccessToken;
+        try
+        {
+            var request = new RefreshTokenRequest
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+            };
+
+            var response = await _authenticationService.RefreshTokenAsync(request);
+            await UpdateAuthenticationStateAsync(response);
+
+            return response.AccessToken;
+        }
+        catch
+        {
+            await LogoutAsync();
+            return null;
+        }
+    }
+
+    private async Task<string> TryRefreshTokenAsync()
+    {
+        var authenticationState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+
+        if (authenticationState.User.Identity is { IsAuthenticated: false })
+        {
+            return null;
+        }
+
+        var expiryDateTimeUtc = DateTime.UnixEpoch.AddSeconds(
+            Convert.ToInt64(authenticationState.User.FindFirst(c => c.Type == "exp")?.Value, CultureInfo.InvariantCulture));
+
+        if (expiryDateTimeUtc < DateTime.UtcNow)
+        {
+            return await RefreshTokenAsync();
+        }
+
+        return null;
+    }
+
+    private async Task UpdateAuthenticationStateAsync(AuthenticationResponse response)
+    {
+        await _localStorageService.SetItemAsStringAsync(AccessTokenKey, response.AccessToken);
+        await _localStorageService.SetItemAsStringAsync(RefreshTokenKey, response.RefreshToken);
+        _authenticationStateProvider.NotifyChange(response.AccessToken);
     }
 }

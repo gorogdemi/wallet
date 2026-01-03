@@ -8,34 +8,33 @@ namespace Wallet.WebUI.Helpers;
 public sealed class JwtAuthenticationStateProvider : AuthenticationStateProvider
 {
     private readonly AuthenticationState _anonymous;
-    private readonly ILocalStorageService _localStorage;
+    private readonly ILocalStorageService _localStorageService;
 
-    public JwtAuthenticationStateProvider(ILocalStorageService localStorage)
+    public JwtAuthenticationStateProvider(ILocalStorageService localStorageService)
     {
-        _localStorage = localStorage;
+        _localStorageService = localStorageService;
         _anonymous = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var tokenString = await _localStorage.GetItemAsStringAsync("authToken");
+        var storedToken = await _localStorageService.GetItemAsStringAsync("Wallet_AccessToken");
 
-        if (string.IsNullOrWhiteSpace(tokenString))
+        if (string.IsNullOrWhiteSpace(storedToken))
         {
             return _anonymous;
         }
 
-        var token = new JwtSecurityToken(tokenString);
+        var token = new JwtSecurityToken(storedToken);
         return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwtAuthType")));
     }
 
-    public void NotifyUserAuthentication(string tokenString)
+    internal void NotifyChange(string tokenString)
     {
         var token = new JwtSecurityToken(tokenString);
-        var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwtAuthType"));
-        var authenticationState = Task.FromResult(new AuthenticationState(authenticatedUser));
-        NotifyAuthenticationStateChanged(authenticationState);
+        var state = Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwtAuthType"))));
+        NotifyAuthenticationStateChanged(state);
     }
 
-    public void NotifyUserLogout() => NotifyAuthenticationStateChanged(Task.FromResult(_anonymous));
+    internal void NotifyLogout() => NotifyAuthenticationStateChanged(Task.FromResult(_anonymous));
 }
