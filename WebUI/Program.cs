@@ -21,6 +21,9 @@ var baseUri = builder.HostEnvironment.IsDevelopment()
 
 var refitSettings = new RefitSettings(new SystemTextJsonContentSerializer(JsonSerializerOptionsProvider.DefaultOptions));
 
+builder.Services.AddAuthorizationCore();
+builder.Services.AddFluentUIComponents();
+
 builder.Services.AddRefitClient<ITransactionService>(refitSettings)
     .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUri, "transactions"))
     .AddHttpMessageHandler<AuthorizationHeaderHandler>();
@@ -36,13 +39,13 @@ builder.Services.AddRefitClient<IBalanceService>(refitSettings)
 builder.Services.AddRefitClient<IAuthenticationService>(refitSettings)
     .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUri, "authentication"));
 
-builder.Services.AddBlazoredLocalStorage();
-builder.Services.AddAuthorizationCore();
-builder.Services.AddValidatorsFromAssembly(typeof(TransactionRequestValidator).Assembly);
-builder.Services.AddFluentUIComponents();
+builder.Services.AddBlazoredLocalStorageAsSingleton();
 
-builder.Services.AddTransient<AuthorizationHeaderHandler>();
-builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddValidatorsFromAssembly(typeof(TransactionRequestValidator).Assembly);
+
+builder.Services.AddSingleton<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
+builder.Services.AddSingleton<IUserService, UserService>();
+
+builder.Services.AddScoped<AuthorizationHeaderHandler>();
 
 await builder.Build().RunAsync();
