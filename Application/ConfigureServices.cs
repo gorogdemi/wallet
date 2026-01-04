@@ -8,6 +8,7 @@ using Wallet.Application.Categories;
 using Wallet.Application.Common.Interfaces;
 using Wallet.Application.Common.Services;
 using Wallet.Application.Transactions;
+using Wallet.Shared.Transactions;
 
 // ReSharper disable CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
@@ -17,7 +18,7 @@ public static class ConfigureServices
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
-        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddValidatorsFromAssembly(typeof(TransactionRequestValidator).Assembly);
 
         services.AddScoped<IWalletContextService, WalletContextService>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();

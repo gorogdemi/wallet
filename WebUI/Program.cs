@@ -8,6 +8,7 @@ using Refit;
 using Wallet.Shared.Transactions;
 using Wallet.WebUI;
 using Wallet.WebUI.Helpers;
+using Wallet.WebUI.Pages.Transactions;
 using Wallet.WebUI.Services;
 using ITransactionService = Wallet.WebUI.Services.ITransactionService;
 
@@ -42,6 +43,7 @@ builder.Services.AddRefitClient<IAuthenticationService>(refitSettings)
 builder.Services.AddBlazoredLocalStorageAsSingleton();
 
 builder.Services.AddValidatorsFromAssembly(typeof(TransactionRequestValidator).Assembly);
+builder.Services.AddValidatorsFromAssembly(typeof(TransactionFormViewModelValidator).Assembly);
 
 builder.Services.AddSingleton<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
 builder.Services.AddSingleton<IUserService, UserService>();
@@ -49,7 +51,3 @@ builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddScoped<AuthorizationHeaderHandler>();
 
 await builder.Build().RunAsync();
-
-// TODO: Blazilla
-// TODO: UI fixes
-// TODO: .NET 9 Blazor updates

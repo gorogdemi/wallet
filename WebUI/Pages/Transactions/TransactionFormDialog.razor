@@ -1,7 +1,7 @@
 ﻿@inherits EditDialog<TransactionFormViewModel>
 
 <EditDialog Content="Content">
-    <FluentValidationValidator />
+    <FluentValidator />
 
     <FormInput ValidationFor="() => Content.Name">
         <FluentTextField Label="Name:" Required @bind-Value="Content.Name" />
