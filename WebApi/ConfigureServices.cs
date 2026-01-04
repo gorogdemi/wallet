@@ -36,47 +36,47 @@ public static class ConfigureServices
 
         services.AddFluentValidationAutoValidation();
 
-        services.AddProblemDetails(
-            options =>
+        services.AddProblemDetails(options =>
+        {
+            options.Map<BadRequestException>(ex => ProblemDetailsCreator.CreateBadRequestMessage(ex.Errors));
+            options.Map<EntityNotFoundException>(ex => ProblemDetailsCreator.CreateNotFoundMessage(ex.Message));
+            options.Map<EntityConflictException>(ex => ProblemDetailsCreator.CreateConflictMessage(ex.Message));
+            options.Map<ForbiddenException>(ex => ProblemDetailsCreator.CreateForbiddenMessage(ex.Message));
+            options.Map<WalletServiceException>(ex => ProblemDetailsCreator.CreateInternalServerErrorMessage(ex.Message));
+            options.Map<Exception>(ex =>
             {
-                options.Map<BadRequestException>(ex => ProblemDetailsCreator.CreateBadRequestMessage(ex.Errors));
-                options.Map<EntityNotFoundException>(ex => ProblemDetailsCreator.CreateNotFoundMessage(ex.Message));
-                options.Map<EntityConflictException>(ex => ProblemDetailsCreator.CreateConflictMessage(ex.Message));
-                options.Map<ForbiddenException>(ex => ProblemDetailsCreator.CreateForbiddenMessage(ex.Message));
-                options.Map<WalletServiceException>(ex => ProblemDetailsCreator.CreateInternalServerErrorMessage(ex.Message));
-                options.Map<Exception>(
-                    ex =>
-                    {
-                        var problemDetails = ProblemDetailsCreator.CreateInternalServerErrorMessage(ex.Message);
-                        problemDetails.Extensions["exceptionDetails"] = ex.ToString();
-                        return problemDetails;
-                    });
+                var problemDetails = ProblemDetailsCreator.CreateInternalServerErrorMessage(ex.Message);
+                problemDetails.Extensions["exceptionDetails"] = ex.ToString();
+                return problemDetails;
             });
+        });
 
         services
-            .AddSwaggerGen(
-                c =>
+            .AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Wallet API", Version = "v1" });
+
+                var security = new OpenApiSecurityRequirement
                 {
-                    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Wallet API", Version = "v1" });
-
-                    var security = new OpenApiSecurityRequirement
                     {
-                        { new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } }, Array.Empty<string>() },
-                    };
+                        new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
+                        Array.Empty<string>()
+                    },
+                };
 
-                    c.AddSecurityDefinition(
-                        "Bearer",
-                        new OpenApiSecurityScheme
-                        {
-                            Description = "JWT Authorization Header Using The Bearer Scheme",
-                            Name = "Authorization",
-                            In = ParameterLocation.Header,
-                            Type = SecuritySchemeType.Http,
-                            Scheme = "Bearer",
-                        });
+                c.AddSecurityDefinition(
+                    "Bearer",
+                    new OpenApiSecurityScheme
+                    {
+                        Description = "JWT Authorization Header Using The Bearer Scheme",
+                        Name = "Authorization",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "Bearer",
+                    });
 
-                    c.AddSecurityRequirement(security);
-                });
+                c.AddSecurityRequirement(security);
+            });
 
         return services;
     }

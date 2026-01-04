@@ -1,7 +1,7 @@
 ﻿@inherits EditDialog<TransactionFormViewModel>
 
 <EditDialog Content="Content">
-    <FluentValidationValidator />
+    <FluentValidator />
 
     <FormInput ValidationFor="() => Content.Name">
         <FluentTextField Label="Name:" Required @bind-Value="Content.Name" />
@@ -24,7 +24,12 @@
     </FormInput>
 
     <FormInput ValidationFor="() => Content.Type">
-        <FluentSelect Label="Type:" Required Placeholder="Select a type..." @bind-SelectedOption="Content.Type" Items="_transactionTypes" OptionText="type => type.ToTransactionTypeText()" />
+        <FluentSelect Label="Type:"
+                      Required
+                      Placeholder="Select a type..."
+                      @bind-SelectedOption="Content.Type"
+                      Items="_transactionTypes"
+                      OptionText="type => type.ToTransactionTypeText()" />
     </FormInput>
 
     <FormInput ValidationFor="() => Content.CategoryId">
@@ -40,7 +45,7 @@
         @if (Content.CategoryId is not null)
         {
             <FluentButton OnClick="() => Content.CategoryId = null" Style="height: 34px">
-                <FluentIcon Icon="Icons.Regular.Size20.Dismiss" Color="Color.Neutral" />
+                <FluentIcon Icon="Regular.Size20.Dismiss" Color="Color.Neutral" />
             </FluentButton>
         }
     </FormInput>

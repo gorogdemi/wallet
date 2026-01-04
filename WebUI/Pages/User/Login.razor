@@ -5,7 +5,7 @@
 
 <FluentCard Width="100%" Height="auto">
     <EditForm Model="ViewModel" OnValidSubmit="LoginAsync">
-        <FluentValidationValidator />
+        <FluentValidator />
 
         <FormInput ValidationFor="() => ViewModel.UserName">
             <FluentTextField @bind-Value="ViewModel.UserName">Username:</FluentTextField>

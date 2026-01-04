@@ -11,7 +11,7 @@
         <div class="top-row px-4">
             <AuthorizeView>
                 <Authorized>
-                    <FluentIcon Icon="Icons.Filled.Size20.Person" />
+                    <FluentIcon Icon="Filled.Size20.Person" />
                     <span style="margin-right: 10px">@context.User.FindFirst("fullname")?.Value</span>
                     <FluentButton Appearance="Appearance.Outline" @onclick="LogoutAsync">Log out</FluentButton>
                 </Authorized>

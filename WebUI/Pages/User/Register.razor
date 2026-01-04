@@ -5,18 +5,18 @@
 
 <FluentCard Width="100%" Height="auto">
     <EditForm Model="ViewModel" OnValidSubmit="RegisterAsync">
-        <FluentValidationValidator />
+        <FluentValidator />
 
         <FormInput ValidationFor="() => ViewModel.UserName">
             <FluentTextField @bind-Value="ViewModel.UserName">Username:</FluentTextField>
         </FormInput>
 
         <FormInput ValidationFor="() => ViewModel.FirstName">
-            <FluentTextField @bind-Value="ViewModel.FirstName">Last name:</FluentTextField>
+            <FluentTextField @bind-Value="ViewModel.FirstName">First name:</FluentTextField>
         </FormInput>
 
         <FormInput ValidationFor="() => ViewModel.LastName">
-            <FluentTextField @bind-Value="ViewModel.LastName">First name:</FluentTextField>
+            <FluentTextField @bind-Value="ViewModel.LastName">Last name:</FluentTextField>
         </FormInput>
 
         <FormInput ValidationFor="() => ViewModel.Email">
