@@ -25,36 +25,32 @@ public abstract class PageBase : ComponentBase
     protected NavigationManager NavigationManager { get; set; }
 
     protected Task HandleRequestAsync(Func<Task> request, Action onSuccess) =>
-        HandleRequestErrorsAsync(
-            async () =>
-            {
-                await request();
-                onSuccess();
-            });
+        HandleRequestErrorsAsync(async () =>
+        {
+            await request();
+            onSuccess();
+        });
 
     protected Task HandleRequestAsync(Func<Task> request, Func<Task> onSuccess) =>
-        HandleRequestErrorsAsync(
-            async () =>
-            {
-                await request();
-                await onSuccess();
-            });
+        HandleRequestErrorsAsync(async () =>
+        {
+            await request();
+            await onSuccess();
+        });
 
     protected Task HandleRequestAsync<T>(Func<Task<T>> request, Action<T> onSuccess) =>
-        HandleRequestErrorsAsync(
-            async () =>
-            {
-                var result = await request();
-                onSuccess(result);
-            });
+        HandleRequestErrorsAsync(async () =>
+        {
+            var result = await request();
+            onSuccess(result);
+        });
 
     protected Task HandleRequestAsync<T>(Func<Task<T>> request, Func<T, Task> onSuccess) =>
-        HandleRequestErrorsAsync(
-            async () =>
-            {
-                var result = await request();
-                await onSuccess(result);
-            });
+        HandleRequestErrorsAsync(async () =>
+        {
+            var result = await request();
+            await onSuccess(result);
+        });
 
     protected override void OnInitialized()
     {
@@ -81,7 +77,6 @@ public abstract class PageBase : ComponentBase
         catch (ApiException e)
         {
             var problem = await e.GetContentAsAsync<ProblemDetails>();
-
             await ShowErrorMessageAlertAsync(problem is not null ? $"{problem.Title}: {problem.Detail}" : e.Message);
         }
         catch (Exception e)
@@ -90,5 +85,12 @@ public abstract class PageBase : ComponentBase
         }
     }
 
-    private async Task ShowErrorMessageAlertAsync(string message) => await MessageService.ShowMessageBarAsync(message, MessageIntent.Error, "TOP");
+    private async Task ShowErrorMessageAlertAsync(string message) =>
+        await MessageService.ShowMessageBarAsync(options =>
+        {
+            options.Body = message;
+            options.Intent = MessageIntent.Error;
+            options.Section = "TOP";
+            options.Timeout = 10000;
+        });
 }

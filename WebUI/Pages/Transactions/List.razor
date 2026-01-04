@@ -1,6 +1,5 @@
 ﻿@page "/transactions"
 @inherits TransactionBase<TransactionViewModel>
-@attribute [Authorize]
 @inject IDialogService DialogService
 
 <h1>Transactions</h1>
@@ -10,13 +9,16 @@
     <FluentIcon Icon="Filled.Size20.AddCircle" Slot="start" Color="Color.Fill" />
 </FluentButton>
 
-<FluentCard Style="display: grid; padding: 0; min-height: 250px;" Width="100%" Height="auto">
-    <FluentDataGrid Items="FilteredItems" GridTemplateColumns="0.5fr 0.2fr 0.2fr 0.2fr 0.4fr 0.2fr 0.2fr 0.2fr 0.2fr" ResizableColumns="true" Style="overflow: auto;">
+<FluentCard Class="d-grid p-0" Style="min-height: 250px;" Width="100%" Height="auto">
+    <FluentDataGrid Items="FilteredItems"
+                    GridTemplateColumns="0.5fr 0.2fr 0.2fr 0.2fr 0.4fr 0.2fr 0.2fr 0.2fr 0.2fr"
+                    ResizableColumns="true"
+                    Class="overflow-auto">
         <ChildContent>
             <PropertyColumn Title="Name" Property="@(c => c.Name)" Sortable="true" Align="Align.Start" IsDefaultSortColumn="true">
                 <ColumnOptions>
                     <div class="search-box">
-                        <FluentSearch @bind-Value="_searchTerm" Autofocus="true" Placeholder="Search..." Immediate="true" ImmediateDelay="200" />
+                        <FluentSearch @bind-Value="_searchTerm" Autofocus="true" Placeholder="Search..." Immediate="true" ImmediateDelay="250" />
                     </div>
                 </ColumnOptions>
             </PropertyColumn>

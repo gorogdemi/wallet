@@ -9,7 +9,7 @@
     <FluentIcon Icon="Filled.Size20.AddCircle" Slot="start" Color="Color.Fill" />
 </FluentButton>
 
-<FluentCard Style="display: grid; padding: 0; min-height: 250px;" Width="100%" Height="auto">
+<FluentCard Class="d-grid p-0" Style="min-height: 250px;" Width="100%" Height="auto">
     <FluentDataGrid Items="CategoryList" GridTemplateColumns="1fr">
         <ChildContent>
             <PropertyColumn Title="Name" Property="@(c => c.Name)" Sortable="true" Align="Align.Start" />
@@ -39,7 +39,7 @@
             () => Service.GetAllAsync(),
             result => ViewModel = result);
 
-    private async Task AddAsync() => await HandleDialogAsync(null, new CategoryRequest());
+    private async Task AddAsync() => await HandleDialogAsync(id: null, new CategoryRequest());
 
     private async Task EditAsync(CategoryDto category) => await HandleDialogAsync(category.Id, new CategoryRequest { Name = category.Name });
 
