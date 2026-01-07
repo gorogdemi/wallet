@@ -6,14 +6,12 @@ namespace Wallet.WebUI.Shared;
 
 public abstract class PageBase : ComponentBase
 {
-    private bool _isLoading;
-
     protected bool IsLoading
     {
-        get => _isLoading;
+        get;
         set
         {
-            _isLoading = value;
+            field = value;
             StateHasChanged();
         }
     }
