@@ -9,7 +9,7 @@
         <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="NI.CSharp.Analyzers" Version="2.0.28" />
+        <PackageReference Include="NI.CSharp.Analyzers" Version="2.0.35" />
         <PackageReference Include="IDisposableAnalyzers" Version="4.0.8" PrivateAssets="all" />
         <AdditionalFiles Include="..\CodeAnalysisDictionary.xml" Visible="False" />
     </ItemGroup>
