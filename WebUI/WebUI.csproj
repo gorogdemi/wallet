@@ -2,6 +2,7 @@
     <PropertyGroup>
         <RootNamespace>Wallet.WebUI</RootNamespace>
         <AssemblyName>Wallet.WebUI</AssemblyName>
+        <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
     </PropertyGroup>
 
     <ItemGroup>
