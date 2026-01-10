@@ -8,11 +8,11 @@
         <FluentValidator />
 
         <FormInput ValidationFor="() => ViewModel.UserName">
-            <FluentTextField @bind-Value="ViewModel.UserName">Username:</FluentTextField>
+            <FluentTextField Label="Username:" Required @bind-Value="ViewModel.UserName" />
         </FormInput>
 
         <FormInput ValidationFor="() => ViewModel.Password">
-            <FluentTextField TextFieldType="TextFieldType.Password" @bind-Value="ViewModel.Password">Password:</FluentTextField>
+            <FluentTextField Label="Password:" Required TextFieldType="TextFieldType.Password" @bind-Value="ViewModel.Password" />
         </FormInput>
 
         <FormSubmit Title="Log in" />

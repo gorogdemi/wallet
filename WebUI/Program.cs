@@ -51,5 +51,3 @@ builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddScoped<AuthorizationHeaderHandler>();
 
 await builder.Build().RunAsync();
-
-// TODO: Refit
