@@ -59,7 +59,7 @@ public class TransactionService : ITransactionService
         var transactions = await _walletContextService.Context.Transactions.Where(t => t.UserId == userId).ToListAsync(cancellationToken);
         _logger.LogInformation("Transactions retrieved from database");
 
-        var mapped = transactions.Select(x => x.ToDto()).ToList();
+        var mapped = transactions.ToDto();
         mapped.ForEach(x => x.SumAmount = x.BankAmount + x.CashAmount);
 
         return mapped;
@@ -90,7 +90,7 @@ public class TransactionService : ITransactionService
             .ToListAsync(cancellationToken);
         _logger.LogInformation("Transactions retrieved from database by search text '{SearchText}'", searchText);
 
-        return transactions.Select(x => x.ToDto()).ToList();
+        return transactions.ToDto();
     }
 
     public async Task<TransactionDto> UpdateAsync(long id, TransactionRequest request, CancellationToken cancellationToken)

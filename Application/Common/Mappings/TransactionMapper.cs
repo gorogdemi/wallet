@@ -11,6 +11,8 @@ public static partial class TransactionMapper
     [MapProperty(nameof(Transaction.Category.Name), nameof(TransactionDto.CategoryName))]
     public static partial TransactionDto ToDto(this Transaction transaction);
 
+    public static partial List<TransactionDto> ToDto(this List<Transaction> transactions);
+
     public static partial Transaction ToEntity(this TransactionRequest request);
 
     public static partial void Update(this TransactionRequest request, Transaction transaction);

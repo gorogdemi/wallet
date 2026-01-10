@@ -27,80 +27,81 @@ public class CategoryService : ICategoryService
     public async Task<CategoryDto> CreateAsync(CategoryRequest request, CancellationToken cancellationToken)
     {
         var userId = _currentUserService.UserId;
-        var transaction = request.ToEntity();
-        transaction.UserId = userId;
+        var category = request.ToEntity();
+        category.UserId = userId;
 
-        transaction = await _walletContextService.CreateAsync(transaction, cancellationToken);
-        _logger.LogInformation("Category created with ID '{Id}'", transaction.Id);
+        category = await _walletContextService.CreateAsync(category, cancellationToken);
+        _logger.LogInformation("Category created with ID '{Id}'", category.Id);
 
-        return transaction.ToDto();
+        return category.ToDto();
     }
 
     public async Task DeleteAsync(long id, CancellationToken cancellationToken)
     {
-        var transaction = await _walletContextService.GetAsync<Category>(id, cancellationToken) ?? throw new EntityNotFoundException();
+        var category = await _walletContextService.GetAsync<Category>(id, cancellationToken) ?? throw new EntityNotFoundException();
         var userId = _currentUserService.UserId;
 
-        if (transaction.UserId != userId)
+        if (category.UserId != userId)
         {
             throw new ForbiddenException();
         }
 
-        await _walletContextService.DeleteAsync(transaction, cancellationToken);
-        _logger.LogInformation("Category '{Id}' deleted", transaction.Id);
+        await _walletContextService.DeleteAsync(category, cancellationToken);
+        _logger.LogInformation("Category '{Id}' deleted", category.Id);
     }
 
     public async Task<List<CategoryDto>> GetAllAsync(CancellationToken cancellationToken)
     {
         var userId = _currentUserService.UserId;
 
-        var transactions = await _walletContextService.Context.Categories.Where(t => t.UserId == userId).ToListAsync(cancellationToken);
+        var categories = await _walletContextService.Context.Categories.Where(t => t.UserId == userId).ToListAsync(cancellationToken);
         _logger.LogInformation("Categories retrieved from database");
 
-        return transactions.Select(x => x.ToDto()).ToList();
+        return categories.ToDto();
     }
 
     public async Task<CategoryDto> GetAsync(long id, CancellationToken cancellationToken)
     {
-        var transaction = await _walletContextService.GetAsync<Category>(id, cancellationToken) ?? throw new EntityNotFoundException();
+        var category = await _walletContextService.GetAsync<Category>(id, cancellationToken) ?? throw new EntityNotFoundException();
         var userId = _currentUserService.UserId;
 
-        if (transaction.UserId != userId)
+        if (category.UserId != userId)
         {
             throw new ForbiddenException();
         }
 
-        _logger.LogInformation("Category '{Id}' retrieved from database", transaction.Id);
+        _logger.LogInformation("Category '{Id}' retrieved from database", category.Id);
 
-        return transaction.ToDto();
+        return category.ToDto();
     }
 
     public async Task<List<CategoryDto>> SearchAsync(string searchText, CancellationToken cancellationToken)
     {
         var userId = _currentUserService.UserId;
-        var transactions = await _walletContextService.Context.Categories.Where(t => t.UserId == userId && EF.Functions.ILike(t.Name, $"%{searchText}%"))
+        var categories = await _walletContextService.Context.Categories
+            .Where(t => t.UserId == userId && EF.Functions.ILike(t.Name, $"%{searchText}%"))
             .ToListAsync(cancellationToken);
         _logger.LogInformation("Categories retrieved from database by search text '{SearchText}'", searchText);
 
-        return transactions.Select(x => x.ToDto()).ToList();
+        return categories.ToDto();
     }
 
     public async Task<CategoryDto> UpdateAsync(long id, CategoryRequest request, CancellationToken cancellationToken)
     {
-        var transaction = await _walletContextService.GetAsync<Category>(id, cancellationToken) ?? throw new EntityNotFoundException();
+        var category = await _walletContextService.GetAsync<Category>(id, cancellationToken) ?? throw new EntityNotFoundException();
         var userId = _currentUserService.UserId;
 
-        if (transaction.UserId != userId)
+        if (category.UserId != userId)
         {
             throw new ForbiddenException();
         }
 
-        request.Update(transaction);
-        transaction.UserId = userId;
+        request.Update(category);
+        category.UserId = userId;
 
-        transaction = await _walletContextService.UpdateAsync(transaction, cancellationToken);
-        _logger.LogInformation("Category '{Id}' updated", transaction.Id);
+        category = await _walletContextService.UpdateAsync(category, cancellationToken);
+        _logger.LogInformation("Category '{Id}' updated", category.Id);
 
-        return transaction.ToDto();
+        return category.ToDto();
     }
 }
