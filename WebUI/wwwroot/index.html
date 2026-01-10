@@ -1,15 +1,17 @@
 ﻿<!DOCTYPE html>
-<html lang="hu">
+<html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <title>Wallet</title>
     <base href="/" />
-    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
-    <link href="_content/Microsoft.FluentUI.AspNetCore.Components/css/reboot.css" rel="stylesheet" />
-    <link href="css/app.css" rel="stylesheet" />
-    <link href="Wallet.WebUI.styles.css" rel="stylesheet" />
+    <link id="webassembly" rel="preload" />
+    <link href="css/bootstrap/bootstrap.min#[.{fingerprint}].css" rel="stylesheet" />
+    <link href="_content/Microsoft.FluentUI.AspNetCore.Components/css/reboot#[.{fingerprint}].css" rel="stylesheet" />
+    <link href="css/app#[.{fingerprint}].css" rel="stylesheet" />
+    <link href="Wallet.WebUI.styles#[.{fingerprint}].css" rel="stylesheet" />
+    <script type="importmap"></script>
 </head>
 
 <body>
@@ -24,7 +26,8 @@
     <a class="reload" href="">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
-<script src="_framework/blazor.webassembly.js"></script>
+
+<script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
 </body>
 
 </html>

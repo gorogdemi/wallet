@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 using FluentValidation.AspNetCore;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Wallet.Application.Common.Exceptions;
 using Wallet.Application.Common.Interfaces;
 using Wallet.Infrastructure.Options;
@@ -56,13 +56,10 @@ public static class ConfigureServices
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Wallet API", Version = "v1" });
 
-                var security = new OpenApiSecurityRequirement
+                c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
                 {
-                    {
-                        new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
-                        Array.Empty<string>()
-                    },
-                };
+                    [new OpenApiSecuritySchemeReference("bearer", document)] = [],
+                });
 
                 c.AddSecurityDefinition(
                     "Bearer",
@@ -74,8 +71,6 @@ public static class ConfigureServices
                         Type = SecuritySchemeType.Http,
                         Scheme = "Bearer",
                     });
-
-                c.AddSecurityRequirement(security);
             });
 
         return services;

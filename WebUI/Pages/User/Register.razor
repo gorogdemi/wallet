@@ -8,31 +8,31 @@
         <FluentValidator />
 
         <FormInput ValidationFor="() => ViewModel.UserName">
-            <FluentTextField @bind-Value="ViewModel.UserName">Username:</FluentTextField>
+            <FluentTextField Label="Username:" Required @bind-Value="ViewModel.UserName" />
         </FormInput>
 
         <FormInput ValidationFor="() => ViewModel.FirstName">
-            <FluentTextField @bind-Value="ViewModel.FirstName">First name:</FluentTextField>
+            <FluentTextField Label="First name:" Required @bind-Value="ViewModel.FirstName" />
         </FormInput>
 
         <FormInput ValidationFor="() => ViewModel.LastName">
-            <FluentTextField @bind-Value="ViewModel.LastName">Last name:</FluentTextField>
+            <FluentTextField Label="Last name:" Required @bind-Value="ViewModel.LastName" />
         </FormInput>
 
         <FormInput ValidationFor="() => ViewModel.Email">
-            <FluentTextField TextFieldType="TextFieldType.Email" @bind-Value="ViewModel.Email">E-mail address:</FluentTextField>
+            <FluentTextField Label="E-mail address:" Required TextFieldType="TextFieldType.Email" @bind-Value="ViewModel.Email" />
         </FormInput>
 
         <FormInput ValidationFor="() => ViewModel.EmailConfirm">
-            <FluentTextField TextFieldType="TextFieldType.Email" @bind-Value="ViewModel.EmailConfirm">Confirm Email address:</FluentTextField>
+            <FluentTextField Label="Confirm e-mail address:" Required TextFieldType="TextFieldType.Email" @bind-Value="ViewModel.EmailConfirm" />
         </FormInput>
 
         <FormInput ValidationFor="() => ViewModel.Password">
-            <FluentTextField TextFieldType="TextFieldType.Password" @bind-Value="ViewModel.Password">Password:</FluentTextField>
+            <FluentTextField Label="Password:" Required TextFieldType="TextFieldType.Password" @bind-Value="ViewModel.Password" />
         </FormInput>
 
         <FormInput ValidationFor="() => ViewModel.PasswordConfirm">
-            <FluentTextField TextFieldType="TextFieldType.Password" @bind-Value="ViewModel.PasswordConfirm">Confirm password:</FluentTextField>
+            <FluentTextField Label="Confirm password:" Required TextFieldType="TextFieldType.Password" @bind-Value="ViewModel.PasswordConfirm" />
         </FormInput>
 
         <FormSubmit Title="Register" />
