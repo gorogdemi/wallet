@@ -1,6 +1,7 @@
+using Wallet.Application.Common.Interfaces;
 using Wallet.Domain.Common;
 
-namespace Wallet.Application.Common.Interfaces;
+namespace Wallet.Application.Persistence;
 
 public interface IWalletContextService
 {

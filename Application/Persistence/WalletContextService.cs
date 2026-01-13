@@ -3,7 +3,7 @@ using Wallet.Application.Common.Exceptions;
 using Wallet.Application.Common.Interfaces;
 using Wallet.Domain.Common;
 
-namespace Wallet.Application.Common.Services;
+namespace Wallet.Application.Persistence;
 
 public class WalletContextService : IWalletContextService
 {

@@ -4,8 +4,7 @@ using FluentValidation;
 using Wallet.Application.Authentication;
 using Wallet.Application.Balance;
 using Wallet.Application.Categories;
-using Wallet.Application.Common.Interfaces;
-using Wallet.Application.Common.Services;
+using Wallet.Application.Persistence;
 using Wallet.Application.Transactions;
 using Wallet.Shared.Transactions;
 
