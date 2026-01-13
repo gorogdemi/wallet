@@ -1,17 +1,13 @@
 #pragma warning disable IDISP004
 #pragma warning disable IDE0130
 
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using Wallet.Application.Common.Interfaces;
 using Wallet.Domain.Enums;
 using Wallet.Infrastructure.Identity;
-using Wallet.Infrastructure.Options;
 using Wallet.Infrastructure.Persistence;
 using Wallet.Infrastructure.Services;
 
@@ -32,9 +28,6 @@ public static class ConfigureServices
             options.ConfigureWarnings(c => c.Ignore(CoreEventId.ManyServiceProvidersCreatedWarning)); // TODO: review
         });
 
-        services.AddScoped<IWalletContext>(provider => provider.GetRequiredService<WalletContext>());
-        services.AddScoped<WalletContextInitializer>();
-
         services
             .AddIdentityCore<ApplicationUser>(options =>
             {
@@ -47,32 +40,11 @@ public static class ConfigureServices
             })
             .AddEntityFrameworkStores<WalletContext>();
 
-        services
-            .AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.MapInboundClaims = false;
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    RoleClaimType = "role",
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey =
-                        new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.GetSection("Authentication").Get<AuthenticationOptions>().JwtSecret)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    RequireExpirationTime = true,
-                    ValidateLifetime = true,
-                };
-            });
+        services.AddScoped<IWalletContext>(provider => provider.GetRequiredService<WalletContext>());
+        services.AddScoped<WalletContextInitializer>();
+        services.AddScoped<ITokenService, JwtTokenService>();
 
         services.AddTransient<IIdentityService, IdentityService>();
-        services.AddScoped<ITokenService, JwtTokenService>();
 
         return services;
     }

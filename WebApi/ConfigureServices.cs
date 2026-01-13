@@ -1,9 +1,12 @@
 #pragma warning disable IDE0130
 
+using System.Text;
 using System.Text.Json.Serialization;
 using FluentValidation.AspNetCore;
 using Hellang.Middleware.ProblemDetails;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Wallet.Application.Common.Exceptions;
 using Wallet.Application.Common.Interfaces;
@@ -21,8 +24,6 @@ public static class ConfigureServices
     {
         services.Configure<AuthenticationOptions>(configuration.GetSection("Authentication"));
         services.Configure<ForwardedHeadersOptions>(options => options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto);
-
-        services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         services.AddCors();
 
@@ -72,6 +73,32 @@ public static class ConfigureServices
                         Scheme = "Bearer",
                     });
             });
+
+        services
+            .AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.MapInboundClaims = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    RoleClaimType = "role",
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.GetSection("Authentication").Get<AuthenticationOptions>().JwtSecret)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    RequireExpirationTime = true,
+                    ValidateLifetime = true,
+                };
+            });
+
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         return services;
     }
