@@ -95,6 +95,7 @@ public static class ConfigureServices
                     ValidateAudience = false,
                     RequireExpirationTime = true,
                     ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromSeconds(30),
                 };
             });
 
