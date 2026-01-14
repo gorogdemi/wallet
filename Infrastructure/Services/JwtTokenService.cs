@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Wallet.Application.Common.Interfaces;
 using Wallet.Application.Common.Models;
+using Wallet.Application.Persistence;
 using Wallet.Domain.Entities;
 using Wallet.Infrastructure.Identity;
 using Wallet.Infrastructure.Options;
@@ -19,11 +20,11 @@ public class JwtTokenService : ITokenService
     private const string JwtUserEmail = "useremail";
     private const string JwtFullName = "fullname";
     private readonly AuthenticationOptions _authenticationOptions;
-    private readonly IWalletContext _walletContext;
+    private readonly IWalletContextService _walletContextService;
 
-    public JwtTokenService(IWalletContext walletContext, IOptions<AuthenticationOptions> authenticationOptions)
+    public JwtTokenService(IWalletContextService walletContextService, IOptions<AuthenticationOptions> authenticationOptions)
     {
-        _walletContext = walletContext;
+        _walletContextService = walletContextService;
         _authenticationOptions = authenticationOptions.Value;
     }
 
@@ -58,8 +59,8 @@ public class JwtTokenService : ITokenService
             ExpiryDate = DateTime.UtcNow.AddMonths(_authenticationOptions.RefreshTokenLifetimeInMonths),
         };
 
-        _walletContext.RefreshTokens.Add(refreshToken);
-        await _walletContext.SaveChangesAsync(cancellationToken);
+        _walletContextService.Context.RefreshTokens.Add(refreshToken);
+        await _walletContextService.Context.SaveChangesAsync(cancellationToken);
 
         return (Result.Success(), tokenHandler.WriteToken(token), refreshToken.Token);
     }
@@ -82,7 +83,7 @@ public class JwtTokenService : ITokenService
         }
 
         var jti = validatedToken.FindFirstValue(JwtRegisteredClaimNames.Jti);
-        var storedRefreshToken = await _walletContext.RefreshTokens.FindAsync([refreshToken], cancellationToken);
+        var storedRefreshToken = await _walletContextService.Context.RefreshTokens.FindAsync([refreshToken], cancellationToken);
 
         if (storedRefreshToken is null)
         {
@@ -110,7 +111,7 @@ public class JwtTokenService : ITokenService
         }
 
         storedRefreshToken.IsUsed = true;
-        await _walletContext.SaveChangesAsync(cancellationToken);
+        await _walletContextService.Context.SaveChangesAsync(cancellationToken);
 
         var user = new ApplicationUser
         {

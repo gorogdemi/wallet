@@ -1,8 +1,9 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Wallet.Application.Common.Exceptions;
 using Wallet.Application.Common.Interfaces;
+using Wallet.Application.Common.Mappings;
+using Wallet.Application.Persistence;
 using Wallet.Domain.Entities;
 using Wallet.Shared.Transactions;
 
@@ -12,19 +13,16 @@ public class TransactionService : ITransactionService
 {
     private readonly ICurrentUserService _currentUserService;
     private readonly ILogger<TransactionService> _logger;
-    private readonly IMapper _mapper;
     private readonly IWalletContextService _walletContextService;
 
     public TransactionService(
         ILogger<TransactionService> logger,
         IWalletContextService walletContextService,
-        ICurrentUserService currentUserService,
-        IMapper mapper)
+        ICurrentUserService currentUserService)
     {
         _logger = logger;
         _walletContextService = walletContextService;
         _currentUserService = currentUserService;
-        _mapper = mapper;
     }
 
     public async Task<TransactionDto> CreateAsync(TransactionRequest request, CancellationToken cancellationToken)
@@ -32,13 +30,13 @@ public class TransactionService : ITransactionService
         _logger.LogInformation("CreateTransaction request received: {@Request}", request);
 
         var userId = _currentUserService.UserId;
-        var transaction = _mapper.Map<Transaction>(request);
+        var transaction = request.ToEntity();
         transaction.UserId = userId;
 
         transaction = await _walletContextService.CreateAsync(transaction, cancellationToken);
         _logger.LogInformation("Transaction created with ID '{Id}'", transaction.Id);
 
-        return _mapper.Map<TransactionDto>(transaction);
+        return transaction.ToDto();
     }
 
     public async Task DeleteAsync(long id, CancellationToken cancellationToken)
@@ -62,7 +60,7 @@ public class TransactionService : ITransactionService
         var transactions = await _walletContextService.Context.Transactions.Where(t => t.UserId == userId).ToListAsync(cancellationToken);
         _logger.LogInformation("Transactions retrieved from database");
 
-        var mapped = _mapper.Map<IEnumerable<TransactionDto>>(transactions).ToList();
+        var mapped = transactions.ToDto();
         mapped.ForEach(x => x.SumAmount = x.BankAmount + x.CashAmount);
 
         return mapped;
@@ -80,7 +78,7 @@ public class TransactionService : ITransactionService
 
         _logger.LogInformation("Transaction '{Id}' retrieved from database", transaction.Id);
 
-        var mapped = _mapper.Map<TransactionDto>(transaction);
+        var mapped = transaction.ToDto();
         mapped.SumAmount = mapped.BankAmount + mapped.CashAmount;
 
         return mapped;
@@ -93,7 +91,7 @@ public class TransactionService : ITransactionService
             .ToListAsync(cancellationToken);
         _logger.LogInformation("Transactions retrieved from database by search text '{SearchText}'", searchText);
 
-        return _mapper.Map<List<TransactionDto>>(transactions);
+        return transactions.ToDto();
     }
 
     public async Task<TransactionDto> UpdateAsync(long id, TransactionRequest request, CancellationToken cancellationToken)
@@ -106,12 +104,12 @@ public class TransactionService : ITransactionService
             throw new ForbiddenException();
         }
 
-        transaction = _mapper.Map(request, transaction);
+        request.Update(transaction);
         transaction.UserId = userId;
 
         transaction = await _walletContextService.UpdateAsync(transaction, cancellationToken);
         _logger.LogInformation("Transaction '{Id}' updated", transaction.Id);
 
-        return _mapper.Map<TransactionDto>(transaction);
+        return transaction.ToDto();
     }
 }

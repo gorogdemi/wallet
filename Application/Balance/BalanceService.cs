@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Wallet.Application.Common.Interfaces;
+using Wallet.Application.Persistence;
 using Wallet.Domain.Enums;
 using Wallet.Shared.Balance;
 
