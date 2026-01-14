@@ -2,17 +2,13 @@
 
 using System.Text;
 using System.Text.Json.Serialization;
-using FluentValidation.AspNetCore;
-using Hellang.Middleware.ProblemDetails;
+using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
-using Wallet.Application.Common.Exceptions;
 using Wallet.Application.Common.Interfaces;
 using Wallet.Infrastructure.Options;
 using Wallet.Infrastructure.Persistence;
-using Wallet.WebApi.Helpers;
 using Wallet.WebApi.Services;
 
 // ReSharper disable once CheckNamespace
@@ -25,55 +21,8 @@ public static class ConfigureServices
         services.Configure<AuthenticationOptions>(configuration.GetSection("Authentication"));
         services.Configure<ForwardedHeadersOptions>(options => options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto);
 
-        services.AddCors();
-
-        services.AddHttpContextAccessor();
-
-        services.AddHealthChecks().AddDbContextCheck<WalletContext>();
-
-        services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-
-        services.AddEndpointsApiExplorer();
-
-        services.AddFluentValidationAutoValidation();
-
-        services.AddProblemDetails(options =>
-        {
-            options.Map<BadRequestException>(ex => ProblemDetailsCreator.CreateBadRequestMessage(ex.Errors));
-            options.Map<EntityNotFoundException>(ex => ProblemDetailsCreator.CreateNotFoundMessage(ex.Message));
-            options.Map<EntityConflictException>(ex => ProblemDetailsCreator.CreateConflictMessage(ex.Message));
-            options.Map<ForbiddenException>(ex => ProblemDetailsCreator.CreateForbiddenMessage(ex.Message));
-            options.Map<WalletServiceException>(ex => ProblemDetailsCreator.CreateInternalServerErrorMessage(ex.Message));
-            options.Map<Exception>(ex =>
-            {
-                var problemDetails = ProblemDetailsCreator.CreateInternalServerErrorMessage(ex.Message);
-                problemDetails.Extensions["exceptionDetails"] = ex.ToString();
-                return problemDetails;
-            });
-        });
-
-        services
-            .AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Wallet API", Version = "v1" });
-
-                c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
-                {
-                    [new OpenApiSecuritySchemeReference("bearer", document)] = [],
-                });
-
-                c.AddSecurityDefinition(
-                    "Bearer",
-                    new OpenApiSecurityScheme
-                    {
-                        Description = "JWT Authorization Header Using The Bearer Scheme",
-                        Name = "Authorization",
-                        In = ParameterLocation.Header,
-                        Type = SecuritySchemeType.Http,
-                        Scheme = "Bearer",
-                    });
-            });
-
+        services.AddFastEndpoints().ConfigureHttpJsonOptions(x => x.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+        services.AddAuthorization();
         services
             .AddAuthentication(options =>
             {
@@ -98,6 +47,34 @@ public static class ConfigureServices
                     ClockSkew = TimeSpan.FromSeconds(30),
                 };
             });
+
+        services.AddCors(options => options.AddPolicy("EnableAll", policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+        services.AddHttpContextAccessor();
+
+        services.SwaggerDocument(s =>
+        {
+            s.EndpointFilter = endpoint => endpoint.EndpointTags is null;
+            s.DocumentSettings = d =>
+            {
+                d.Title = "Wallet API";
+                d.Version = "v1";
+                d.Description = "Web API for Wallet.";
+
+                /*d.AddAuth(
+                    "Bearer",
+                    new OpenApiSecurityScheme
+                    {
+                        Description = "JWT Authorization Header Using The Bearer Scheme",
+                        Name = "Authorization",
+                        In = OpenApiSecurityApiKeyLocation.Header,
+                        Type = OpenApiSecuritySchemeType.Http,
+                        Scheme = "Bearer",
+                    });*/
+            };
+        });
+
+        services.AddHealthChecks()
+            .AddDbContextCheck<WalletContext>();
 
         services.AddScoped<ICurrentUserService, CurrentUserService>();
 
