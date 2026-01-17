@@ -2,6 +2,7 @@
     <PropertyGroup>
         <RootNamespace>Wallet.WebApi</RootNamespace>
         <AssemblyName>Wallet.WebApi</AssemblyName>
+        <NoWarn>CA1725;CA1812;</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
