@@ -6,10 +6,8 @@ using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
-using Wallet.Application.Common.Interfaces;
 using Wallet.Infrastructure.Options;
 using Wallet.Infrastructure.Persistence;
-using Wallet.WebApi.Services;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
@@ -75,8 +73,6 @@ public static class ConfigureServices
 
         services.AddHealthChecks()
             .AddDbContextCheck<WalletContext>();
-
-        services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         return services;
     }
