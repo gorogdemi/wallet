@@ -17,7 +17,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 var baseUri = builder.HostEnvironment.IsDevelopment()
-    ? new Uri("https://localhost:5001")
+    ? new Uri("http://localhost:5000")
     : new Uri($"{builder.HostEnvironment.BaseAddress}api");
 
 var refitSettings = new RefitSettings(new SystemTextJsonContentSerializer(JsonSerializerOptionsProvider.DefaultOptions));
