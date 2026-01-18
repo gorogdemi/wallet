@@ -1,4 +1,3 @@
-using Wallet.Application.Common.Mappings;
 using Wallet.Application.Persistence;
 using Wallet.Domain.Entities;
 using Wallet.Shared.Categories;
@@ -6,7 +5,7 @@ using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Categories;
 
-public class GetCategoryEndpoint : Endpoint<long, CategoryDto>
+public class GetCategoryEndpoint : Endpoint<long, CategoryDto, CategoryMapper>
 {
     private readonly ILogger<GetCategoryEndpoint> _logger;
     private readonly IWalletContextService _walletContextService;
@@ -39,7 +38,7 @@ public class GetCategoryEndpoint : Endpoint<long, CategoryDto>
             return;
         }
 
-        var response = category.ToDto();
+        var response = Map.FromEntity(category);
 
         _logger.LogInformation("Category with ID {Id} successfully retrieved", id);
 

@@ -1,4 +1,3 @@
-using Wallet.Application.Common.Mappings;
 using Wallet.Application.Persistence;
 using Wallet.Domain.Entities;
 using Wallet.Shared.Categories;
@@ -6,7 +5,7 @@ using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Categories;
 
-public class UpdateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto>
+public class UpdateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto, CategoryMapper>
 {
     private readonly ILogger<UpdateCategoryEndpoint> _logger;
     private readonly IWalletContextService _walletContextService;
@@ -41,12 +40,10 @@ public class UpdateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto>
             return;
         }
 
-        request.Update(category);
-        category.UserId = userId;
-
+        category = Map.UpdateEntity(request, category);
         category = await _walletContextService.UpdateAsync(category, cancellationToken);
 
-        var response = category.ToDto();
+        var response = Map.FromEntity(category);
 
         _logger.LogInformation("Category with ID {Id} successfully updated", id);
 

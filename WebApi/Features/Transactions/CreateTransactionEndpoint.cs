@@ -1,11 +1,10 @@
-using Wallet.Application.Common.Mappings;
 using Wallet.Application.Persistence;
 using Wallet.Shared.Transactions;
 using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Transactions;
 
-public class CreateTransactionEndpoint : Endpoint<TransactionRequest, TransactionDto>
+public class CreateTransactionEndpoint : Endpoint<TransactionRequest, TransactionDto, TransactionMapper>
 {
     private readonly ILogger<CreateTransactionEndpoint> _logger;
     private readonly IWalletContextService _walletContextService;
@@ -23,12 +22,13 @@ public class CreateTransactionEndpoint : Endpoint<TransactionRequest, Transactio
         _logger.LogInformation("Received CreateTransaction request");
 
         var userId = User.GetId();
-        var transaction = request.ToEntity();
+
+        var transaction = Map.ToEntity(request);
         transaction.UserId = userId;
 
         transaction = await _walletContextService.CreateAsync(transaction, cancellationToken);
 
-        var response = transaction.ToDto();
+        var response = Map.FromEntity(transaction);
 
         _logger.LogInformation("Transaction with ID {Id} successfully created", transaction.Id);
 

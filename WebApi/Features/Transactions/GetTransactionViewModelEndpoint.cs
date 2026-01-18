@@ -30,7 +30,7 @@ public class GetTransactionViewModelEndpoint : EndpointWithoutRequest<Transactio
 
         var viewModel = new TransactionViewModel
         {
-            Transactions = transactions.ToDto(),
+            Transactions = transactions.ToDto(), // TODO: remove VM
             Categories = categories.ToDto(),
         };
 

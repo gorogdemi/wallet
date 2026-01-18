@@ -1,4 +1,3 @@
-using Wallet.Application.Common.Mappings;
 using Wallet.Application.Persistence;
 using Wallet.Domain.Entities;
 using Wallet.Shared.Transactions;
@@ -6,7 +5,7 @@ using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Transactions;
 
-public class UpdateTransactionEndpoint : Endpoint<TransactionRequest, TransactionDto>
+public class UpdateTransactionEndpoint : Endpoint<TransactionRequest, TransactionDto, TransactionMapper>
 {
     private readonly ILogger<UpdateTransactionEndpoint> _logger;
     private readonly IWalletContextService _walletContextService;
@@ -41,12 +40,10 @@ public class UpdateTransactionEndpoint : Endpoint<TransactionRequest, Transactio
             return;
         }
 
-        request.Update(transaction);
-        transaction.UserId = userId;
-
+        transaction = Map.UpdateEntity(request, transaction);
         transaction = await _walletContextService.UpdateAsync(transaction, cancellationToken);
 
-        var response = transaction.ToDto();
+        var response = Map.FromEntity(transaction);
 
         _logger.LogInformation("Transaction with ID {Id} successfully updated", id);
 

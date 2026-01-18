@@ -1,4 +1,3 @@
-using Wallet.Application.Common.Mappings;
 using Wallet.Application.Persistence;
 using Wallet.Domain.Entities;
 using Wallet.Shared.Transactions;
@@ -6,7 +5,7 @@ using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Transactions;
 
-public class GetTransactionEndpoint : Endpoint<long, TransactionDto>
+public class GetTransactionEndpoint : Endpoint<long, TransactionDto, TransactionMapper>
 {
     private readonly ILogger<GetTransactionEndpoint> _logger;
     private readonly IWalletContextService _walletContextService;
@@ -39,7 +38,7 @@ public class GetTransactionEndpoint : Endpoint<long, TransactionDto>
             return;
         }
 
-        var response = transaction.ToDto();
+        var response = Map.FromEntity(transaction);
         response.SumAmount = response.BankAmount + response.CashAmount;
 
         _logger.LogInformation("Transaction with ID {Id} successfully retrieved", id);

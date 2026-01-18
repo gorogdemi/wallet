@@ -1,12 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using Wallet.Application.Common.Mappings;
 using Wallet.Application.Persistence;
 using Wallet.Shared.Transactions;
 using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Transactions;
 
-public class SearchTransactionsEndpoint : Endpoint<string, List<TransactionDto>>
+public class SearchTransactionsEndpoint : Endpoint<string, List<TransactionDto>, TransactionMapper>
 {
     private readonly ILogger<SearchTransactionsEndpoint> _logger;
     private readonly IWalletContextService _walletContextService;
@@ -29,7 +28,7 @@ public class SearchTransactionsEndpoint : Endpoint<string, List<TransactionDto>>
             .Where(t => t.UserId == userId && EF.Functions.ILike(t.Name, $"%{text}%"))
             .ToListAsync(cancellationToken);
 
-        var response = transactions.ToDto();
+        var response = transactions.ConvertAll(Map.FromEntity);
 
         _logger.LogInformation("Transactions successfully retrieved");
 

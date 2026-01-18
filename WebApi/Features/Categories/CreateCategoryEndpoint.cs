@@ -1,11 +1,10 @@
-using Wallet.Application.Common.Mappings;
 using Wallet.Application.Persistence;
 using Wallet.Shared.Categories;
 using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Categories;
 
-public class CreateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto>
+public class CreateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto, CategoryMapper>
 {
     private readonly ILogger<CreateCategoryEndpoint> _logger;
     private readonly IWalletContextService _walletContextService;
@@ -23,12 +22,13 @@ public class CreateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto>
         _logger.LogInformation("Received CreateCategory request");
 
         var userId = User.GetId();
-        var category = request.ToEntity();
+
+        var category = Map.ToEntity(request);
         category.UserId = userId;
 
         category = await _walletContextService.CreateAsync(category, cancellationToken);
 
-        var response = category.ToDto();
+        var response = Map.FromEntity(category);
 
         _logger.LogInformation("Category with ID {Id} successfully created", category.Id);
 

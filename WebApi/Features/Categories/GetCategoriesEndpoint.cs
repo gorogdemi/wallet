@@ -1,12 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using Wallet.Application.Common.Mappings;
 using Wallet.Application.Persistence;
 using Wallet.Shared.Categories;
 using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Categories;
 
-public class GetCategoriesEndpoint : EndpointWithoutRequest<List<CategoryDto>>
+public class GetCategoriesEndpoint : EndpointWithoutRequest<List<CategoryDto>, CategoryMapper>
 {
     private readonly ILogger<GetCategoriesEndpoint> _logger;
     private readonly IWalletContextService _walletContextService;
@@ -26,7 +25,7 @@ public class GetCategoriesEndpoint : EndpointWithoutRequest<List<CategoryDto>>
         var userId = User.GetId();
         var categories = await _walletContextService.Context.Categories.Where(t => t.UserId == userId).ToListAsync(cancellationToken);
 
-        var response = categories.ToDto();
+        var response = categories.ConvertAll(Map.FromEntity);
 
         _logger.LogInformation("Categories successfully retrieved");
 
