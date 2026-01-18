@@ -33,7 +33,6 @@ public class TransactionMapper : Mapper<TransactionRequest, TransactionDto, Tran
             CategoryId = request.CategoryId,
         };
 
-
     public override Transaction UpdateEntity(TransactionRequest request, Transaction transaction)
     {
         transaction.Name = request.Name;
