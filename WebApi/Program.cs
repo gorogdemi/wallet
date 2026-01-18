@@ -38,7 +38,17 @@ app.UseAuthorization();
 
 app.UseFastEndpoints(c =>
 {
-    c.Errors.UseProblemDetails();
+    c.Errors.UseProblemDetails(x => x.ResponseBuilder =
+        (failures, ctx, statusCode)
+            => new HttpValidationProblemDetails
+            {
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+                Title = "Bad Request",
+                Status = statusCode,
+                Instance = ctx.Request.Path,
+                Detail = failures.Count == 1 ? failures[0].ErrorMessage : "One or more validation failures have occurred.",
+                Errors = failures.ToDictionary(f => f.PropertyName, f => new[] { f.ErrorMessage }),
+            });
     c.Validation.UsePropertyNamingPolicy = false;
     c.Endpoints.Configurator = ep =>
     {

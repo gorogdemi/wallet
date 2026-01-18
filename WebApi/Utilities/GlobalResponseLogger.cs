@@ -1,4 +1,5 @@
 using System.Text.Json;
+using ProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
 namespace Wallet.WebApi.Utilities;
 
@@ -47,10 +48,11 @@ internal sealed class GlobalResponseLogger : IGlobalPostProcessor
 
         var response = new ProblemDetails
         {
+            Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+            Title = "Internal Server Error",
             Status = 500,
-            Detail = context.ExceptionDispatchInfo.SourceException.Message,
             Instance = context.HttpContext.Request.Path,
-            TraceId = context.HttpContext.TraceIdentifier,
+            Detail = context.ExceptionDispatchInfo.SourceException.Message,
         };
 
         await context.HttpContext.Response.SendStringAsync(
