@@ -74,8 +74,15 @@ public abstract class PageBase : ComponentBase
         }
         catch (ApiException e)
         {
-            var problem = await e.GetContentAsAsync<ProblemDetails>();
-            await ShowErrorMessageAlertAsync(problem is not null ? $"{problem.Title}: {problem.Detail}" : e.Message);
+            try
+            {
+                var problem = await e.GetContentAsAsync<ProblemDetails>();
+                await ShowErrorMessageAlertAsync($"{problem.Title}: {problem.Detail}");
+            }
+            catch
+            {
+                await ShowErrorMessageAlertAsync(e.Message);
+            }
         }
         catch (Exception e)
         {
