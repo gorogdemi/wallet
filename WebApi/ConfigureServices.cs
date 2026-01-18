@@ -3,11 +3,13 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using FastEndpoints.Swagger;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 using Wallet.Infrastructure.Options;
 using Wallet.Infrastructure.Persistence;
+using Wallet.Shared.Transactions;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
@@ -19,7 +21,11 @@ public static class ConfigureServices
         services.Configure<AuthenticationOptions>(configuration.GetSection("Authentication"));
         services.Configure<ForwardedHeadersOptions>(options => options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto);
 
-        services.AddFastEndpoints().ConfigureHttpJsonOptions(x => x.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+        services.AddValidatorsFromAssemblyContaining<TransactionRequestValidator>();
+
+        services.AddFastEndpoints(options => options.IncludeAbstractValidators = true)
+            .ConfigureHttpJsonOptions(x => x.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
         services.AddAuthorization();
         services
             .AddAuthentication(options =>
