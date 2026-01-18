@@ -9,24 +9,14 @@
     <FluentIcon Icon="Filled.Size20.AddCircle" Slot="start" Color="Color.Fill" />
 </FluentButton>
 
-<FluentCard Class="d-grid p-0" Style="min-height: 250px;" Width="100%" Height="auto">
-    <FluentDataGrid Items="CategoryList" GridTemplateColumns="1fr">
+<FluentCard Class="d-grid p-0" Style="min-height: 300px;" Width="100%" Height="auto">
+    <FluentDataGrid Items="CategoryList" GridTemplateColumns="1fr" Loading="IsLoading" RowSize="DataGridRowSize.Medium">
         <ChildContent>
-            <PropertyColumn Title="Name" Property="@(c => c.Name)" Sortable="true" Align="Align.Start" />
+            <PropertyColumn Title="Name" Property="@(c => c.Name)" Tooltip="true" Sortable="true" Align="Align.Start" />
             <TemplateColumn Title="Action">
                 <EditorButtons OnEdit="() => EditAsync(context)" OnDelete="() => DeleteAsync(context)" />
             </TemplateColumn>
         </ChildContent>
-        <EmptyContent>
-            @if (IsLoading)
-            {
-                <FluentProgressRing />
-            }
-            else
-            {
-                <div>No data available.</div>
-            }
-        </EmptyContent>
     </FluentDataGrid>
 </FluentCard>
 
