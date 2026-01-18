@@ -1,6 +1,7 @@
 using Wallet.Shared.Categories;
+using Wallet.Shared.Transactions;
 
-namespace Wallet.Shared.Transactions;
+namespace Wallet.WebUI.Pages.Transactions;
 
 public class TransactionViewModel
 {

@@ -4,7 +4,7 @@
 
 <h1>Transactions</h1>
 
-<FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" OnClick="AddAsync">
+<FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" OnClick="AddAsync" Disabled="IsLoading">
     New transaction
     <FluentIcon Icon="Filled.Size20.AddCircle" Slot="start" Color="Color.Fill" />
 </FluentButton>
@@ -44,10 +44,20 @@
 
     private IQueryable<TransactionDto> FilteredItems => ViewModel?.Transactions.Where(x => x.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase)).AsQueryable();
 
-    protected override async Task SetViewModelAsync() =>
+    protected override async Task SetViewModelAsync()
+    {
+        var viewModel = new TransactionViewModel();
+
         await HandleRequestAsync(
-            () => Service.GetViewModelAsync(),
-            result => ViewModel = result);
+            Service.TransactionService.GetAllAsync,
+            result => viewModel.Transactions = result);
+
+        await HandleRequestAsync(
+            Service.CategoryService.GetAllAsync,
+            result => viewModel.Categories = result);
+
+        ViewModel = viewModel;
+    }
 
     private async Task AddAsync() => await HandleDialogAsync(null);
 
@@ -113,7 +123,7 @@
         };
 
         await HandleRequestAsync(
-            () => isEdit ? Service.UpdateAsync(id!.Value, request) : Service.CreateAsync(request),
+            () => isEdit ? Service.TransactionService.UpdateAsync(id!.Value, request) : Service.TransactionService.CreateAsync(request),
             SetViewModelAsync);
     }
 
@@ -125,7 +135,7 @@
         if (!result.Cancelled)
         {
             await HandleRequestAsync(
-                () => Service.DeleteAsync(id),
+                () => Service.TransactionService.DeleteAsync(id),
                 SetViewModelAsync);
         }
     }

@@ -1,10 +1,7 @@
-﻿using Refit;
-using Wallet.Shared.Transactions;
+﻿using Wallet.Shared.Transactions;
 
 namespace Wallet.WebUI.Services;
 
-public interface ITransactionService : IWalletService<TransactionRequest, TransactionDto>
+public interface ITransactionService : IHttpService<TransactionRequest, TransactionDto>
 {
-    [Get("/vm")]
-    Task<TransactionViewModel> GetViewModelAsync();
 }

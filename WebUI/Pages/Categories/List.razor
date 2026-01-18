@@ -4,7 +4,7 @@
 
 <h1>Categories</h1>
 
-<FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" OnClick="AddAsync">
+<FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" OnClick="AddAsync" Disabled="IsLoading">
     New category
     <FluentIcon Icon="Filled.Size20.AddCircle" Slot="start" Color="Color.Fill" />
 </FluentButton>
@@ -26,7 +26,7 @@
 
     protected override async Task SetViewModelAsync() =>
         await HandleRequestAsync(
-            () => Service.GetAllAsync(),
+            Service.GetAllAsync,
             result => ViewModel = result);
 
     private async Task AddAsync() => await HandleDialogAsync(id: null, new CategoryRequest());

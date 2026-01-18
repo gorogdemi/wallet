@@ -16,7 +16,7 @@ public class TransactionMapper : Mapper<TransactionRequest, TransactionDto, Tran
             CashAmount = transaction.CashAmount,
             SumAmount = transaction.BankAmount + transaction.CashAmount,
             CategoryId = transaction.CategoryId,
-            CategoryName = transaction.Category.Name,
+            CategoryName = transaction.Category?.Name,
             Date = transaction.Date.ToDateTime(TimeOnly.MinValue),
             Type = (TransactionType)transaction.Type,
         };

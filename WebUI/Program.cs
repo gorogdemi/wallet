@@ -46,6 +46,7 @@ builder.Services.AddValidatorsFromAssembly(typeof(TransactionRequestValidator).A
 builder.Services.AddValidatorsFromAssembly(typeof(TransactionFormViewModelValidator).Assembly);
 
 builder.Services.AddSingleton<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
+builder.Services.AddSingleton<IWalletService, WalletService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 
 builder.Services.AddScoped<AuthorizationHeaderHandler>();
