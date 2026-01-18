@@ -63,17 +63,6 @@ public static class ConfigureServices
                 d.Title = "Wallet API";
                 d.Version = "v1";
                 d.Description = "Web API for Wallet.";
-
-                /*d.AddAuth(
-                    "Bearer",
-                    new OpenApiSecurityScheme
-                    {
-                        Description = "JWT Authorization Header Using The Bearer Scheme",
-                        Name = "Authorization",
-                        In = OpenApiSecurityApiKeyLocation.Header,
-                        Type = OpenApiSecuritySchemeType.Http,
-                        Scheme = "Bearer",
-                    });*/
             };
         });
 

@@ -26,7 +26,6 @@ public class GetTransactionsEndpoint : EndpointWithoutRequest<List<TransactionDt
         var transactions = await _walletContextService.Context.Transactions.Where(t => t.UserId == userId).ToListAsync(cancellationToken);
 
         var response = transactions.ConvertAll(Map.FromEntity);
-        response.ForEach(x => x.SumAmount = x.BankAmount + x.CashAmount);
 
         _logger.LogInformation("Transactions successfully retrieved");
 

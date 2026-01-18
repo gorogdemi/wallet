@@ -5,7 +5,7 @@ using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Transactions;
 
-public class GetTransactionEndpoint : Endpoint<long, TransactionDto, TransactionMapper>
+public class GetTransactionEndpoint : EndpointWithoutRequest<TransactionDto, TransactionMapper>
 {
     private readonly ILogger<GetTransactionEndpoint> _logger;
     private readonly IWalletContextService _walletContextService;
@@ -18,8 +18,10 @@ public class GetTransactionEndpoint : Endpoint<long, TransactionDto, Transaction
 
     public override void Configure() => Get("/transactions/{id:long}");
 
-    public override async Task HandleAsync(long id, CancellationToken cancellationToken)
+    public override async Task HandleAsync(CancellationToken cancellationToken)
     {
+        var id = Route<long>("id");
+
         _logger.LogInformation("Received GetTransaction request for ID {Id}", id);
 
         var transaction = await _walletContextService.GetAsync<Transaction>(id, cancellationToken);
@@ -39,7 +41,6 @@ public class GetTransactionEndpoint : Endpoint<long, TransactionDto, Transaction
         }
 
         var response = Map.FromEntity(transaction);
-        response.SumAmount = response.BankAmount + response.CashAmount;
 
         _logger.LogInformation("Transaction with ID {Id} successfully retrieved", id);
 

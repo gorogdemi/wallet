@@ -6,7 +6,12 @@ namespace Wallet.WebApi.Features.Transactions;
 
 public class TransactionMapper : Mapper<TransactionRequest, TransactionDto, Transaction>
 {
-    public override TransactionDto FromEntity(Transaction transaction) => transaction.ToDto();
+    public override TransactionDto FromEntity(Transaction transaction)
+    {
+        var dto = transaction.ToDto();
+        dto.SumAmount = dto.BankAmount + dto.CashAmount;
+        return dto;
+    }
 
     public override Transaction ToEntity(TransactionRequest request) => request.ToEntity();
 

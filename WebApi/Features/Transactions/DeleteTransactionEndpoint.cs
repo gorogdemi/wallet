@@ -5,7 +5,7 @@ using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Transactions;
 
-public class DeleteTransactionEndpoint : Endpoint<long, TransactionDto>
+public class DeleteTransactionEndpoint : EndpointWithoutRequest<TransactionDto>
 {
     private readonly ILogger<DeleteTransactionEndpoint> _logger;
     private readonly IWalletContextService _walletContextService;
@@ -18,8 +18,10 @@ public class DeleteTransactionEndpoint : Endpoint<long, TransactionDto>
 
     public override void Configure() => Delete("/transactions/{id:long}");
 
-    public override async Task HandleAsync(long id, CancellationToken cancellationToken)
+    public override async Task HandleAsync(CancellationToken cancellationToken)
     {
+        var id = Route<long>("id");
+
         _logger.LogInformation("Received DeleteTransaction request for ID {Id}", id);
 
         var transaction = await _walletContextService.GetAsync<Transaction>(id, cancellationToken);

@@ -5,7 +5,7 @@ using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Categories;
 
-public class DeleteCategoryEndpoint : Endpoint<long, CategoryDto>
+public class DeleteCategoryEndpoint : EndpointWithoutRequest<CategoryDto>
 {
     private readonly ILogger<DeleteCategoryEndpoint> _logger;
     private readonly IWalletContextService _walletContextService;
@@ -18,8 +18,10 @@ public class DeleteCategoryEndpoint : Endpoint<long, CategoryDto>
 
     public override void Configure() => Delete("/categories/{id:long}");
 
-    public override async Task HandleAsync(long id, CancellationToken cancellationToken)
+    public override async Task HandleAsync(CancellationToken cancellationToken)
     {
+        var id = Route<long>("id");
+
         _logger.LogInformation("Received DeleteCategory request for ID {Id}", id);
 
         var category = await _walletContextService.GetAsync<Category>(id, cancellationToken);
