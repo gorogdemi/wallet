@@ -4,7 +4,7 @@
 
 <h1>Transactions</h1>
 
-<FluentButton Class="mt-3 mb-3" IconStart="@(new Filled.Size20.AddCircle())" Appearance="Appearance.Accent" OnClick="AddAsync" Disabled="IsLoading">
+<FluentButton Class="mt-3 mb-3" IconStart="@(new Filled.Size20.AddCircle())" Appearance="Appearance.Accent" OnClick="AddAsync" Loading="IsLoading">
     New transaction
 </FluentButton>
 
@@ -39,7 +39,7 @@
 
     private string _searchTerm = string.Empty;
 
-    private IQueryable<TransactionDto> FilteredItems => ViewModel?.Transactions.Where(x => x.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase)).AsQueryable();
+    private IQueryable<TransactionDto> FilteredItems => ViewModel?.Transactions?.Items.Where(x => x.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase)).AsQueryable();
 
     protected override async Task SetViewModelAsync()
     {
@@ -51,7 +51,7 @@
 
         await HandleRequestAsync(
             Service.CategoryService.GetAllAsync,
-            result => viewModel.Categories = result);
+            result => viewModel.Categories = result.Items);
 
         ViewModel = viewModel;
     }
@@ -93,7 +93,7 @@
 
         if (isEdit)
         {
-            var transaction = ViewModel.Transactions.Find(x => x.Id == id);
+            var transaction = ViewModel.Transactions.Items.Find(x => x.Id == id);
             formViewModel.Name = transaction!.Name;
             formViewModel.Comment = transaction.Comment;
             formViewModel.BankAmount = transaction.BankAmount;

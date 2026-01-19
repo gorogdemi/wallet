@@ -1,4 +1,5 @@
 ﻿using Refit;
+using Wallet.Shared.Common.Models;
 
 namespace Wallet.WebUI.Services;
 
@@ -11,7 +12,7 @@ public interface IHttpService<in TRequest, TResponse>
     Task DeleteAsync(long id);
 
     [Get("/")]
-    Task<List<TResponse>> GetAllAsync();
+    Task<PaginatedList<TResponse>> GetAllAsync();
 
     [Get("/{id}")]
     Task<TResponse> GetAsync(long id);

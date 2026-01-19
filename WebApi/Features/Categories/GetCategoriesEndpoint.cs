@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Wallet.Application.Persistence;
 using Wallet.Shared.Categories;
+using Wallet.Shared.Common.Models;
 using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Categories;
 
-public class GetCategoriesEndpoint : EndpointWithoutRequest<List<CategoryDto>, CategoryMapper>
+public class GetCategoriesEndpoint : EndpointWithoutRequest<PaginatedList<CategoryDto>, CategoryMapper>
 {
     private readonly ILogger<GetCategoriesEndpoint> _logger;
     private readonly IWalletContextService _walletContextService;
@@ -23,9 +24,13 @@ public class GetCategoriesEndpoint : EndpointWithoutRequest<List<CategoryDto>, C
         _logger.LogInformation("Received GetCategories request");
 
         var userId = User.GetId();
-        var categories = await _walletContextService.Context.Categories.Where(t => t.UserId == userId).ToListAsync(cancellationToken);
+        var response = await _walletContextService.Context.Categories
+            .AsNoTracking()
+            .Where(t => t.UserId == userId)
 
-        var response = categories.ConvertAll(Map.FromEntity);
+            // .Where(t => t.UserId == userId && EF.Functions.ILike(t.Name, $"%{text}%"))
+            .Select(x => Map.FromEntity(x))
+            .ToPaginatedListAsync(pageNumber: 1, pageSize: 20, cancellationToken);
 
         _logger.LogInformation("Categories successfully retrieved");
 
