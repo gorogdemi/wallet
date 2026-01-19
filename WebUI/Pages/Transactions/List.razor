@@ -4,10 +4,13 @@
 
 <h1>Transactions</h1>
 
-<FluentButton Class="mt-3 mb-3" Appearance="Appearance.Accent" OnClick="AddAsync" Disabled="IsLoading">
+<FluentButton Class="mt-3 mb-3" IconStart="@(new Filled.Size20.AddCircle())" Appearance="Appearance.Accent" OnClick="AddAsync" Disabled="IsLoading">
     New transaction
-    <FluentIcon Icon="Filled.Size20.AddCircle" Slot="start" Color="Color.Fill" />
 </FluentButton>
+
+<FluentToolbar Orientation="Orientation.Horizontal" Class="mb-3 w-100">
+    <FluentSearch @bind-Value="_searchTerm" Autofocus="true" Placeholder="Search..." Immediate="true" ImmediateDelay="250" />
+</FluentToolbar>
 
 <FluentCard Class="d-grid p-0" Style="min-height: 300px;" Width="100%" Height="auto">
     <FluentDataGrid Items="FilteredItems"
@@ -17,13 +20,7 @@
                     RowSize="DataGridRowSize.Medium"
                     Style="overflow-x: auto;">
         <ChildContent>
-            <PropertyColumn Title="Name" Property="@(c => c.Name)" Sortable="true" Tooltip="true" Align="Align.Start" IsDefaultSortColumn="true">
-                <ColumnOptions>
-                    <div class="search-box">
-                        <FluentSearch @bind-Value="_searchTerm" Autofocus="true" Placeholder="Search..." Immediate="true" ImmediateDelay="250" />
-                    </div>
-                </ColumnOptions>
-            </PropertyColumn>
+            <PropertyColumn Title="Name" Property="@(c => c.Name)" Sortable="true" Tooltip="true" Align="Align.Start" IsDefaultSortColumn="true" />
             <PropertyColumn Title="Full" Property="@(c => c.SumAmount)" Format="0 Ft" Sortable="true" Align="Align.End" />
             <PropertyColumn Title="Cash" Property="@(c => c.CashAmount)" Format="0 Ft" Sortable="true" Align="Align.End" />
             <PropertyColumn Title="Bank" Property="@(c => c.BankAmount)" Format="0 Ft" Sortable="true" Align="Align.End" />

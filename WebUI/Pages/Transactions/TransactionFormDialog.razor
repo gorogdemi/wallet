@@ -4,19 +4,15 @@
     <FluentValidator />
 
     <FormInput ValidationFor="() => Content.Name">
-        <FluentTextField Label="Name:" Required @bind-Value="Content.Name" />
+        <FluentTextField Label="Name:" Required @bind-Value="Content.Name" Autofocus="true" />
     </FormInput>
 
     <FormInput ValidationFor="() => Content.BankAmount">
-        <FluentNumberField Label="Bank amount:" Required @bind-Value="Content.BankAmount" />
+        <FluentNumberField Label="Bank amount:" Required @bind-Value="Content.BankAmount" Min="0" Step="10" />
     </FormInput>
 
     <FormInput ValidationFor="() => Content.CashAmount">
-        <FluentNumberField Label="Cash amount:" Required @bind-Value="Content.CashAmount" />
-    </FormInput>
-
-    <FormInput ValidationFor="() => Content.Comment">
-        <FluentTextField Label="Comment:" @bind-Value="Content.Comment" />
+        <FluentNumberField Label="Cash amount:" Required @bind-Value="Content.CashAmount" Min="0" Step="10" />
     </FormInput>
 
     <FormInput ValidationFor="() => Content.Date">
@@ -48,6 +44,10 @@
                 <FluentIcon Icon="Regular.Size20.Dismiss" Color="Color.Neutral" />
             </FluentButton>
         }
+    </FormInput>
+
+    <FormInput ValidationFor="() => Content.Comment">
+        <FluentTextField Label="Comment:" @bind-Value="Content.Comment" />
     </FormInput>
 </EditDialog>
 
