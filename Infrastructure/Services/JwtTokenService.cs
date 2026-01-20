@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Wallet.Application.Common.Interfaces;
 using Wallet.Application.Common.Models;
-using Wallet.Application.Persistence;
 using Wallet.Domain.Entities;
 using Wallet.Infrastructure.Identity;
 using Wallet.Infrastructure.Options;
@@ -59,10 +58,9 @@ public class JwtTokenService : ITokenService
             ExpiryDate = DateTime.UtcNow.AddMonths(_authenticationOptions.RefreshTokenLifetimeInMonths),
         };
 
-        _walletContextService.Context.RefreshTokens.Add(refreshToken);
-        await _walletContextService.Context.SaveChangesAsync(cancellationToken);
+        await _walletContextService.CreateAsync(refreshToken, cancellationToken);
 
-        return (Result.Success(), tokenHandler.WriteToken(token), refreshToken.Token);
+        return (Result.Success(), tokenHandler.WriteToken(token), refreshToken.Id);
     }
 
     public async Task<(Result Result, IUser User)> RefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken)
@@ -83,7 +81,7 @@ public class JwtTokenService : ITokenService
         }
 
         var jti = validatedToken.FindFirstValue(JwtRegisteredClaimNames.Jti);
-        var storedRefreshToken = await _walletContextService.Context.RefreshTokens.FindAsync([refreshToken], cancellationToken);
+        var storedRefreshToken = await _walletContextService.GetAsync<RefreshToken>(refreshToken, cancellationToken);
 
         if (storedRefreshToken is null)
         {
@@ -111,7 +109,7 @@ public class JwtTokenService : ITokenService
         }
 
         storedRefreshToken.IsUsed = true;
-        await _walletContextService.Context.SaveChangesAsync(cancellationToken);
+        await _walletContextService.UpdateAsync(storedRefreshToken, cancellationToken);
 
         var user = new ApplicationUser
         {

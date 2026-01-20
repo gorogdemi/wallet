@@ -2,7 +2,7 @@
 
 namespace Wallet.Domain.Entities;
 
-public class Category : EntityBase
+public class Category : EntityBase, IUserOwnedEntity
 {
     public string Name { get; set; }
 

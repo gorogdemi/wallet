@@ -1,14 +1,13 @@
 ﻿using System.Reflection;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Wallet.Application.Common.Interfaces;
 using Wallet.Domain.Entities;
 using Wallet.Domain.Enums;
 using Wallet.Infrastructure.Identity;
 
 namespace Wallet.Infrastructure.Persistence;
 
-public class WalletContext : IdentityDbContext<ApplicationUser>, IWalletContext
+public class WalletContext : IdentityDbContext<ApplicationUser>
 {
     public WalletContext(DbContextOptions<WalletContext> options)
         : base(options)

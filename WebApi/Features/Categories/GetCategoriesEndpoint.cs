@@ -1,5 +1,5 @@
-using Microsoft.EntityFrameworkCore;
-using Wallet.Application.Persistence;
+using Wallet.Application.Common.Interfaces;
+using Wallet.Domain.Entities;
 using Wallet.Shared.Categories;
 using Wallet.Shared.Common.Models;
 using Wallet.WebApi.Extensions;
@@ -24,9 +24,8 @@ public class GetCategoriesEndpoint : EndpointWithoutRequest<PaginatedList<Catego
         _logger.LogInformation("Received GetCategories request");
 
         var userId = User.GetId();
-        var response = await _walletContextService.Context.Categories
-            .AsNoTracking()
-            .Where(t => t.UserId == userId)
+        var response = await _walletContextService.GetQueryableAsNoTracking<Category>()
+            .FilterUserById(userId)
 
             // .Where(t => t.UserId == userId && EF.Functions.ILike(t.Name, $"%{text}%"))
             .Select(x => Map.FromEntity(x))

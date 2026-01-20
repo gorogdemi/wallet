@@ -3,7 +3,7 @@ using Wallet.Domain.Enums;
 
 namespace Wallet.Domain.Entities;
 
-public class Transaction : EntityBase
+public class Transaction : EntityBase, IUserOwnedEntity
 {
     public double BankAmount { get; set; }
 

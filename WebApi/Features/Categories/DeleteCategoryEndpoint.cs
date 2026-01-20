@@ -1,4 +1,4 @@
-using Wallet.Application.Persistence;
+using Wallet.Application.Common.Interfaces;
 using Wallet.Domain.Entities;
 using Wallet.Shared.Categories;
 using Wallet.WebApi.Extensions;
@@ -16,11 +16,11 @@ public class DeleteCategoryEndpoint : EndpointWithoutRequest<CategoryDto>
         _walletContextService = walletContextService;
     }
 
-    public override void Configure() => Delete("/categories/{id:long}");
+    public override void Configure() => Delete("/categories/{id}");
 
     public override async Task HandleAsync(CancellationToken cancellationToken)
     {
-        var id = Route<long>("id");
+        var id = Route<string>("id");
 
         _logger.LogInformation("Received DeleteCategory request for ID {Id}", id);
 

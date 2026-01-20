@@ -40,7 +40,7 @@ public static class ConfigureServices
             })
             .AddEntityFrameworkStores<WalletContext>();
 
-        services.AddScoped<IWalletContext>(provider => provider.GetRequiredService<WalletContext>());
+        services.AddScoped<IWalletContextService, WalletContextService>();
         services.AddScoped<WalletContextInitializer>();
         services.AddScoped<ITokenService, JwtTokenService>();
 

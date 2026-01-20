@@ -1,4 +1,4 @@
-using Wallet.Application.Persistence;
+using Wallet.Application.Common.Interfaces;
 using Wallet.Shared.Transactions;
 using Wallet.WebApi.Extensions;
 
