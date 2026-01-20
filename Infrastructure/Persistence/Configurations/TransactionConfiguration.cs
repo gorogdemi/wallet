@@ -12,6 +12,11 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
         builder.HasKey(x => x.Id);
 
         builder
+            .Property(x => x.Id)
+            .HasMaxLength(100)
+            .ValueGeneratedOnAdd();
+
+        builder
             .Property(x => x.Comment)
             .HasMaxLength(255);
 

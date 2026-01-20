@@ -12,14 +12,14 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
         builder.HasKey(x => x.Id);
 
         builder
-            .Property(x => x.JwtId)
-            .IsRequired()
-            .HasMaxLength(100);
-
-        builder
             .Property(x => x.Id)
             .HasMaxLength(100)
             .ValueGeneratedOnAdd();
+
+        builder
+            .Property(x => x.JwtId)
+            .IsRequired()
+            .HasMaxLength(100);
 
         builder
             .HasOne<ApplicationUser>()

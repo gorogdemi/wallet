@@ -11,7 +11,7 @@ public class Transaction : EntityBase, IUserOwnedEntity
 
     public virtual Category Category { get; set; }
 
-    public long? CategoryId { get; set; }
+    public string CategoryId { get; set; }
 
     public string Comment { get; set; }
 

@@ -8,7 +8,7 @@ public class TransactionDto
 
     public double CashAmount { get; set; }
 
-    public long? CategoryId { get; set; }
+    public string CategoryId { get; set; }
 
     public string CategoryName { get; set; }
 

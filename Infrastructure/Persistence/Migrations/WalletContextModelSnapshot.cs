@@ -17,7 +17,7 @@ namespace Wallet.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.11")
+                .HasAnnotation("ProductVersion", "10.0.2")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
@@ -160,11 +160,10 @@ namespace Wallet.Infrastructure.Migrations
 
             modelBuilder.Entity("Wallet.Domain.Entities.Category", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -187,7 +186,7 @@ namespace Wallet.Infrastructure.Migrations
 
             modelBuilder.Entity("Wallet.Domain.Entities.RefreshToken", b =>
                 {
-                    b.Property<string>("Token")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
@@ -213,7 +212,7 @@ namespace Wallet.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("Token");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
@@ -222,11 +221,10 @@ namespace Wallet.Infrastructure.Migrations
 
             modelBuilder.Entity("Wallet.Domain.Entities.Transaction", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<double>("BankAmount")
                         .HasColumnType("double precision");
@@ -234,8 +232,8 @@ namespace Wallet.Infrastructure.Migrations
                     b.Property<double>("CashAmount")
                         .HasColumnType("double precision");
 
-                    b.Property<long?>("CategoryId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CategoryId")
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Comment")
                         .HasMaxLength(255)

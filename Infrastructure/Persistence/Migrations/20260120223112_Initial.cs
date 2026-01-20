@@ -165,8 +165,7 @@ namespace Wallet.Infrastructure.Migrations
                 name: "Categories",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     UserId = table.Column<string>(type: "text", nullable: false)
                 },
@@ -184,7 +183,7 @@ namespace Wallet.Infrastructure.Migrations
                 name: "RefreshTokens",
                 columns: table => new
                 {
-                    Token = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Id = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ExpiryDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     IsInvalidated = table.Column<bool>(type: "boolean", nullable: false),
@@ -194,7 +193,7 @@ namespace Wallet.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RefreshTokens", x => x.Token);
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
                     table.ForeignKey(
                         name: "FK_RefreshTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -207,11 +206,10 @@ namespace Wallet.Infrastructure.Migrations
                 name: "Transactions",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     BankAmount = table.Column<double>(type: "double precision", nullable: false),
                     CashAmount = table.Column<double>(type: "double precision", nullable: false),
-                    CategoryId = table.Column<long>(type: "bigint", nullable: true),
+                    CategoryId = table.Column<string>(type: "character varying(100)", nullable: true),
                     Comment = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
