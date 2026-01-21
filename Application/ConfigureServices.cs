@@ -1,7 +1,5 @@
 #pragma warning disable IDE0130
 
-
-
 // ReSharper disable CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
 

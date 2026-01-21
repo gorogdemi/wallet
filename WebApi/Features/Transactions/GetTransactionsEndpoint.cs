@@ -1,3 +1,4 @@
+using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using Wallet.Application.Common.Interfaces;
 using Wallet.Domain.Entities;
@@ -7,7 +8,7 @@ using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Transactions;
 
-public class GetTransactionsEndpoint : EndpointWithoutRequest<PaginatedList<TransactionDto>, TransactionMapper>
+public class GetTransactionsEndpoint : Endpoint<GetPaginatedListRequest, PaginatedList<TransactionDto>, TransactionMapper>
 {
     private readonly ILogger<GetTransactionsEndpoint> _logger;
     private readonly IWalletContextService _walletContextService;
@@ -20,17 +21,18 @@ public class GetTransactionsEndpoint : EndpointWithoutRequest<PaginatedList<Tran
 
     public override void Configure() => Get("/transactions");
 
-    public override async Task HandleAsync(CancellationToken cancellationToken)
+    public override async Task HandleAsync(GetPaginatedListRequest request, CancellationToken cancellationToken)
     {
-        var text = "x";
         _logger.LogInformation("Received GetTransactions request");
+
+        var sortBy = $"{request.SortBy ?? "Id"} {(request.SortByAscending != true ? "DESC" : "ASC")}";
 
         var userId = User.GetId();
         var response = await _walletContextService.GetQueryableAsNoTracking<Transaction>()
             .FilterUserById(userId)
-            .Where(t => EF.Functions.ILike(t.Name, $"%{text}%"))
-            .Select(x => Map.FromEntity(x))
-            .ToPaginatedListAsync(pageNumber: 1, pageSize: 2, cancellationToken);
+            .WhereIf(!string.IsNullOrEmpty(request.NameFilter), t => EF.Functions.ILike(t.Name, $"%{request.NameFilter}%"))
+            .OrderBy(sortBy)
+            .ToPaginatedListAsync(request.PageNumber, request.PageSize, Map.FromEntity, cancellationToken);
 
         _logger.LogInformation("Transactions successfully retrieved");
 

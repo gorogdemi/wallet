@@ -1,68 +1,115 @@
 ﻿@page "/transactions"
+@using Wallet.Shared.Common.Models
 @inherits TransactionBase<TransactionViewModel>
 @inject IDialogService DialogService
 
 <h1>Transactions</h1>
 
-<FluentButton Class="mt-3 mb-3" IconStart="@(new Filled.Size20.AddCircle())" Appearance="Appearance.Accent" OnClick="AddAsync" Loading="IsLoading">
+<FluentButton Class="mt-3 mb-3"
+              IconStart="@(new Filled.Size20.AddCircle())"
+              Appearance="Appearance.Accent"
+              OnClick="AddAsync"
+              Loading="IsLoading"
+              Disabled="@(ViewModel?.Categories is null)">
     New transaction
 </FluentButton>
 
 <FluentToolbar Orientation="Orientation.Horizontal" Class="mb-3 w-100">
-    <FluentSearch @bind-Value="_searchTerm" Autofocus="true" Placeholder="Search..." Immediate="true" ImmediateDelay="250" />
+    <FluentSearch @bind-Value="SearchTerm" Autofocus="true" Placeholder="Search..." Immediate="true" ImmediateDelay="250" />
 </FluentToolbar>
 
 <FluentCard Class="d-grid p-0" Style="min-height: 300px;" Width="100%" Height="auto">
-    <FluentDataGrid Items="FilteredItems"
+    <FluentDataGrid @ref="_dataGrid"
+                    ItemsProvider="_transactionProvider"
                     GridTemplateColumns="0.5fr 0.2fr 0.2fr 0.2fr 0.2fr 0.2fr 0.2fr 0.4fr 0.2fr"
                     ResizableColumns="true"
-                    Loading="IsLoading"
+                    Loading="true"
                     RowSize="DataGridRowSize.Medium"
+                    Pagination="@_pagination"
                     Style="overflow-x: auto;">
         <ChildContent>
             <PropertyColumn Title="Name" Property="@(c => c.Name)" Sortable="true" Tooltip="true" Align="Align.Start" IsDefaultSortColumn="true" />
-            <PropertyColumn Title="Full" Property="@(c => c.SumAmount)" Format="0 Ft" Sortable="true" Align="Align.End" />
+            <PropertyColumn Title="Full" Property="@(c => c.SumAmount)" Format="0 Ft" Align="Align.End" />
             <PropertyColumn Title="Cash" Property="@(c => c.CashAmount)" Format="0 Ft" Sortable="true" Align="Align.End" />
             <PropertyColumn Title="Bank" Property="@(c => c.BankAmount)" Format="0 Ft" Sortable="true" Align="Align.End" />
-            <PropertyColumn Title="Date" Property="@(c => c.Date.ToFormattedDate())" Sortable="true" Align="Align.Start" />
-            <PropertyColumn Title="Type" Property="@(c => c.Type.ToTransactionTypeText())" Sortable="true" Align="Align.Start" />
-            <PropertyColumn Title="Category" Property="@(c => c.CategoryName.ToCategoryText())" Sortable="true" Align="Align.Start" />
+            <PropertyColumn Title="Date" Property="@(c => c.Date)" Format="yyyy.MM.dd" Sortable="true" Align="Align.Start" />
+            <PropertyColumn Title="Type" Property="@(c => c.Type.ToTransactionTypeText())" Align="Align.Start" />
+            <PropertyColumn Title="Category" Property="@(c => c.CategoryName.ToCategoryText())" Align="Align.Start" />
             <PropertyColumn Title="Comment" Property="@(c => c.Comment)" Tooltip="true" Align="Align.Start" />
             <TemplateColumn Title="Action">
                 <EditorButtons OnEdit="() => EditAsync(context)" OnDelete="() => DeleteAsync(context.Id)" />
             </TemplateColumn>
         </ChildContent>
+        <EmptyContent></EmptyContent>
     </FluentDataGrid>
+
+    <FluentPaginator Class="mx-3" State="@_pagination" />
 </FluentCard>
 
 @code {
 
-    private string _searchTerm = string.Empty;
+    private readonly PaginationState _pagination = new() { ItemsPerPage = 3 };
+    private FluentDataGrid<TransactionDto> _dataGrid;
+    private GridItemsProvider<TransactionDto> _transactionProvider;
 
-    private IQueryable<TransactionDto> FilteredItems => ViewModel?.Transactions?.Items.Where(x => x.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase)).AsQueryable();
+    [SupplyParameterFromQuery]
+    public string SearchTerm { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        _transactionProvider = async request =>
+        {
+            _dataGrid.SetLoadingState(true);
+
+            var providerResult = new GridItemsProviderResult<TransactionDto> { Items = [], TotalItemCount = 0 };
+            
+            var sortedProperty = request.GetSortByProperties().First();
+
+            await HandleRequestAsync(
+                async () => await Service.TransactionService.GetAllAsync(
+                    new GetPaginatedListRequest
+                    {
+                        PageNumber = _pagination.CurrentPageIndex + 1,
+                        PageSize = _pagination.ItemsPerPage,
+                        SortBy = sortedProperty.PropertyName,
+                        SortByAscending = sortedProperty.Direction is SortDirection.Ascending,
+                        NameFilter = SearchTerm,
+                    }),
+                transactions =>
+                {
+                    ViewModel.Transactions = transactions;
+                    _dataGrid.SetLoadingState(false);
+                    providerResult = GridItemsProviderResult.From(ViewModel.Transactions.Items, ViewModel.Transactions.TotalCount!.Value);
+                });
+
+            return providerResult;
+        };
+    }
 
     protected override async Task SetViewModelAsync()
     {
-        var viewModel = new TransactionViewModel();
-
         await HandleRequestAsync(
-            Service.TransactionService.GetAllAsync,
-            result => viewModel.Transactions = result);
+            async () =>
+            {
+                var categories = await Service.CategoryService.GetAllAsync(new GetPaginatedListRequest());
 
-        await HandleRequestAsync(
-            Service.CategoryService.GetAllAsync,
-            result => viewModel.Categories = result.Items);
-
-        ViewModel = viewModel;
+                return new TransactionViewModel
+                {
+                    Categories = categories.Items,
+                };
+            },
+            viewModel => ViewModel = viewModel);
     }
 
     private async Task AddAsync() => await HandleDialogAsync(null);
 
     private async Task EditAsync(TransactionDto transaction) => await HandleDialogAsync(transaction.Id);
 
-    private async Task HandleDialogAsync(long? id)
+    private async Task HandleDialogAsync(string id)
     {
-        var isEdit = id.HasValue;
+        var isEdit = !string.IsNullOrEmpty(id);
         var formViewModel = SetFormViewModel(id, isEdit);
 
         DialogParameters parameters = new()
@@ -84,7 +131,7 @@
         }
     }
 
-    private TransactionFormViewModel SetFormViewModel(long? id, bool isEdit)
+    private TransactionFormViewModel SetFormViewModel(string id, bool isEdit)
     {
         var formViewModel = new TransactionFormViewModel
         {
@@ -99,14 +146,14 @@
             formViewModel.BankAmount = transaction.BankAmount;
             formViewModel.CashAmount = transaction.CashAmount;
             formViewModel.Date = transaction.Date;
-            formViewModel.CategoryId = transaction.CategoryId?.ToString();
+            formViewModel.CategoryId = transaction.CategoryId;
             formViewModel.Type = transaction.Type;
         }
 
         return formViewModel;
     }
 
-    private async Task SaveTransactionAsync(long? id, TransactionFormViewModel viewModel, bool isEdit)
+    private async Task SaveTransactionAsync(string id, TransactionFormViewModel viewModel, bool isEdit)
     {
         var request = new TransactionRequest
         {
@@ -115,16 +162,16 @@
             BankAmount = viewModel.BankAmount,
             CashAmount = viewModel.CashAmount,
             Date = viewModel.Date,
-            CategoryId = viewModel.CategoryId is not null ? Convert.ToInt64(viewModel.CategoryId) : null,
+            CategoryId = viewModel.CategoryId,
             Type = viewModel.Type,
         };
 
         await HandleRequestAsync(
-            () => isEdit ? Service.TransactionService.UpdateAsync(id!.Value, request) : Service.TransactionService.CreateAsync(request),
-            SetViewModelAsync);
+            async () => await (isEdit ? Service.TransactionService.UpdateAsync(id, request) : Service.TransactionService.CreateAsync(request)),
+            async () => await _dataGrid.RefreshDataAsync());
     }
 
-    private async Task DeleteAsync(long id)
+    private async Task DeleteAsync(string id)
     {
         var dialog = await DialogService.ShowConfirmationAsync("Are you sure about deleting the transaction?", title: "Delete transaction");
         var result = await dialog.Result;
@@ -132,8 +179,8 @@
         if (!result.Cancelled)
         {
             await HandleRequestAsync(
-                () => Service.TransactionService.DeleteAsync(id),
-                SetViewModelAsync);
+                async () => await Service.TransactionService.DeleteAsync(id),
+                async () => await _dataGrid.RefreshDataAsync());
         }
     }
 

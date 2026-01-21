@@ -9,14 +9,14 @@ public interface IHttpService<in TRequest, TResponse>
     Task CreateAsync(TRequest request);
 
     [Delete("/{id}")]
-    Task DeleteAsync(long id);
+    Task DeleteAsync(string id);
 
     [Get("/")]
-    Task<PaginatedList<TResponse>> GetAllAsync();
+    Task<PaginatedList<TResponse>> GetAllAsync([Query] GetPaginatedListRequest request);
 
     [Get("/{id}")]
-    Task<TResponse> GetAsync(long id);
+    Task<TResponse> GetAsync(string id);
 
     [Put("/{id}")]
-    Task UpdateAsync(long id, TRequest request);
+    Task UpdateAsync(string id, TRequest request);
 }

@@ -1,4 +1,5 @@
 ﻿@page "/categories"
+@using Wallet.Shared.Common.Models
 @inherits CategoryBase
 @inject IDialogService DialogService
 
@@ -25,16 +26,16 @@
 
     protected override async Task SetViewModelAsync() =>
         await HandleRequestAsync(
-            Service.GetAllAsync,
+            async () => await Service.GetAllAsync(new GetPaginatedListRequest()),
             result => ViewModel = result.Items);
 
     private async Task AddAsync() => await HandleDialogAsync(id: null, new CategoryRequest());
 
     private async Task EditAsync(CategoryDto category) => await HandleDialogAsync(category.Id, new CategoryRequest { Name = category.Name });
 
-    private async Task HandleDialogAsync(long? id, CategoryRequest categoryRequest)
+    private async Task HandleDialogAsync(string id, CategoryRequest categoryRequest)
     {
-        var isEdit = id.HasValue;
+        var isEdit = !string.IsNullOrEmpty(id);
 
         DialogParameters parameters = new()
         {
@@ -53,7 +54,7 @@
             var request = result.Data as CategoryRequest;
 
             await HandleRequestAsync(
-                () => isEdit ? Service.UpdateAsync(id!.Value, request) : Service.CreateAsync(request),
+                async () => await (isEdit ? Service.UpdateAsync(id, request) : Service.CreateAsync(request)),
                 SetViewModelAsync);
         }
     }
@@ -66,7 +67,7 @@
         if (!result.Cancelled)
         {
             await HandleRequestAsync(
-                () => Service.DeleteAsync(category.Id),
+                async () => await Service.DeleteAsync(category.Id),
                 SetViewModelAsync);
         }
     }

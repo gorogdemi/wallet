@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Wallet.Application.Common.Interfaces;
 using Wallet.Domain.Entities;
 using Wallet.Shared.Categories;
@@ -6,7 +7,7 @@ using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Categories;
 
-public class GetCategoriesEndpoint : EndpointWithoutRequest<PaginatedList<CategoryDto>, CategoryMapper>
+public class GetCategoriesEndpoint : Endpoint<GetPaginatedListRequest, PaginatedList<CategoryDto>, CategoryMapper>
 {
     private readonly ILogger<GetCategoriesEndpoint> _logger;
     private readonly IWalletContextService _walletContextService;
@@ -19,17 +20,15 @@ public class GetCategoriesEndpoint : EndpointWithoutRequest<PaginatedList<Catego
 
     public override void Configure() => Get("/categories");
 
-    public override async Task HandleAsync(CancellationToken cancellationToken)
+    public override async Task HandleAsync(GetPaginatedListRequest request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Received GetCategories request");
 
         var userId = User.GetId();
         var response = await _walletContextService.GetQueryableAsNoTracking<Category>()
             .FilterUserById(userId)
-
-            // .Where(t => t.UserId == userId && EF.Functions.ILike(t.Name, $"%{text}%"))
-            .Select(x => Map.FromEntity(x))
-            .ToPaginatedListAsync(pageNumber: 1, pageSize: 20, cancellationToken);
+            .WhereIf(!string.IsNullOrEmpty(request.NameFilter), t => EF.Functions.ILike(t.Name, $"%{request.NameFilter}%"))
+            .ToPaginatedListAsync(request.PageNumber, request.PageSize, Map.FromEntity, cancellationToken);
 
         _logger.LogInformation("Categories successfully retrieved");
 

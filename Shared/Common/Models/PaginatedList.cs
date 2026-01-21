@@ -8,11 +8,16 @@ public sealed class PaginatedList<T>
     {
     }
 
-    public PaginatedList(List<T> items, int count, int pageNumber, int pageSize)
+    public PaginatedList(List<T> items)
+    {
+        Items = items;
+    }
+
+    public PaginatedList(List<T> items, int totalCount, int pageNumber, int pageSize)
     {
         PageNumber = pageNumber;
-        TotalPages = (int)Math.Ceiling(count / (double)pageSize);
-        TotalCount = count;
+        TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+        TotalCount = totalCount;
         Items = items;
     }
 
@@ -24,9 +29,9 @@ public sealed class PaginatedList<T>
 
     public List<T> Items { get; set; }
 
-    public int PageNumber { get; set; }
+    public int? PageNumber { get; set; }
 
-    public int TotalCount { get; set; }
+    public int? TotalCount { get; set; }
 
-    public int TotalPages { get; set; }
+    public int? TotalPages { get; set; }
 }
