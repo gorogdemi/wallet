@@ -2,7 +2,7 @@ using Wallet.Shared.Common.Enums;
 
 namespace Wallet.WebUI.Extensions;
 
-public static class ConverterExtensions
+internal static class ConverterExtensions
 {
     public static string ToCategoryText(this string category) => category ?? "None";
 

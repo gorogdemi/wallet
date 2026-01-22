@@ -8,6 +8,13 @@
     New category
 </FluentButton>
 
+<FluentToolbar Orientation="Orientation.Horizontal" Class="mb-3 w-100">
+    <FluentSearch @bind-Value="NameFilter" @bind-Value:after="DataGridRefreshDataAsync" Autofocus="true" Placeholder="Name..." />
+    <FluentButton IconStart="@(new Filled.Size20.ArrowClockwise())" Appearance="Appearance.Accent" Loading="IsLoading" OnClick="DataGridRefreshDataAsync">
+        Search
+    </FluentButton>
+</FluentToolbar>
+
 <FluentCard Class="d-grid p-0" Style="min-height: 300px;" Width="100%" Height="auto">
     <FluentDataGrid @ref="_dataGrid"
                     Items="_categories"
@@ -30,15 +37,44 @@
 
 @code {
 
-    private readonly PaginationState _pagination = new() { ItemsPerPage = 5 };
+    private readonly PaginationState _pagination = new() { ItemsPerPage = 10 };
     private FluentDataGrid<CategoryDto> _dataGrid;
     private IQueryable<CategoryDto> _categories;
 
-    protected async Task RefreshItemsAsync(GridItemsProviderRequest<CategoryDto> request)
+    [SupplyParameterFromQuery]
+    private int Page { get; set; }
+
+    [SupplyParameterFromQuery]
+    private string SortBy { get; set; }
+
+    [SupplyParameterFromQuery]
+    private bool Ascending { get; set; } = true;
+
+    [SupplyParameterFromQuery]
+    private string NameFilter { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await _pagination.SetCurrentPageIndexAsync(Page >= 1 ? Page - 1 : 0);
+
+        await base.OnInitializedAsync();
+    }
+
+    protected override Task SetViewModelAsync() => Task.CompletedTask;
+
+    private async Task RefreshItemsAsync(GridItemsProviderRequest<CategoryDto> request)
     {
         IsLoading = true;
 
         var sortedProperty = request.GetSortByProperties().First();
+        var sortBy = sortedProperty.PropertyName;
+        var ascending = sortedProperty.Direction is SortDirection.Ascending;
+
+        if (ViewModel is null && !string.IsNullOrEmpty(SortBy))
+        {
+            sortBy = SortBy;
+            ascending = Ascending;
+        }
 
         await HandleRequestAsync(
             async () => await Service.GetAllAsync(
@@ -46,24 +82,26 @@
                 {
                     PageNumber = _pagination.CurrentPageIndex + 1,
                     PageSize = _pagination.ItemsPerPage,
-                    SortBy = sortedProperty.PropertyName,
-                    SortByAscending = sortedProperty.Direction is SortDirection.Ascending,
-
-                    // NameFilter = SearchTerm,
+                    SortBy = sortBy,
+                    SortByAscending = ascending,
+                    NameFilter = NameFilter,
                 }),
-            categories =>
-            {
-                ViewModel = categories;
-                _dataGrid.SetLoadingState(false);
-            });
+            viewModel => ViewModel = viewModel);
 
         _categories = ViewModel.Items.AsQueryable();
         await _pagination.SetTotalItemCountAsync(ViewModel.TotalCount!.Value);
 
+        NavigationManager.UpdateBrowserUriQueryParameters(
+            new Dictionary<string, object>
+            {
+                ["page"] = _pagination.CurrentPageIndex + 1,
+                ["sortBy"] = sortBy,
+                ["ascending"] = ascending,
+                ["nameFilter"] = NameFilter,
+            });
+
         IsLoading = false;
     }
-
-    protected override async Task SetViewModelAsync() => ViewModel = new PaginatedList<CategoryDto>();
 
     private async Task AddAsync() => await HandleDialogAsync(id: null, new CategoryRequest());
 
@@ -107,5 +145,7 @@
                 async () => await _dataGrid.RefreshDataAsync());
         }
     }
+
+    private async Task DataGridRefreshDataAsync() => await _dataGrid.RefreshDataAsync(true);
 
 }
