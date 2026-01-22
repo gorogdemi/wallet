@@ -1,3 +1,4 @@
+using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using Wallet.Application.Common.Interfaces;
 using Wallet.Domain.Entities;
@@ -24,10 +25,13 @@ public class GetCategoriesEndpoint : Endpoint<GetPaginatedListRequest, Paginated
     {
         _logger.LogInformation("Received GetCategories request");
 
+        var sortBy = $"{request.SortBy ?? "Id"} {(request.SortByAscending != true ? "DESC" : "ASC")}";
         var userId = User.GetId();
+
         var response = await _walletContextService.GetQueryableAsNoTracking<Category>()
             .FilterUserById(userId)
             .WhereIf(!string.IsNullOrEmpty(request.NameFilter), t => EF.Functions.ILike(t.Name, $"%{request.NameFilter}%"))
+            .OrderBy(sortBy)
             .ToPaginatedListAsync(request.PageNumber, request.PageSize, Map.FromEntity, cancellationToken);
 
         _logger.LogInformation("Categories successfully retrieved");

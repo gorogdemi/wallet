@@ -26,8 +26,8 @@ public class GetTransactionsEndpoint : Endpoint<GetPaginatedListRequest, Paginat
         _logger.LogInformation("Received GetTransactions request");
 
         var sortBy = $"{request.SortBy ?? "Id"} {(request.SortByAscending != true ? "DESC" : "ASC")}";
-
         var userId = User.GetId();
+
         var response = await _walletContextService.GetQueryableAsNoTracking<Transaction>()
             .FilterUserById(userId)
             .WhereIf(!string.IsNullOrEmpty(request.NameFilter), t => EF.Functions.ILike(t.Name, $"%{request.NameFilter}%"))

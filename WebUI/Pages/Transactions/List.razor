@@ -1,5 +1,4 @@
 ﻿@page "/transactions"
-@using Wallet.Shared.Common.Models
 @inherits TransactionBase<TransactionViewModel>
 @inject IDialogService DialogService
 
@@ -64,7 +63,7 @@
             _dataGrid.SetLoadingState(true);
 
             var providerResult = new GridItemsProviderResult<TransactionDto> { Items = [], TotalItemCount = 0 };
-            
+
             var sortedProperty = request.GetSortByProperties().First();
 
             await HandleRequestAsync(
