@@ -4,20 +4,21 @@
 
 <h1>Categories</h1>
 
-<FluentButton Class="mt-3 mb-3" IconStart="@(new Filled.Size20.AddCircle())" Appearance="Appearance.Accent" OnClick="AddAsync" Loading="IsLoading">
+<FluentButton Class="mt-3 mb-3" IconStart="@(new Filled.Size20.AddCircle())" Appearance="Appearance.Accent" OnClick="AddAsync">
     New category
 </FluentButton>
 
 <FluentCard Class="d-grid p-0" Style="min-height: 300px;" Width="100%" Height="auto">
     <FluentDataGrid @ref="_dataGrid"
-                    ItemsProvider="_categoryProvider"
+                    Items="_categories"
+                    RefreshItems="RefreshItemsAsync"
                     GridTemplateColumns="1fr"
-                    Loading="true"
+                    Loading="IsLoading"
                     RowSize="DataGridRowSize.Medium"
                     Pagination="@_pagination"
                     Style="overflow-x: auto;">
         <ChildContent>
-            <PropertyColumn Title="Name" Property="@(c => c.Name)" Tooltip="true" Sortable="true" Align="Align.Start" IsDefaultSortColumn="true" />
+            <PropertyColumn Title="Name" Property="@(c => c.Name)" Sortable="true" Align="Align.Start" IsDefaultSortColumn="true" />
             <TemplateColumn Title="Action">
                 <EditorButtons OnEdit="() => EditAsync(context)" OnDelete="() => DeleteAsync(context)" />
             </TemplateColumn>
@@ -29,42 +30,37 @@
 
 @code {
 
-    private readonly PaginationState _pagination = new() { ItemsPerPage = 3 };
+    private readonly PaginationState _pagination = new() { ItemsPerPage = 5 };
     private FluentDataGrid<CategoryDto> _dataGrid;
-    private GridItemsProvider<CategoryDto> _categoryProvider;
+    private IQueryable<CategoryDto> _categories;
 
-    protected override async Task OnInitializedAsync()
+    protected async Task RefreshItemsAsync(GridItemsProviderRequest<CategoryDto> request)
     {
-        await base.OnInitializedAsync();
+        IsLoading = true;
 
-        _categoryProvider = async request =>
-        {
-            _dataGrid.SetLoadingState(true);
+        var sortedProperty = request.GetSortByProperties().First();
 
-            var providerResult = new GridItemsProviderResult<CategoryDto> { Items = [], TotalItemCount = 0 };
-
-            var sortedProperty = request.GetSortByProperties().First();
-
-            await HandleRequestAsync(
-                async () => await Service.GetAllAsync(
-                    new GetPaginatedListRequest
-                    {
-                        PageNumber = _pagination.CurrentPageIndex + 1,
-                        PageSize = _pagination.ItemsPerPage,
-                        SortBy = sortedProperty.PropertyName,
-                        SortByAscending = sortedProperty.Direction is SortDirection.Ascending,
-
-                        // NameFilter = SearchTerm,
-                    }),
-                categories =>
+        await HandleRequestAsync(
+            async () => await Service.GetAllAsync(
+                new GetPaginatedListRequest
                 {
-                    ViewModel = categories;
-                    _dataGrid.SetLoadingState(false);
-                    providerResult = GridItemsProviderResult.From(ViewModel.Items, ViewModel.TotalCount!.Value);
-                });
+                    PageNumber = _pagination.CurrentPageIndex + 1,
+                    PageSize = _pagination.ItemsPerPage,
+                    SortBy = sortedProperty.PropertyName,
+                    SortByAscending = sortedProperty.Direction is SortDirection.Ascending,
 
-            return providerResult;
-        };
+                    // NameFilter = SearchTerm,
+                }),
+            categories =>
+            {
+                ViewModel = categories;
+                _dataGrid.SetLoadingState(false);
+            });
+
+        _categories = ViewModel.Items.AsQueryable();
+        await _pagination.SetTotalItemCountAsync(ViewModel.TotalCount!.Value);
+
+        IsLoading = false;
     }
 
     protected override async Task SetViewModelAsync() => ViewModel = new PaginatedList<CategoryDto>();
