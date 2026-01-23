@@ -14,15 +14,19 @@
 </FluentButton>
 
 <FluentToolbar Orientation="Orientation.Horizontal" Class="mb-3 w-100">
-    <FluentSearch @bind-Value="SearchTerm" Autofocus="true" Placeholder="Search..." Immediate="true" ImmediateDelay="250" />
+    <FluentSearch @bind-Value="NameFilter" @bind-Value:after="DataGridRefreshDataAsync" Autofocus="true" Placeholder="Name..." />
+    <FluentButton IconStart="@(new Filled.Size20.ArrowClockwise())" Appearance="Appearance.Accent" Loading="IsTableLoading" OnClick="DataGridRefreshDataAsync">
+        Search
+    </FluentButton>
 </FluentToolbar>
 
 <FluentCard Class="d-grid p-0" Style="min-height: 300px;" Width="100%" Height="auto">
     <FluentDataGrid @ref="_dataGrid"
-                    ItemsProvider="_transactionProvider"
+                    Items="_transactions"
+                    RefreshItems="RefreshItemsAsync"
                     GridTemplateColumns="0.5fr 0.2fr 0.2fr 0.2fr 0.2fr 0.2fr 0.2fr 0.4fr 0.2fr"
                     ResizableColumns="true"
-                    Loading="true"
+                    Loading="IsTableLoading"
                     RowSize="DataGridRowSize.Medium"
                     Pagination="@_pagination"
                     Style="overflow-x: auto;">
@@ -39,7 +43,6 @@
                 <EditorButtons OnEdit="() => EditAsync(context)" OnDelete="() => DeleteAsync(context.Id)" />
             </TemplateColumn>
         </ChildContent>
-        <EmptyContent></EmptyContent>
     </FluentDataGrid>
 
     <FluentPaginator Class="mx-3" State="@_pagination" />
@@ -49,42 +52,34 @@
 
     private readonly PaginationState _pagination = new() { ItemsPerPage = 3 };
     private FluentDataGrid<TransactionDto> _dataGrid;
-    private GridItemsProvider<TransactionDto> _transactionProvider;
+    private IQueryable<TransactionDto> _transactions;
+
+    private bool IsTableLoading
+    {
+        get;
+        set
+        {
+            field = value;
+            StateHasChanged();
+        }
+    }
 
     [SupplyParameterFromQuery]
-    public string SearchTerm { get; set; }
+    private int Page { get; set; }
+
+    [SupplyParameterFromQuery]
+    private string SortBy { get; set; }
+
+    [SupplyParameterFromQuery]
+    private bool Ascending { get; set; }
+
+    [SupplyParameterFromQuery]
+    private string NameFilter { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        await _pagination.SetCurrentPageIndexAsync(Page >= 1 ? Page - 1 : 0);
         await base.OnInitializedAsync();
-
-        _transactionProvider = async request =>
-        {
-            _dataGrid.SetLoadingState(true);
-
-            var providerResult = new GridItemsProviderResult<TransactionDto> { Items = [], TotalItemCount = 0 };
-
-            var sortedProperty = request.GetSortByProperties().First();
-
-            await HandleRequestAsync(
-                async () => await Service.TransactionService.GetAllAsync(
-                    new GetPaginatedListRequest
-                    {
-                        PageNumber = _pagination.CurrentPageIndex + 1,
-                        PageSize = _pagination.ItemsPerPage,
-                        SortBy = sortedProperty.PropertyName,
-                        SortByAscending = sortedProperty.Direction is SortDirection.Ascending,
-                        NameFilter = SearchTerm,
-                    }),
-                transactions =>
-                {
-                    ViewModel.Transactions = transactions;
-                    _dataGrid.SetLoadingState(false);
-                    providerResult = GridItemsProviderResult.From(ViewModel.Transactions.Items, ViewModel.Transactions.TotalCount!.Value);
-                });
-
-            return providerResult;
-        };
     }
 
     protected override async Task SetViewModelAsync()
@@ -100,6 +95,47 @@
                 };
             },
             viewModel => ViewModel = viewModel);
+    }
+
+    private async Task RefreshItemsAsync(GridItemsProviderRequest<TransactionDto> request)
+    {
+        IsTableLoading = true;
+
+        var sortedProperty = request.GetSortByProperties().First();
+        var sortBy = sortedProperty.PropertyName;
+        var ascending = sortedProperty.Direction is SortDirection.Ascending;
+
+        if (ViewModel is null && !string.IsNullOrEmpty(SortBy))
+        {
+            sortBy = SortBy;
+            ascending = Ascending;
+        }
+
+        await HandleRequestAsync(
+            async () => await Service.TransactionService.GetAllAsync(
+                new GetPaginatedListRequest
+                {
+                    PageNumber = _pagination.CurrentPageIndex + 1,
+                    PageSize = _pagination.ItemsPerPage,
+                    SortBy = sortBy,
+                    SortByAscending = ascending,
+                    NameFilter = NameFilter,
+                }),
+            transactions => ViewModel.Transactions = transactions);
+
+        _transactions = ViewModel!.Transactions.Items.AsQueryable();
+        await _pagination.SetTotalItemCountAsync(ViewModel!.Transactions.TotalCount!.Value);
+
+        NavigationManager.UpdateBrowserUriQueryParameters(
+            new Dictionary<string, object>
+            {
+                ["page"] = _pagination.CurrentPageIndex + 1,
+                ["sortBy"] = sortBy,
+                ["ascending"] = ascending,
+                ["nameFilter"] = NameFilter,
+            });
+
+        IsTableLoading = false;
     }
 
     private async Task AddAsync() => await HandleDialogAsync(null);
@@ -167,7 +203,7 @@
 
         await HandleRequestAsync(
             async () => await (isEdit ? Service.TransactionService.UpdateAsync(id, request) : Service.TransactionService.CreateAsync(request)),
-            async () => await _dataGrid.RefreshDataAsync());
+            DataGridRefreshDataAsync);
     }
 
     private async Task DeleteAsync(string id)
@@ -179,8 +215,10 @@
         {
             await HandleRequestAsync(
                 async () => await Service.TransactionService.DeleteAsync(id),
-                async () => await _dataGrid.RefreshDataAsync());
+                DataGridRefreshDataAsync);
         }
     }
+
+    private async Task DataGridRefreshDataAsync() => await _dataGrid.RefreshDataAsync(true);
 
 }

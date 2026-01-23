@@ -48,7 +48,7 @@
     private string SortBy { get; set; }
 
     [SupplyParameterFromQuery]
-    private bool Ascending { get; set; } = true;
+    private bool Ascending { get; set; }
 
     [SupplyParameterFromQuery]
     private string NameFilter { get; set; }
@@ -56,7 +56,6 @@
     protected override async Task OnInitializedAsync()
     {
         await _pagination.SetCurrentPageIndexAsync(Page >= 1 ? Page - 1 : 0);
-
         await base.OnInitializedAsync();
     }
 
@@ -129,7 +128,7 @@
 
             await HandleRequestAsync(
                 async () => await (isEdit ? Service.UpdateAsync(id, request) : Service.CreateAsync(request)),
-                async () => await _dataGrid.RefreshDataAsync());
+                DataGridRefreshDataAsync);
         }
     }
 
@@ -142,7 +141,7 @@
         {
             await HandleRequestAsync(
                 async () => await Service.DeleteAsync(category.Id),
-                async () => await _dataGrid.RefreshDataAsync());
+                DataGridRefreshDataAsync);
         }
     }
 
