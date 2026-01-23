@@ -17,7 +17,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 var baseUri = builder.HostEnvironment.IsDevelopment()
-    ? new Uri("http://localhost:5000")
+    ? new Uri("http://localhost:8080")
     : new Uri($"{builder.HostEnvironment.BaseAddress}api");
 
 var refitSettings = new RefitSettings(new SystemTextJsonContentSerializer(JsonSerializerOptionsProvider.DefaultOptions));
@@ -46,6 +46,7 @@ builder.Services.AddValidatorsFromAssembly(typeof(TransactionRequestValidator).A
 builder.Services.AddValidatorsFromAssembly(typeof(TransactionFormViewModelValidator).Assembly);
 
 builder.Services.AddSingleton<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
+builder.Services.AddSingleton<IWalletService, WalletService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 
 builder.Services.AddScoped<AuthorizationHeaderHandler>();

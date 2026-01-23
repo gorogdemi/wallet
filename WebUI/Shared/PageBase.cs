@@ -77,7 +77,7 @@ public abstract class PageBase : ComponentBase
             try
             {
                 var problem = await e.GetContentAsAsync<ProblemDetails>();
-                await ShowErrorMessageAlertAsync($"{problem.Title}: {problem.Detail}");
+                await ShowErrorMessageAlertAsync(problem is not null ? $"{problem.Title}: {problem.Detail}" : e.Message);
             }
             catch
             {

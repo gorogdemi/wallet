@@ -3,7 +3,7 @@ using Wallet.Domain.Enums;
 
 namespace Wallet.Domain.Entities;
 
-public class Transaction : EntityBase
+public class Transaction : EntityBase, IUserOwnedEntity
 {
     public double BankAmount { get; set; }
 
@@ -11,7 +11,7 @@ public class Transaction : EntityBase
 
     public virtual Category Category { get; set; }
 
-    public long? CategoryId { get; set; }
+    public string CategoryId { get; set; }
 
     public string Comment { get; set; }
 

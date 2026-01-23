@@ -1,4 +1,4 @@
-using Wallet.Application.Persistence;
+using Wallet.Application.Common.Interfaces;
 using Wallet.Domain.Entities;
 using Wallet.Shared.Transactions;
 using Wallet.WebApi.Extensions;
@@ -16,11 +16,11 @@ public class DeleteTransactionEndpoint : EndpointWithoutRequest<TransactionDto>
         _walletContextService = walletContextService;
     }
 
-    public override void Configure() => Delete("/transactions/{id:long}");
+    public override void Configure() => Delete("/transactions/{id}");
 
     public override async Task HandleAsync(CancellationToken cancellationToken)
     {
-        var id = Route<long>("id");
+        var id = Route<string>("id");
 
         _logger.LogInformation("Received DeleteTransaction request for ID {Id}", id);
 

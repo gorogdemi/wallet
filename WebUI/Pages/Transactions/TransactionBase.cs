@@ -3,6 +3,6 @@ using Wallet.WebUI.Shared;
 
 namespace Wallet.WebUI.Pages.Transactions;
 
-public abstract class TransactionBase<TViewModel> : AuthenticationAwarePageBase<TViewModel, ITransactionService>
+public abstract class TransactionBase<TViewModel> : AuthenticationAwarePageBase<TViewModel, IWalletService>
 {
 }

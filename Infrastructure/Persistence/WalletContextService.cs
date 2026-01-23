@@ -3,25 +3,25 @@ using Wallet.Application.Common.Exceptions;
 using Wallet.Application.Common.Interfaces;
 using Wallet.Domain.Common;
 
-namespace Wallet.Application.Persistence;
+namespace Wallet.Infrastructure.Persistence;
 
 public class WalletContextService : IWalletContextService
 {
-    public WalletContextService(IWalletContext walletContext)
-    {
-        Context = walletContext;
-    }
+    private readonly WalletContext _context;
 
-    public IWalletContext Context { get; }
+    public WalletContextService(WalletContext walletContext)
+    {
+        _context = walletContext;
+    }
 
     public async Task<TDomainType> CreateAsync<TDomainType>(TDomainType domainType, CancellationToken cancellationToken)
         where TDomainType : EntityBase, new()
     {
-        Context.Set<TDomainType>().Add(domainType);
+        _context.Set<TDomainType>().Add(domainType);
 
         try
         {
-            await Context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
         }
         catch (DbUpdateException)
         {
@@ -41,8 +41,8 @@ public class WalletContextService : IWalletContextService
     {
         try
         {
-            Context.Set<TDomainType>().Remove(domainType);
-            await Context.SaveChangesAsync(cancellationToken);
+            _context.Set<TDomainType>().Remove(domainType);
+            await _context.SaveChangesAsync(cancellationToken);
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -55,20 +55,20 @@ public class WalletContextService : IWalletContextService
         }
     }
 
-    public async Task<IEnumerable<TDomainType>> GetAllAsync<TDomainType>(CancellationToken cancellationToken)
+    public async Task<TDomainType> GetAsync<TDomainType>(string id, CancellationToken cancellationToken)
         where TDomainType : EntityBase, new() =>
-        await Context.Set<TDomainType>().ToListAsync(cancellationToken);
+        await _context.Set<TDomainType>().FindAsync([id], cancellationToken);
 
-    public async Task<TDomainType> GetAsync<TDomainType>(long id, CancellationToken cancellationToken)
+    public IQueryable<TDomainType> GetQueryableAsNoTracking<TDomainType>()
         where TDomainType : EntityBase, new() =>
-        await Context.Set<TDomainType>().FindAsync([id], cancellationToken);
+        _context.Set<TDomainType>().AsNoTracking();
 
     public async Task<TDomainType> UpdateAsync<TDomainType>(TDomainType domainType, CancellationToken cancellationToken)
         where TDomainType : EntityBase, new()
     {
         try
         {
-            await Context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
         }
         catch (DbUpdateConcurrencyException)
         {

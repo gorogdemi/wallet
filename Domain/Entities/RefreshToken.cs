@@ -1,6 +1,8 @@
-﻿namespace Wallet.Domain.Entities;
+﻿using Wallet.Domain.Common;
 
-public class RefreshToken
+namespace Wallet.Domain.Entities;
+
+public class RefreshToken : EntityBase, IUserOwnedEntity
 {
     public DateTime CreationDate { get; set; }
 
@@ -11,8 +13,6 @@ public class RefreshToken
     public bool IsUsed { get; set; }
 
     public string JwtId { get; set; }
-
-    public string Token { get; set; }
 
     public string UserId { get; set; }
 }

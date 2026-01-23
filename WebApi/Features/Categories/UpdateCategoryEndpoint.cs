@@ -1,4 +1,4 @@
-using Wallet.Application.Persistence;
+using Wallet.Application.Common.Interfaces;
 using Wallet.Domain.Entities;
 using Wallet.Shared.Categories;
 using Wallet.WebApi.Extensions;
@@ -16,11 +16,11 @@ public class UpdateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto, Cat
         _walletContextService = walletContextService;
     }
 
-    public override void Configure() => Put("/categories/{id:long}");
+    public override void Configure() => Put("/categories/{id}");
 
     public override async Task HandleAsync(CategoryRequest request, CancellationToken cancellationToken)
     {
-        var id = Route<long>("id");
+        var id = Route<string>("id");
 
         _logger.LogInformation("Received UpdateCategory request for ID {Id}", id);
 
