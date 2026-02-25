@@ -19,11 +19,11 @@ public class JwtTokenService : ITokenService
     private const string JwtUserEmail = "useremail";
     private const string JwtFullName = "fullname";
     private readonly AuthenticationOptions _authenticationOptions;
-    private readonly IWalletContextService _walletContextService;
+    private readonly IDbContextService _dbContextService;
 
-    public JwtTokenService(IWalletContextService walletContextService, IOptions<AuthenticationOptions> authenticationOptions)
+    public JwtTokenService(IDbContextService dbContextService, IOptions<AuthenticationOptions> authenticationOptions)
     {
-        _walletContextService = walletContextService;
+        _dbContextService = dbContextService;
         _authenticationOptions = authenticationOptions.Value;
     }
 
@@ -58,7 +58,7 @@ public class JwtTokenService : ITokenService
             ExpiryDate = DateTime.UtcNow.AddMonths(_authenticationOptions.RefreshTokenLifetimeInMonths),
         };
 
-        await _walletContextService.CreateAsync(refreshToken, cancellationToken);
+        await _dbContextService.CreateAsync(refreshToken, cancellationToken);
 
         return (Result.Success(), tokenHandler.WriteToken(token), refreshToken.Id);
     }
@@ -81,7 +81,7 @@ public class JwtTokenService : ITokenService
         }
 
         var jti = validatedToken.FindFirstValue(JwtRegisteredClaimNames.Jti);
-        var storedRefreshToken = await _walletContextService.GetAsync<RefreshToken>(refreshToken, cancellationToken);
+        var storedRefreshToken = await _dbContextService.GetAsync<RefreshToken>(refreshToken, cancellationToken);
 
         if (storedRefreshToken is null)
         {
@@ -109,7 +109,7 @@ public class JwtTokenService : ITokenService
         }
 
         storedRefreshToken.IsUsed = true;
-        await _walletContextService.UpdateAsync(storedRefreshToken, cancellationToken);
+        await _dbContextService.UpdateAsync(storedRefreshToken, cancellationToken);
 
         var user = new ApplicationUser
         {

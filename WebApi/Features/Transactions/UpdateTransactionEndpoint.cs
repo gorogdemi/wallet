@@ -7,13 +7,13 @@ namespace Wallet.WebApi.Features.Transactions;
 
 public class UpdateTransactionEndpoint : Endpoint<TransactionRequest, TransactionDto, TransactionMapper>
 {
+    private readonly IDbContextService _dbContextService;
     private readonly ILogger<UpdateTransactionEndpoint> _logger;
-    private readonly IWalletContextService _walletContextService;
 
-    public UpdateTransactionEndpoint(ILogger<UpdateTransactionEndpoint> logger, IWalletContextService walletContextService)
+    public UpdateTransactionEndpoint(ILogger<UpdateTransactionEndpoint> logger, IDbContextService dbContextService)
     {
         _logger = logger;
-        _walletContextService = walletContextService;
+        _dbContextService = dbContextService;
     }
 
     public override void Configure() => Put("/transactions/{id}");
@@ -24,7 +24,7 @@ public class UpdateTransactionEndpoint : Endpoint<TransactionRequest, Transactio
 
         _logger.LogInformation("Received UpdateTransaction request for ID {Id}", id);
 
-        var transaction = await _walletContextService.GetAsync<Transaction>(id, cancellationToken);
+        var transaction = await _dbContextService.GetAsync<Transaction>(id, cancellationToken);
 
         if (transaction is null)
         {
@@ -41,7 +41,7 @@ public class UpdateTransactionEndpoint : Endpoint<TransactionRequest, Transactio
         }
 
         transaction = Map.UpdateEntity(request, transaction);
-        transaction = await _walletContextService.UpdateAsync(transaction, cancellationToken);
+        transaction = await _dbContextService.UpdateAsync(transaction, cancellationToken);
 
         var response = Map.FromEntity(transaction);
 

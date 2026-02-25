@@ -6,13 +6,13 @@ namespace Wallet.WebApi.Features.Categories;
 
 public class CreateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto, CategoryMapper>
 {
+    private readonly IDbContextService _dbContextService;
     private readonly ILogger<CreateCategoryEndpoint> _logger;
-    private readonly IWalletContextService _walletContextService;
 
-    public CreateCategoryEndpoint(ILogger<CreateCategoryEndpoint> logger, IWalletContextService walletContextService)
+    public CreateCategoryEndpoint(ILogger<CreateCategoryEndpoint> logger, IDbContextService dbContextService)
     {
         _logger = logger;
-        _walletContextService = walletContextService;
+        _dbContextService = dbContextService;
     }
 
     public override void Configure() => Post("/categories");
@@ -26,7 +26,7 @@ public class CreateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto, Cat
         var category = Map.ToEntity(request);
         category.UserId = userId;
 
-        category = await _walletContextService.CreateAsync(category, cancellationToken);
+        category = await _dbContextService.CreateAsync(category, cancellationToken);
 
         var response = Map.FromEntity(category);
 

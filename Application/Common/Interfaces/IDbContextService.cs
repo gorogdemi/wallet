@@ -2,7 +2,7 @@ using Wallet.Domain.Common;
 
 namespace Wallet.Application.Common.Interfaces;
 
-public interface IWalletContextService
+public interface IDbContextService
 {
     Task<TDomainType> CreateAsync<TDomainType>(TDomainType domainType, CancellationToken cancellationToken)
         where TDomainType : EntityBase, new();

@@ -7,13 +7,13 @@ namespace Wallet.WebApi.Features.Transactions;
 
 public class DeleteTransactionEndpoint : EndpointWithoutRequest<TransactionDto>
 {
+    private readonly IDbContextService _dbContextService;
     private readonly ILogger<DeleteTransactionEndpoint> _logger;
-    private readonly IWalletContextService _walletContextService;
 
-    public DeleteTransactionEndpoint(ILogger<DeleteTransactionEndpoint> logger, IWalletContextService walletContextService)
+    public DeleteTransactionEndpoint(ILogger<DeleteTransactionEndpoint> logger, IDbContextService dbContextService)
     {
         _logger = logger;
-        _walletContextService = walletContextService;
+        _dbContextService = dbContextService;
     }
 
     public override void Configure() => Delete("/transactions/{id}");
@@ -24,7 +24,7 @@ public class DeleteTransactionEndpoint : EndpointWithoutRequest<TransactionDto>
 
         _logger.LogInformation("Received DeleteTransaction request for ID {Id}", id);
 
-        var transaction = await _walletContextService.GetAsync<Transaction>(id, cancellationToken);
+        var transaction = await _dbContextService.GetAsync<Transaction>(id, cancellationToken);
 
         if (transaction is null)
         {
@@ -40,7 +40,7 @@ public class DeleteTransactionEndpoint : EndpointWithoutRequest<TransactionDto>
             return;
         }
 
-        await _walletContextService.DeleteAsync(transaction, cancellationToken);
+        await _dbContextService.DeleteAsync(transaction, cancellationToken);
 
         _logger.LogInformation("Transaction with ID {Id} successfully deleted", id);
 
