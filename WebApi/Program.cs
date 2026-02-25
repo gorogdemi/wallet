@@ -49,7 +49,9 @@ app.UseFastEndpoints(c =>
                 Detail = failures.Count == 1 ? failures[0].ErrorMessage : "One or more validation failures have occurred.",
                 Errors = failures.ToDictionary(f => f.PropertyName, f => new[] { f.ErrorMessage }),
             });
+
     c.Validation.UsePropertyNamingPolicy = false;
+
     c.Endpoints.Configurator = ep =>
     {
         ep.PreProcessor<GlobalRequestLogger>(Order.Before);

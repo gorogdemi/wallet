@@ -1,8 +1,7 @@
-#pragma warning disable IDISP004
 #pragma warning disable IDE0130
+#pragma warning disable IDISP001
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using Wallet.Application.Common.Interfaces;
@@ -20,12 +19,12 @@ public static class ConfigureServices
     {
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(configuration.GetConnectionString("Postgres"));
         dataSourceBuilder.MapEnum<TransactionType>();
+        var dataSource = dataSourceBuilder.Build();
 
         services.AddDbContext<WalletContext>(options =>
         {
-            options.UseNpgsql(dataSourceBuilder.Build(), builder => builder.MigrationsAssembly(typeof(WalletContext).Assembly.FullName));
+            options.UseNpgsql(dataSource, builder => builder.MigrationsAssembly(typeof(WalletContext).Assembly.FullName));
             options.UseLazyLoadingProxies();
-            options.ConfigureWarnings(c => c.Ignore(CoreEventId.ManyServiceProvidersCreatedWarning)); // TODO: review
         });
 
         services

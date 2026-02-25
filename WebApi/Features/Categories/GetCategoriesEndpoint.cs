@@ -8,7 +8,7 @@ using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Categories;
 
-public class GetCategoriesEndpoint : Endpoint<GetPaginatedListRequest, PaginatedList<CategoryDto>, CategoryMapper>
+public class GetCategoriesEndpoint : Endpoint<GetCategoriesRequest, PaginatedList<CategoryDto>, CategoryMapper>
 {
     private readonly IDbContextService _dbContextService;
     private readonly ILogger<GetCategoriesEndpoint> _logger;
@@ -21,7 +21,7 @@ public class GetCategoriesEndpoint : Endpoint<GetPaginatedListRequest, Paginated
 
     public override void Configure() => Get("/categories");
 
-    public override async Task HandleAsync(GetPaginatedListRequest request, CancellationToken cancellationToken)
+    public override async Task HandleAsync(GetCategoriesRequest request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Received GetCategories request");
 
