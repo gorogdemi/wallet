@@ -5,7 +5,7 @@ using Wallet.Domain.Common;
 
 namespace Wallet.Infrastructure.Persistence;
 
-public class WalletContextService : IWalletContextService
+public class WalletContextService : IDbContextService
 {
     private readonly WalletContext _context;
 

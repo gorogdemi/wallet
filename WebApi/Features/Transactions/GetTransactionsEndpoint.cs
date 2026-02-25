@@ -10,13 +10,13 @@ namespace Wallet.WebApi.Features.Transactions;
 
 public class GetTransactionsEndpoint : Endpoint<GetPaginatedListRequest, PaginatedList<TransactionDto>, TransactionMapper>
 {
+    private readonly IDbContextService _dbContextService;
     private readonly ILogger<GetTransactionsEndpoint> _logger;
-    private readonly IWalletContextService _walletContextService;
 
-    public GetTransactionsEndpoint(ILogger<GetTransactionsEndpoint> logger, IWalletContextService walletContextService)
+    public GetTransactionsEndpoint(ILogger<GetTransactionsEndpoint> logger, IDbContextService dbContextService)
     {
         _logger = logger;
-        _walletContextService = walletContextService;
+        _dbContextService = dbContextService;
     }
 
     public override void Configure() => Get("/transactions");
@@ -28,7 +28,7 @@ public class GetTransactionsEndpoint : Endpoint<GetPaginatedListRequest, Paginat
         var sortBy = $"{request.SortBy ?? "Id"} {(request.SortByAscending != true ? "DESC" : "ASC")}";
         var userId = User.GetId();
 
-        var response = await _walletContextService.GetQueryableAsNoTracking<Transaction>()
+        var response = await _dbContextService.GetQueryableAsNoTracking<Transaction>()
             .FilterUserById(userId)
             .WhereIf(!string.IsNullOrEmpty(request.NameFilter), t => EF.Functions.ILike(t.Name, $"%{request.NameFilter}%"))
             .OrderBy(sortBy)

@@ -7,13 +7,13 @@ namespace Wallet.WebApi.Features.Categories;
 
 public class GetCategoryEndpoint : EndpointWithoutRequest<CategoryDto, CategoryMapper>
 {
+    private readonly IDbContextService _dbContextService;
     private readonly ILogger<GetCategoryEndpoint> _logger;
-    private readonly IWalletContextService _walletContextService;
 
-    public GetCategoryEndpoint(ILogger<GetCategoryEndpoint> logger, IWalletContextService walletContextService)
+    public GetCategoryEndpoint(ILogger<GetCategoryEndpoint> logger, IDbContextService dbContextService)
     {
         _logger = logger;
-        _walletContextService = walletContextService;
+        _dbContextService = dbContextService;
     }
 
     public override void Configure() => Get("/categories/{id}");
@@ -24,7 +24,7 @@ public class GetCategoryEndpoint : EndpointWithoutRequest<CategoryDto, CategoryM
 
         _logger.LogInformation("Received GetCategory request for ID {Id}", id);
 
-        var category = await _walletContextService.GetAsync<Category>(id, cancellationToken);
+        var category = await _dbContextService.GetAsync<Category>(id, cancellationToken);
 
         if (category is null)
         {

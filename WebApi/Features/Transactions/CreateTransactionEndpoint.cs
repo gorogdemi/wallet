@@ -6,13 +6,13 @@ namespace Wallet.WebApi.Features.Transactions;
 
 public class CreateTransactionEndpoint : Endpoint<TransactionRequest, TransactionDto, TransactionMapper>
 {
+    private readonly IDbContextService _dbContextService;
     private readonly ILogger<CreateTransactionEndpoint> _logger;
-    private readonly IWalletContextService _walletContextService;
 
-    public CreateTransactionEndpoint(ILogger<CreateTransactionEndpoint> logger, IWalletContextService walletContextService)
+    public CreateTransactionEndpoint(ILogger<CreateTransactionEndpoint> logger, IDbContextService dbContextService)
     {
         _logger = logger;
-        _walletContextService = walletContextService;
+        _dbContextService = dbContextService;
     }
 
     public override void Configure() => Post("/transactions");
@@ -26,7 +26,7 @@ public class CreateTransactionEndpoint : Endpoint<TransactionRequest, Transactio
         var transaction = Map.ToEntity(request);
         transaction.UserId = userId;
 
-        transaction = await _walletContextService.CreateAsync(transaction, cancellationToken);
+        transaction = await _dbContextService.CreateAsync(transaction, cancellationToken);
 
         var response = Map.FromEntity(transaction);
 

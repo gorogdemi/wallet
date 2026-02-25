@@ -10,13 +10,13 @@ namespace Wallet.WebApi.Features.Categories;
 
 public class GetCategoriesEndpoint : Endpoint<GetPaginatedListRequest, PaginatedList<CategoryDto>, CategoryMapper>
 {
+    private readonly IDbContextService _dbContextService;
     private readonly ILogger<GetCategoriesEndpoint> _logger;
-    private readonly IWalletContextService _walletContextService;
 
-    public GetCategoriesEndpoint(ILogger<GetCategoriesEndpoint> logger, IWalletContextService walletContextService)
+    public GetCategoriesEndpoint(ILogger<GetCategoriesEndpoint> logger, IDbContextService dbContextService)
     {
         _logger = logger;
-        _walletContextService = walletContextService;
+        _dbContextService = dbContextService;
     }
 
     public override void Configure() => Get("/categories");
@@ -28,7 +28,7 @@ public class GetCategoriesEndpoint : Endpoint<GetPaginatedListRequest, Paginated
         var sortBy = $"{request.SortBy ?? "Id"} {(request.SortByAscending != true ? "DESC" : "ASC")}";
         var userId = User.GetId();
 
-        var response = await _walletContextService.GetQueryableAsNoTracking<Category>()
+        var response = await _dbContextService.GetQueryableAsNoTracking<Category>()
             .FilterUserById(userId)
             .WhereIf(!string.IsNullOrEmpty(request.NameFilter), t => EF.Functions.ILike(t.Name, $"%{request.NameFilter}%"))
             .OrderBy(sortBy)

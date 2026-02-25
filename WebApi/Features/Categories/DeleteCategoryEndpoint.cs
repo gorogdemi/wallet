@@ -7,13 +7,13 @@ namespace Wallet.WebApi.Features.Categories;
 
 public class DeleteCategoryEndpoint : EndpointWithoutRequest<CategoryDto>
 {
+    private readonly IDbContextService _dbContextService;
     private readonly ILogger<DeleteCategoryEndpoint> _logger;
-    private readonly IWalletContextService _walletContextService;
 
-    public DeleteCategoryEndpoint(ILogger<DeleteCategoryEndpoint> logger, IWalletContextService walletContextService)
+    public DeleteCategoryEndpoint(ILogger<DeleteCategoryEndpoint> logger, IDbContextService dbContextService)
     {
         _logger = logger;
-        _walletContextService = walletContextService;
+        _dbContextService = dbContextService;
     }
 
     public override void Configure() => Delete("/categories/{id}");
@@ -24,7 +24,7 @@ public class DeleteCategoryEndpoint : EndpointWithoutRequest<CategoryDto>
 
         _logger.LogInformation("Received DeleteCategory request for ID {Id}", id);
 
-        var category = await _walletContextService.GetAsync<Category>(id, cancellationToken);
+        var category = await _dbContextService.GetAsync<Category>(id, cancellationToken);
 
         if (category is null)
         {
@@ -40,7 +40,7 @@ public class DeleteCategoryEndpoint : EndpointWithoutRequest<CategoryDto>
             return;
         }
 
-        await _walletContextService.DeleteAsync(category, cancellationToken);
+        await _dbContextService.DeleteAsync(category, cancellationToken);
 
         _logger.LogInformation("Category with ID {Id} successfully deleted", id);
 

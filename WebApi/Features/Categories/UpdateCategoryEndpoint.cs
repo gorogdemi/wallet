@@ -7,13 +7,13 @@ namespace Wallet.WebApi.Features.Categories;
 
 public class UpdateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto, CategoryMapper>
 {
+    private readonly IDbContextService _dbContextService;
     private readonly ILogger<UpdateCategoryEndpoint> _logger;
-    private readonly IWalletContextService _walletContextService;
 
-    public UpdateCategoryEndpoint(ILogger<UpdateCategoryEndpoint> logger, IWalletContextService walletContextService)
+    public UpdateCategoryEndpoint(ILogger<UpdateCategoryEndpoint> logger, IDbContextService dbContextService)
     {
         _logger = logger;
-        _walletContextService = walletContextService;
+        _dbContextService = dbContextService;
     }
 
     public override void Configure() => Put("/categories/{id}");
@@ -24,7 +24,7 @@ public class UpdateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto, Cat
 
         _logger.LogInformation("Received UpdateCategory request for ID {Id}", id);
 
-        var category = await _walletContextService.GetAsync<Category>(id, cancellationToken);
+        var category = await _dbContextService.GetAsync<Category>(id, cancellationToken);
 
         if (category is null)
         {
@@ -41,7 +41,7 @@ public class UpdateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto, Cat
         }
 
         category = Map.UpdateEntity(request, category);
-        category = await _walletContextService.UpdateAsync(category, cancellationToken);
+        category = await _dbContextService.UpdateAsync(category, cancellationToken);
 
         var response = Map.FromEntity(category);
 

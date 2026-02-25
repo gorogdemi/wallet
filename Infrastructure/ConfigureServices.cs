@@ -33,14 +33,14 @@ public static class ConfigureServices
             {
                 options.SignIn.RequireConfirmedAccount = true;
                 options.Password.RequireDigit = false;
-                options.Password.RequiredLength = 6;
+                options.Password.RequiredLength = 8;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
             })
             .AddEntityFrameworkStores<WalletContext>();
 
-        services.AddScoped<IWalletContextService, WalletContextService>();
+        services.AddScoped<IDbContextService, WalletContextService>();
         services.AddScoped<WalletContextInitializer>();
         services.AddScoped<ITokenService, JwtTokenService>();
 

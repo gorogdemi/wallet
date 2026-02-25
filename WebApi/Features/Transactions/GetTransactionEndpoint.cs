@@ -7,13 +7,13 @@ namespace Wallet.WebApi.Features.Transactions;
 
 public class GetTransactionEndpoint : EndpointWithoutRequest<TransactionDto, TransactionMapper>
 {
+    private readonly IDbContextService _dbContextService;
     private readonly ILogger<GetTransactionEndpoint> _logger;
-    private readonly IWalletContextService _walletContextService;
 
-    public GetTransactionEndpoint(ILogger<GetTransactionEndpoint> logger, IWalletContextService walletContextService)
+    public GetTransactionEndpoint(ILogger<GetTransactionEndpoint> logger, IDbContextService dbContextService)
     {
         _logger = logger;
-        _walletContextService = walletContextService;
+        _dbContextService = dbContextService;
     }
 
     public override void Configure() => Get("/transactions/{id}");
@@ -24,7 +24,7 @@ public class GetTransactionEndpoint : EndpointWithoutRequest<TransactionDto, Tra
 
         _logger.LogInformation("Received GetTransaction request for ID {Id}", id);
 
-        var transaction = await _walletContextService.GetAsync<Transaction>(id, cancellationToken);
+        var transaction = await _dbContextService.GetAsync<Transaction>(id, cancellationToken);
 
         if (transaction is null)
         {
