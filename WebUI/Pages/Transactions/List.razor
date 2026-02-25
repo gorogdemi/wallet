@@ -15,6 +15,32 @@
 
 <FluentToolbar Orientation="Orientation.Horizontal" Class="mb-3 w-100">
     <FluentSearch @bind-Value="NameFilter" @bind-Value:after="DataGridRefreshDataAsync" Autofocus="true" Placeholder="Name..." />
+    <FluentSelect Placeholder="All types"
+                  @bind-SelectedOption="TypeFilterValue"
+                  @bind-SelectedOption:after="DataGridRefreshDataAsync"
+                  Items="_transactionTypes"
+                  OptionText="type => type!.Value.ToTransactionTypeText()"
+                  Width="180px" />
+    @if (TypeFilterValue.HasValue)
+    {
+        <FluentButton OnClick="ClearTypeFilterAsync" Style="height: 32px">
+            <FluentIcon Icon="Regular.Size20.Dismiss" Color="Color.Neutral" />
+        </FluentButton>
+    }
+    <FluentSelect Placeholder="All categories"
+                  @bind-Value="CategoryIdFilter"
+                  @bind-Value:after="DataGridRefreshDataAsync"
+                  Items="ViewModel?.Categories"
+                  OptionText="o => o?.Name.ToCategoryText()"
+                  OptionValue="o => o?.Id"
+                  Width="220px"
+                  Disabled="@(ViewModel?.Categories is null)" />
+    @if (!string.IsNullOrEmpty(CategoryIdFilter))
+    {
+        <FluentButton OnClick="ClearCategoryFilterAsync" Style="height: 32px">
+            <FluentIcon Icon="Regular.Size20.Dismiss" Color="Color.Neutral" />
+        </FluentButton>
+    }
     <FluentButton IconStart="@(new Filled.Size20.ArrowClockwise())" Appearance="Appearance.Accent" Loading="IsTableLoading" OnClick="DataGridRefreshDataAsync">
         Search
     </FluentButton>
@@ -53,6 +79,7 @@
     private readonly PaginationState _pagination = new() { ItemsPerPage = 3 };
     private FluentDataGrid<TransactionDto> _dataGrid;
     private IQueryable<TransactionDto> _transactions;
+    private List<TransactionType?> _transactionTypes = new();
 
     private bool IsTableLoading
     {
@@ -80,10 +107,20 @@
     private string CategoryIdFilter { get; set; }
 
     [SupplyParameterFromQuery]
-    private TransactionType? TypeFilter { get; set; }
+    private string TypeFilterQuery { get; set; }
+
+    private TransactionType? TypeFilterValue { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        _transactionTypes = Enum.GetValues<TransactionType>().Cast<TransactionType?>().ToList();
+
+        if (!string.IsNullOrWhiteSpace(TypeFilterQuery)
+            && Enum.TryParse(TypeFilterQuery, ignoreCase: true, out TransactionType parsedType))
+        {
+            TypeFilterValue = parsedType;
+        }
+
         await _pagination.SetCurrentPageIndexAsync(Page >= 1 ? Page - 1 : 0);
         await base.OnInitializedAsync();
     }
@@ -127,7 +164,7 @@
                     SortByAscending = ascending,
                     NameFilter = NameFilter,
                     CategoryIdFilter = CategoryIdFilter,
-                    TypeFilter = TypeFilter,
+                    TypeFilter = TypeFilterValue,
                 }),
             transactions => ViewModel.Transactions = transactions);
 
@@ -142,7 +179,7 @@
                 ["ascending"] = ascending,
                 ["nameFilter"] = NameFilter,
                 ["categoryIdFilter"] = CategoryIdFilter,
-                ["typeFilter"] = TypeFilter,
+                ["typeFilter"] = TypeFilterQuery,
             });
 
         IsTableLoading = false;
@@ -229,6 +266,23 @@
         }
     }
 
-    private async Task DataGridRefreshDataAsync() => await _dataGrid.RefreshDataAsync(true);
+    private async Task ClearTypeFilterAsync()
+    {
+        TypeFilterValue = null;
+        TypeFilterQuery = null;
+        await DataGridRefreshDataAsync();
+    }
+
+    private async Task ClearCategoryFilterAsync()
+    {
+        CategoryIdFilter = null;
+        await DataGridRefreshDataAsync();
+    }
+
+    private async Task DataGridRefreshDataAsync()
+    {
+        TypeFilterQuery = TypeFilterValue?.ToString();
+        await _dataGrid.RefreshDataAsync(true);
+    }
 
 }
