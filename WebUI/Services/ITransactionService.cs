@@ -2,6 +2,6 @@
 
 namespace Wallet.WebUI.Services;
 
-public interface ITransactionService : IHttpService<TransactionRequest, TransactionDto>
+public interface ITransactionService : IHttpService<TransactionRequest, TransactionDto, GetTransactionsRequest>
 {
 }

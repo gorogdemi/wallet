@@ -3,7 +3,7 @@ using Wallet.Shared.Common.Models;
 
 namespace Wallet.WebUI.Services;
 
-public interface IHttpService<in TRequest, TResponse>
+public interface IHttpService<in TRequest, TResponse, in TQuery> where TQuery : GetPaginatedListRequest
 {
     [Post("/")]
     Task CreateAsync(TRequest request);
@@ -12,7 +12,7 @@ public interface IHttpService<in TRequest, TResponse>
     Task DeleteAsync(string id);
 
     [Get("/")]
-    Task<PaginatedList<TResponse>> GetAllAsync([Query] GetPaginatedListRequest request);
+    Task<PaginatedList<TResponse>> GetAllAsync([Query] TQuery request);
 
     [Get("/{id}")]
     Task<TResponse> GetAsync(string id);
