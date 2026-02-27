@@ -1,18 +1,15 @@
-using Wallet.Application.Common.Interfaces;
+using Wallet.Application.Transactions.CreateTransaction;
 using Wallet.Shared.Transactions;
-using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Transactions;
 
-public class CreateTransactionEndpoint : Endpoint<TransactionRequest, TransactionDto, TransactionMapper>
+public class CreateTransactionEndpoint : Endpoint<TransactionRequest, TransactionDto>
 {
-    private readonly IDbContextService _dbContextService;
     private readonly ILogger<CreateTransactionEndpoint> _logger;
 
-    public CreateTransactionEndpoint(ILogger<CreateTransactionEndpoint> logger, IDbContextService dbContextService)
+    public CreateTransactionEndpoint(ILogger<CreateTransactionEndpoint> logger)
     {
         _logger = logger;
-        _dbContextService = dbContextService;
     }
 
     public override void Configure() => Post("/transactions");
@@ -21,17 +18,18 @@ public class CreateTransactionEndpoint : Endpoint<TransactionRequest, Transactio
     {
         _logger.LogInformation("Received CreateTransaction request");
 
-        var userId = User.GetId();
+        var response = await new CreateTransactionCommand(
+                request.Name,
+                request.Date,
+                request.Type,
+                request.BankAmount,
+                request.CashAmount,
+                request.Comment,
+                request.CategoryId)
+            .ExecuteAsync(cancellationToken);
 
-        var transaction = Map.ToEntity(request);
-        transaction.UserId = userId;
+        _logger.LogInformation("Transaction with ID {Id} successfully created", response.Id);
 
-        transaction = await _dbContextService.CreateAsync(transaction, cancellationToken);
-
-        var response = Map.FromEntity(transaction);
-
-        _logger.LogInformation("Transaction with ID {Id} successfully created", transaction.Id);
-
-        await Send.CreatedAtAsync<GetTransactionEndpoint>(transaction.Id, response, cancellation: cancellationToken);
+        await Send.CreatedAtAsync<GetTransactionEndpoint>(response.Id, response, cancellation: cancellationToken);
     }
 }

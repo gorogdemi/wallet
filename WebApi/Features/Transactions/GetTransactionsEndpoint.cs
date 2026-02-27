@@ -1,23 +1,16 @@
-using System.Linq.Dynamic.Core;
-using Microsoft.EntityFrameworkCore;
-using Wallet.Application.Common.Interfaces;
-using Wallet.Domain.Entities;
-using Wallet.Domain.Enums;
+using Wallet.Application.Transactions.GetTransactions;
 using Wallet.Shared.Common.Models;
 using Wallet.Shared.Transactions;
-using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Transactions;
 
-public class GetTransactionsEndpoint : Endpoint<GetTransactionsRequest, PaginatedList<TransactionDto>, TransactionMapper>
+public class GetTransactionsEndpoint : Endpoint<GetTransactionsRequest, PaginatedList<TransactionDto>>
 {
-    private readonly IDbContextService _dbContextService;
     private readonly ILogger<GetTransactionsEndpoint> _logger;
 
-    public GetTransactionsEndpoint(ILogger<GetTransactionsEndpoint> logger, IDbContextService dbContextService)
+    public GetTransactionsEndpoint(ILogger<GetTransactionsEndpoint> logger)
     {
         _logger = logger;
-        _dbContextService = dbContextService;
     }
 
     public override void Configure() => Get("/transactions");
@@ -26,16 +19,15 @@ public class GetTransactionsEndpoint : Endpoint<GetTransactionsRequest, Paginate
     {
         _logger.LogInformation("Received GetTransactions request");
 
-        var sortBy = $"{request.SortBy ?? "Id"} {(request.SortByAscending != true ? "DESC" : "ASC")}";
-        var userId = User.GetId();
-
-        var response = await _dbContextService.GetQueryableAsNoTracking<Transaction>()
-            .FilterUserById(userId)
-            .WhereIf(!string.IsNullOrEmpty(request.NameFilter), t => EF.Functions.ILike(t.Name, $"%{request.NameFilter}%"))
-            .WhereIf(!string.IsNullOrEmpty(request.CategoryIdFilter), t => t.CategoryId == request.CategoryIdFilter)
-            .WhereIf(request.TypeFilter.HasValue, t => t.Type == (TransactionType)request.TypeFilter!.Value)
-            .OrderBy(sortBy)
-            .ToPaginatedListAsync(request.PageNumber, request.PageSize, Map.FromEntity, cancellationToken);
+        var response = await new GetTransactionsQuery(
+                request.PageNumber,
+                request.PageSize,
+                request.SortBy,
+                request.SortByAscending,
+                request.NameFilter,
+                request.CategoryIdFilter,
+                request.TypeFilter)
+            .ExecuteAsync(cancellationToken);
 
         _logger.LogInformation("Transactions successfully retrieved");
 

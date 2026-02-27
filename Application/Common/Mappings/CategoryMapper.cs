@@ -1,17 +1,27 @@
-using Riok.Mapperly.Abstractions;
 using Wallet.Domain.Entities;
 using Wallet.Shared.Categories;
 
 namespace Wallet.Application.Common.Mappings;
 
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.None)]
 public static partial class CategoryMapper
 {
-    public static partial CategoryDto ToDto(this Category category);
+    public static CategoryDto ToDto(this Category category) =>
+        new()
+        {
+            Id = category.Id,
+            Name = category.Name,
+        };
 
-    public static partial List<CategoryDto> ToDto(this List<Category> categories);
+    public static Category ToEntity(this CategoryRequest request) =>
+        new()
+        {
+            Name = request.Name,
+        };
 
-    public static partial Category ToEntity(this CategoryRequest request);
+    public static Category UpdateEntity(this CategoryRequest request, Category category)
+    {
+        category.Name = request.Name;
 
-    public static partial void Update(this CategoryRequest request, Category category);
+        return category;
+    }
 }

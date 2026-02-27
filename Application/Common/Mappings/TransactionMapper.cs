@@ -1,19 +1,48 @@
-using Riok.Mapperly.Abstractions;
 using Wallet.Domain.Entities;
+using Wallet.Shared.Common.Enums;
 using Wallet.Shared.Transactions;
 
 namespace Wallet.Application.Common.Mappings;
 
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.None)]
-[UseStaticMapper(typeof(DateTimeMapper))]
-public static partial class TransactionMapper
+public static class TransactionMapper
 {
-    [MapProperty(nameof(Transaction.Category.Name), nameof(TransactionDto.CategoryName))]
-    public static partial TransactionDto ToDto(this Transaction transaction);
+    public static TransactionDto ToDto(this Transaction transaction) =>
+        new()
+        {
+            Id = transaction.Id,
+            Name = transaction.Name,
+            Comment = transaction.Comment,
+            BankAmount = transaction.BankAmount,
+            CashAmount = transaction.CashAmount,
+            SumAmount = transaction.BankAmount + transaction.CashAmount,
+            CategoryId = transaction.CategoryId,
+            CategoryName = transaction.Category?.Name,
+            Date = transaction.Date.ToDateTime(TimeOnly.MinValue),
+            Type = (TransactionType)transaction.Type,
+        };
 
-    public static partial List<TransactionDto> ToDto(this List<Transaction> transactions);
+    public static Transaction ToEntity(this TransactionRequest request) =>
+        new()
+        {
+            Name = request.Name,
+            Date = DateOnly.FromDateTime(request.Date!.Value),
+            Type = (Domain.Enums.TransactionType)request.Type!,
+            BankAmount = request.BankAmount,
+            CashAmount = request.CashAmount,
+            Comment = request.Comment,
+            CategoryId = request.CategoryId,
+        };
 
-    public static partial Transaction ToEntity(this TransactionRequest request);
+    public static Transaction UpdateEntity(this TransactionRequest request, Transaction transaction)
+    {
+        transaction.Name = request.Name;
+        transaction.Date = DateOnly.FromDateTime(request.Date!.Value);
+        transaction.Type = (Domain.Enums.TransactionType)request.Type!;
+        transaction.BankAmount = request.BankAmount;
+        transaction.CashAmount = request.CashAmount;
+        transaction.Comment = request.Comment;
+        transaction.CategoryId = request.CategoryId;
 
-    public static partial void Update(this TransactionRequest request, Transaction transaction);
+        return transaction;
+    }
 }
