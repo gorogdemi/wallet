@@ -1,19 +1,15 @@
-using Wallet.Application.Common.Interfaces;
-using Wallet.Domain.Entities;
+using Wallet.Application.Categories.UpdateCategory;
 using Wallet.Shared.Categories;
-using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Categories;
 
-public class UpdateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto, CategoryMapper>
+public class UpdateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto>
 {
-    private readonly IDbContextService _dbContextService;
     private readonly ILogger<UpdateCategoryEndpoint> _logger;
 
-    public UpdateCategoryEndpoint(ILogger<UpdateCategoryEndpoint> logger, IDbContextService dbContextService)
+    public UpdateCategoryEndpoint(ILogger<UpdateCategoryEndpoint> logger)
     {
         _logger = logger;
-        _dbContextService = dbContextService;
     }
 
     public override void Configure() => Put("/categories/{id}");
@@ -24,26 +20,7 @@ public class UpdateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto, Cat
 
         _logger.LogInformation("Received UpdateCategory request for ID {Id}", id);
 
-        var category = await _dbContextService.GetAsync<Category>(id, cancellationToken);
-
-        if (category is null)
-        {
-            await Send.NotFoundAsync(cancellationToken);
-            return;
-        }
-
-        var userId = User.GetId();
-
-        if (category.UserId != userId)
-        {
-            await Send.ForbiddenAsync(cancellationToken);
-            return;
-        }
-
-        category = Map.UpdateEntity(request, category);
-        category = await _dbContextService.UpdateAsync(category, cancellationToken);
-
-        var response = Map.FromEntity(category);
+        var response = await new UpdateCategoryCommand(id, request.Name).ExecuteAsync(cancellationToken);
 
         _logger.LogInformation("Category with ID {Id} successfully updated", id);
 
