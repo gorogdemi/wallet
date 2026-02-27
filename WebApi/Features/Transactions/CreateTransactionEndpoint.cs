@@ -18,14 +18,7 @@ public class CreateTransactionEndpoint : Endpoint<TransactionRequest, Transactio
     {
         _logger.LogInformation("Received CreateTransaction request");
 
-        var response = await new CreateTransactionCommand(
-                request.Name,
-                request.Date,
-                request.Type,
-                request.BankAmount,
-                request.CashAmount,
-                request.Comment,
-                request.CategoryId)
+        var response = await new CreateTransactionCommand(request)
             .ExecuteAsync(cancellationToken);
 
         _logger.LogInformation("Transaction with ID {Id} successfully created", response.Id);

@@ -27,7 +27,7 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
             throw new ForbiddenException();
         }
 
-        category.Name = command.Name;
+        command.Request.UpdateEntity(category);
 
         category = await _dbContextService.UpdateAsync(category, ct);
 

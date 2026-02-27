@@ -27,18 +27,7 @@ public class UpdateTransactionCommandHandler : ICommandHandler<UpdateTransaction
             throw new ForbiddenException();
         }
 
-        var request = new TransactionRequest
-        {
-            Name = command.Name,
-            Date = command.Date,
-            Type = command.Type,
-            BankAmount = command.BankAmount,
-            CashAmount = command.CashAmount,
-            Comment = command.Comment,
-            CategoryId = command.CategoryId,
-        };
-
-        request.UpdateEntity(transaction);
+        command.Request.UpdateEntity(transaction);
 
         transaction = await _dbContextService.UpdateAsync(transaction, ct);
 

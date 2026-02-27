@@ -18,7 +18,7 @@ public class CreateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto>
     {
         _logger.LogInformation("Received CreateCategory request");
 
-        var response = await new CreateCategoryCommand(request.Name).ExecuteAsync(cancellationToken);
+        var response = await new CreateCategoryCommand(request).ExecuteAsync(cancellationToken);
 
         _logger.LogInformation("Category with ID {Id} successfully created", response.Id);
 

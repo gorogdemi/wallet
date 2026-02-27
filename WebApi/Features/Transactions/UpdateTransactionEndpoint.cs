@@ -20,15 +20,7 @@ public class UpdateTransactionEndpoint : Endpoint<TransactionRequest, Transactio
 
         _logger.LogInformation("Received UpdateTransaction request for ID {Id}", id);
 
-        var response = await new UpdateTransactionCommand(
-                id,
-                request.Name,
-                request.Date,
-                request.Type,
-                request.BankAmount,
-                request.CashAmount,
-                request.Comment,
-                request.CategoryId)
+        var response = await new UpdateTransactionCommand(id, request)
             .ExecuteAsync(cancellationToken);
 
         _logger.LogInformation("Transaction with ID {Id} successfully updated", id);

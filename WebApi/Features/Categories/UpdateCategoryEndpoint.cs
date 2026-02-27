@@ -20,7 +20,7 @@ public class UpdateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto>
 
         _logger.LogInformation("Received UpdateCategory request for ID {Id}", id);
 
-        var response = await new UpdateCategoryCommand(id, request.Name).ExecuteAsync(cancellationToken);
+        var response = await new UpdateCategoryCommand(id, request).ExecuteAsync(cancellationToken);
 
         _logger.LogInformation("Category with ID {Id} successfully updated", id);
 
