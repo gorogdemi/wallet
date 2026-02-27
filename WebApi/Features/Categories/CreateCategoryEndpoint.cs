@@ -1,18 +1,15 @@
-using Wallet.Application.Common.Interfaces;
+using Wallet.Application.Categories.CreateCategory;
 using Wallet.Shared.Categories;
-using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Categories;
 
-public class CreateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto, CategoryMapper>
+public class CreateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto>
 {
-    private readonly IDbContextService _dbContextService;
     private readonly ILogger<CreateCategoryEndpoint> _logger;
 
-    public CreateCategoryEndpoint(ILogger<CreateCategoryEndpoint> logger, IDbContextService dbContextService)
+    public CreateCategoryEndpoint(ILogger<CreateCategoryEndpoint> logger)
     {
         _logger = logger;
-        _dbContextService = dbContextService;
     }
 
     public override void Configure() => Post("/categories");
@@ -21,17 +18,10 @@ public class CreateCategoryEndpoint : Endpoint<CategoryRequest, CategoryDto, Cat
     {
         _logger.LogInformation("Received CreateCategory request");
 
-        var userId = User.GetId();
+        var response = await new CreateCategoryCommand(request.Name).ExecuteAsync(cancellationToken);
 
-        var category = Map.ToEntity(request);
-        category.UserId = userId;
+        _logger.LogInformation("Category with ID {Id} successfully created", response.Id);
 
-        category = await _dbContextService.CreateAsync(category, cancellationToken);
-
-        var response = Map.FromEntity(category);
-
-        _logger.LogInformation("Category with ID {Id} successfully created", category.Id);
-
-        await Send.CreatedAtAsync<GetCategoryEndpoint>(category.Id, response, cancellation: cancellationToken);
+        await Send.CreatedAtAsync<GetCategoryEndpoint>(response.Id, response, cancellation: cancellationToken);
     }
 }

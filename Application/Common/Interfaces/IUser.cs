@@ -2,11 +2,11 @@
 
 public interface IUser
 {
-    string Email { get; set; }
+    string Email { get; }
 
-    string FullName { get; set; }
+    string FullName { get; }
 
-    string Id { get; set; }
+    string Id { get; }
 
-    string UserName { get; set; }
+    string UserName { get; }
 }

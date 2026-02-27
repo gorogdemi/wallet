@@ -7,9 +7,11 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
+using Wallet.Application.Common.Interfaces;
 using Wallet.Infrastructure.Options;
 using Wallet.Infrastructure.Persistence;
 using Wallet.Shared.Transactions;
+using Wallet.WebApi.Services;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
@@ -27,6 +29,7 @@ public static class ConfigureServices
             .ConfigureHttpJsonOptions(x => x.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
         services.AddAuthorization();
+
         services
             .AddAuthentication(options =>
             {
@@ -38,6 +41,7 @@ public static class ConfigureServices
             {
                 options.MapInboundClaims = false;
                 options.SaveToken = true;
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     RoleClaimType = "role",
@@ -58,6 +62,7 @@ public static class ConfigureServices
         services.SwaggerDocument(s =>
         {
             s.EndpointFilter = endpoint => endpoint.EndpointTags is null;
+
             s.DocumentSettings = d =>
             {
                 d.Title = "Wallet API";
@@ -68,6 +73,8 @@ public static class ConfigureServices
 
         services.AddHealthChecks()
             .AddDbContextCheck<WalletContext>();
+
+        services.AddScoped<IUser, CurrentUser>();
 
         return services;
     }
