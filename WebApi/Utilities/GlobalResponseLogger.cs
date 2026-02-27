@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Wallet.Application.Common.Exceptions;
 using ProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
 namespace Wallet.WebApi.Utilities;
@@ -46,18 +47,26 @@ internal sealed class GlobalResponseLogger : IGlobalPostProcessor
 
         context.MarkExceptionAsHandled();
 
+        var exception = context.ExceptionDispatchInfo.SourceException;
+        var (statusCode, title, type) = exception switch
+        {
+            ForbiddenException => (StatusCodes.Status403Forbidden, "Forbidden", "https://tools.ietf.org/html/rfc7231#section-6.5.3"),
+            EntityNotFoundException => (StatusCodes.Status404NotFound, "Not Found", "https://tools.ietf.org/html/rfc7231#section-6.5.4"),
+            _ => (StatusCodes.Status500InternalServerError, "Internal Server Error", "https://tools.ietf.org/html/rfc7231#section-6.6.1"),
+        };
+
         var response = new ProblemDetails
         {
-            Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
-            Title = "Internal Server Error",
-            Status = 500,
+            Type = type,
+            Title = title,
+            Status = statusCode,
             Instance = context.HttpContext.Request.Path,
-            Detail = context.ExceptionDispatchInfo.SourceException.Message,
+            Detail = exception.Message,
         };
 
         await context.HttpContext.Response.SendStringAsync(
             JsonSerializer.Serialize(response, _jsonSerializerOptions),
-            statusCode: 500,
+            statusCode: statusCode,
             "application/problem+json; charset=utf-8",
             ct);
     }

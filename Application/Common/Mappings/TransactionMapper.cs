@@ -33,7 +33,7 @@ public static class TransactionMapper
             CategoryId = request.CategoryId,
         };
 
-    public static Transaction UpdateEntity(this TransactionRequest request, Transaction transaction)
+    public static void UpdateEntity(this TransactionRequest request, Transaction transaction)
     {
         transaction.Name = request.Name;
         transaction.Date = DateOnly.FromDateTime(request.Date!.Value);
@@ -42,7 +42,5 @@ public static class TransactionMapper
         transaction.CashAmount = request.CashAmount;
         transaction.Comment = request.Comment;
         transaction.CategoryId = request.CategoryId;
-
-        return transaction;
     }
 }

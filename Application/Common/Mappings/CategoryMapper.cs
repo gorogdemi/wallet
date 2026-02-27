@@ -3,7 +3,7 @@ using Wallet.Shared.Categories;
 
 namespace Wallet.Application.Common.Mappings;
 
-public static partial class CategoryMapper
+public static class CategoryMapper
 {
     public static CategoryDto ToDto(this Category category) =>
         new()
@@ -18,10 +18,5 @@ public static partial class CategoryMapper
             Name = request.Name,
         };
 
-    public static Category UpdateEntity(this CategoryRequest request, Category category)
-    {
-        category.Name = request.Name;
-
-        return category;
-    }
+    public static void UpdateEntity(this CategoryRequest request, Category category) => category.Name = request.Name;
 }
