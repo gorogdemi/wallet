@@ -1,19 +1,15 @@
-using Wallet.Application.Common.Interfaces;
-using Wallet.Domain.Entities;
+using Wallet.Application.Categories.GetCategory;
 using Wallet.Shared.Categories;
-using Wallet.WebApi.Extensions;
 
 namespace Wallet.WebApi.Features.Categories;
 
-public class GetCategoryEndpoint : EndpointWithoutRequest<CategoryDto, CategoryMapper>
+public class GetCategoryEndpoint : EndpointWithoutRequest<CategoryDto>
 {
-    private readonly IDbContextService _dbContextService;
     private readonly ILogger<GetCategoryEndpoint> _logger;
 
-    public GetCategoryEndpoint(ILogger<GetCategoryEndpoint> logger, IDbContextService dbContextService)
+    public GetCategoryEndpoint(ILogger<GetCategoryEndpoint> logger)
     {
         _logger = logger;
-        _dbContextService = dbContextService;
     }
 
     public override void Configure() => Get("/categories/{id}");
@@ -24,23 +20,7 @@ public class GetCategoryEndpoint : EndpointWithoutRequest<CategoryDto, CategoryM
 
         _logger.LogInformation("Received GetCategory request for ID {Id}", id);
 
-        var category = await _dbContextService.GetAsync<Category>(id, cancellationToken);
-
-        if (category is null)
-        {
-            await Send.NotFoundAsync(cancellationToken);
-            return;
-        }
-
-        var userId = User.GetId();
-
-        if (category.UserId != userId)
-        {
-            await Send.ForbiddenAsync(cancellationToken);
-            return;
-        }
-
-        var response = Map.FromEntity(category);
+        var response = await new GetCategoryQuery(id).ExecuteAsync(cancellationToken);
 
         _logger.LogInformation("Category with ID {Id} successfully retrieved", id);
 

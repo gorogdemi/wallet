@@ -2,11 +2,11 @@ using Wallet.Domain.Entities;
 using Wallet.Shared.Common.Enums;
 using Wallet.Shared.Transactions;
 
-namespace Wallet.WebApi.Features.Transactions;
+namespace Wallet.Application.Common.Mappings;
 
-public class TransactionMapper : Mapper<TransactionRequest, TransactionDto, Transaction>
+public static class TransactionMapper
 {
-    public override TransactionDto FromEntity(Transaction transaction) =>
+    public static TransactionDto ToDto(this Transaction transaction) =>
         new()
         {
             Id = transaction.Id,
@@ -21,7 +21,7 @@ public class TransactionMapper : Mapper<TransactionRequest, TransactionDto, Tran
             Type = (TransactionType)transaction.Type,
         };
 
-    public override Transaction ToEntity(TransactionRequest request) =>
+    public static Transaction ToEntity(this TransactionRequest request) =>
         new()
         {
             Name = request.Name,
@@ -33,7 +33,7 @@ public class TransactionMapper : Mapper<TransactionRequest, TransactionDto, Tran
             CategoryId = request.CategoryId,
         };
 
-    public override Transaction UpdateEntity(TransactionRequest request, Transaction transaction)
+    public static void UpdateEntity(this TransactionRequest request, Transaction transaction)
     {
         transaction.Name = request.Name;
         transaction.Date = DateOnly.FromDateTime(request.Date!.Value);
@@ -42,7 +42,5 @@ public class TransactionMapper : Mapper<TransactionRequest, TransactionDto, Tran
         transaction.CashAmount = request.CashAmount;
         transaction.Comment = request.Comment;
         transaction.CategoryId = request.CategoryId;
-
-        return transaction;
     }
 }
