@@ -34,7 +34,7 @@ public class JwtTokenService : RefreshTokenService<TokenRequest, TokenResponse>
             o.AccessTokenValidity = _authenticationOptions.JwtTokenLifetime;
             o.RefreshTokenValidity = DateTime.UtcNow - DateTime.UtcNow.AddMonths(_authenticationOptions.RefreshTokenLifetimeInMonths);
 
-            o.Endpoint("/authentication/refresh", ep => { ep.Summary(s => s.Summary = "this is the refresh token endpoint"); });
+            o.Endpoint(_authenticationOptions.RefreshTokenEndpoint, _ => { });
         });
     }
 

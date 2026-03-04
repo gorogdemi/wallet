@@ -6,5 +6,7 @@ public class AuthenticationOptions
 
     public TimeSpan JwtTokenLifetime { get; set; }
 
+    public string RefreshTokenEndpoint { get; set; }
+
     public int RefreshTokenLifetimeInMonths { get; set; }
 }
