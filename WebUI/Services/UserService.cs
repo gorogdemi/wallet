@@ -3,6 +3,7 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Wallet.Shared.Authentication;
 using Wallet.WebUI.Helpers;
+using Wallet.WebUI.Models;
 
 namespace Wallet.WebUI.Services;
 
@@ -62,18 +63,17 @@ public sealed class UserService : IUserService, IDisposable
         _authenticationStateProvider.NotifyLogout();
     }
 
-    public async Task RegisterAsync(RegistrationRequest registrationRequest) => await _authenticationService.RegisterAsync(registrationRequest);
+    public async Task RegisterAsync(RegisterRequest registerRequest) => await _authenticationService.RegisterAsync(registerRequest);
 
-    private async Task<string> RefreshTokenAsync()
+    private async Task<string> RefreshTokenAsync(string userId)
     {
-        var accessToken = await _localStorageService.GetItemAsStringAsync(AccessTokenKey);
         var refreshToken = await _localStorageService.GetItemAsStringAsync(RefreshTokenKey);
 
         try
         {
-            var request = new RefreshTokenRequest
+            var request = new TokenRequest
             {
-                AccessToken = accessToken,
+                UserId = userId,
                 RefreshToken = refreshToken,
             };
 
@@ -103,13 +103,13 @@ public sealed class UserService : IUserService, IDisposable
 
         if (expiryDateTimeUtc < DateTime.UtcNow)
         {
-            return await RefreshTokenAsync();
+            return await RefreshTokenAsync(authenticationState.User.FindFirst("userid")?.Value);
         }
 
         return null;
     }
 
-    private async Task UpdateAuthenticationStateAsync(AuthenticationResponse response)
+    private async Task UpdateAuthenticationStateAsync(TokenResponse response)
     {
         await _localStorageService.SetItemAsStringAsync(AccessTokenKey, response.AccessToken);
         await _localStorageService.SetItemAsStringAsync(RefreshTokenKey, response.RefreshToken);

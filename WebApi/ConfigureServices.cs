@@ -2,9 +2,9 @@
 
 using System.Text;
 using System.Text.Json.Serialization;
+using FastEndpoints.Security;
 using FastEndpoints.Swagger;
 using FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 using Wallet.Application.Common.Interfaces;
@@ -25,36 +25,32 @@ public static class ConfigureServices
 
         services.AddValidatorsFromAssemblyContaining<TransactionRequestValidator>();
 
-        services.AddFastEndpoints(options => options.IncludeAbstractValidators = true)
-            .ConfigureHttpJsonOptions(x => x.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-
-        services.AddAuthorization();
+        var jwtSecret = configuration.GetSection("Authentication").Get<AuthenticationOptions>().JwtSecret;
 
         services
-            .AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.MapInboundClaims = false;
-                options.SaveToken = true;
-
-                options.TokenValidationParameters = new TokenValidationParameters
+            .AddAuthenticationJwtBearer(
+                signingOptions => signingOptions.SigningKey = jwtSecret,
+                bearerOptions =>
                 {
-                    RoleClaimType = "role",
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey =
-                        new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.GetSection("Authentication").Get<AuthenticationOptions>().JwtSecret)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    RequireExpirationTime = true,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.FromSeconds(30),
-                };
-            });
+                    bearerOptions.MapInboundClaims = false;
+                    bearerOptions.SaveToken = true;
+
+                    bearerOptions.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        RoleClaimType = "role",
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSecret)),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        RequireExpirationTime = true,
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.FromSeconds(30),
+                    };
+                })
+            .AddAuthorization();
+
+        services.AddFastEndpoints(options => options.IncludeAbstractValidators = true)
+            .ConfigureHttpJsonOptions(x => x.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
         services.AddCors(options => options.AddPolicy("EnableAll", policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
         services.AddHttpContextAccessor();

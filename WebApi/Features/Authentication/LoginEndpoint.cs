@@ -1,19 +1,19 @@
+using FastEndpoints.Security;
+using Wallet.Application.Authentication.Login;
+using Wallet.Application.Common.Exceptions;
 using Wallet.Application.Common.Interfaces;
+using Wallet.Infrastructure.Services;
 using Wallet.Shared.Authentication;
 
 namespace Wallet.WebApi.Features.Authentication;
 
-public class LoginEndpoint : Endpoint<LoginRequest, AuthenticationResponse>
+public class LoginEndpoint : Endpoint<LoginRequest, TokenResponse>
 {
-    private readonly IIdentityService _identityService;
     private readonly ILogger<LoginEndpoint> _logger;
-    private readonly ITokenService _tokenService;
 
-    public LoginEndpoint(ILogger<LoginEndpoint> logger, IIdentityService identityService, ITokenService tokenService)
+    public LoginEndpoint(ILogger<LoginEndpoint> logger)
     {
         _logger = logger;
-        _identityService = identityService;
-        _tokenService = tokenService;
     }
 
     public override void Configure()
@@ -26,31 +26,18 @@ public class LoginEndpoint : Endpoint<LoginRequest, AuthenticationResponse>
     {
         _logger.LogInformation("Received login request for username '{UserName}'", request.UserName);
 
-        var validPassword = await _identityService.CheckPasswordAsync(request.UserName, request.Password);
+        IUser user = null;
 
-        if (!validPassword)
+        try
         {
-            ThrowError("User name or password is incorrect.");
+            user = await new LoginCommand(request).ExecuteAsync(cancellationToken);
+        }
+        catch (BadRequestException ex)
+        {
+            ThrowError(ex.Message);
         }
 
-        var user = await _identityService.GetUserByUserNameAsync(request.UserName);
-        var tokenResult = await _tokenService.GenerateTokensForUserAsync(user, cancellationToken);
-
-        if (!tokenResult.Result.Succeeded)
-        {
-            foreach (var error in tokenResult.Result.Errors)
-            {
-                AddError(error);
-            }
-
-            ThrowIfAnyErrors();
-        }
-
-        var response = new AuthenticationResponse
-        {
-            AccessToken = tokenResult.AccessToken,
-            RefreshToken = tokenResult.RefreshToken,
-        };
+        var response = await CreateTokenWith<JwtTokenService>(user.Id, privileges => JwtTokenService.SetUserClaims(user, privileges));
 
         _logger.LogInformation("User with username '{UserName}' successfully authenticated", request.UserName);
 

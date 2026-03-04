@@ -52,7 +52,7 @@
                     RefreshItems="RefreshItemsAsync"
                     GridTemplateColumns="0.5fr 0.2fr 0.2fr 0.2fr 0.2fr 0.2fr 0.2fr 0.4fr 0.2fr"
                     ResizableColumns="true"
-                    Loading="IsTableLoading"
+                    Loading="@(IsLoading || IsTableLoading)"
                     RowSize="DataGridRowSize.Medium"
                     Pagination="@_pagination"
                     Style="overflow-x: auto;">
@@ -79,7 +79,7 @@
     private readonly PaginationState _pagination = new() { ItemsPerPage = 3 };
     private FluentDataGrid<TransactionDto> _dataGrid;
     private IQueryable<TransactionDto> _transactions;
-    private List<TransactionType?> _transactionTypes = new();
+    private List<TransactionType?> _transactionTypes = [];
 
     private bool IsTableLoading
     {
@@ -137,18 +137,27 @@
                     Categories = categories.Items,
                 };
             },
-            viewModel => ViewModel = viewModel);
+            async viewModel =>
+            {
+                ViewModel = viewModel;
+                await DataGridRefreshDataAsync();
+            });
     }
 
     private async Task RefreshItemsAsync(GridItemsProviderRequest<TransactionDto> request)
     {
+        if (ViewModel is null)
+        {
+            return;
+        }
+
         IsTableLoading = true;
 
         var sortedProperty = request.GetSortByProperties().First();
         var sortBy = sortedProperty.PropertyName;
         var ascending = sortedProperty.Direction is SortDirection.Ascending;
 
-        if (ViewModel is null && !string.IsNullOrEmpty(SortBy))
+        if (!string.IsNullOrEmpty(SortBy))
         {
             sortBy = SortBy;
             ascending = Ascending;
@@ -166,10 +175,12 @@
                     CategoryIdFilter = CategoryIdFilter,
                     TypeFilter = TypeFilterValue,
                 }),
-            transactions => ViewModel.Transactions = transactions);
-
-        _transactions = ViewModel!.Transactions.Items.AsQueryable();
-        await _pagination.SetTotalItemCountAsync(ViewModel!.Transactions.TotalCount!.Value);
+            async transactions =>
+            {
+                ViewModel.Transactions = transactions;
+                _transactions = ViewModel.Transactions.Items.AsQueryable();
+                await _pagination.SetTotalItemCountAsync(ViewModel.Transactions.TotalCount!.Value);
+            });
 
         NavigationManager.UpdateBrowserUriQueryParameters(
             new Dictionary<string, object>

@@ -1,17 +1,15 @@
-using Wallet.Application.Common.Interfaces;
+using Wallet.Application.Authentication.Register;
 using Wallet.Shared.Authentication;
 
 namespace Wallet.WebApi.Features.Authentication;
 
-public class RegisterEndpoint : Endpoint<RegistrationRequest, EmptyResponse>
+public class RegisterEndpoint : Endpoint<RegisterRequest, EmptyResponse>
 {
-    private readonly IIdentityService _identityService;
     private readonly ILogger<RegisterEndpoint> _logger;
 
-    public RegisterEndpoint(ILogger<RegisterEndpoint> logger, IIdentityService identityService)
+    public RegisterEndpoint(ILogger<RegisterEndpoint> logger)
     {
         _logger = logger;
-        _identityService = identityService;
     }
 
     public override void Configure()
@@ -20,15 +18,11 @@ public class RegisterEndpoint : Endpoint<RegistrationRequest, EmptyResponse>
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(RegistrationRequest request, CancellationToken cancellationToken)
+    public override async Task HandleAsync(RegisterRequest request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Received registration request for username '{UserName}'", request.UserName);
 
-        var result = await _identityService.CreateUserAsync(
-            request.UserName,
-            request.Password,
-            request.Email,
-            $"{request.LastName} {request.FirstName}");
+        var result = await new RegisterCommand(request).ExecuteAsync(cancellationToken);
 
         if (!result.Succeeded)
         {

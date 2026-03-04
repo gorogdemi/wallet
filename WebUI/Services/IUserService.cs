@@ -10,5 +10,5 @@ public interface IUserService
 
     Task LogoutAsync();
 
-    Task RegisterAsync(RegistrationRequest registrationRequest);
+    Task RegisterAsync(RegisterRequest registerRequest);
 }

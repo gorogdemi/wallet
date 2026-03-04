@@ -2,9 +2,9 @@
 
 namespace Wallet.Shared.Authentication;
 
-public class RegistrationRequestValidator : AbstractValidator<RegistrationRequest>
+public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {
-    public RegistrationRequestValidator()
+    public RegisterRequestValidator()
     {
         RuleFor(request => request.Email)
             .NotEmpty()

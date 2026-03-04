@@ -1,6 +1,6 @@
 ﻿namespace Wallet.Shared.Authentication;
 
-public class RegistrationRequest
+public class RegisterRequest
 {
     public string Email { get; set; }
 

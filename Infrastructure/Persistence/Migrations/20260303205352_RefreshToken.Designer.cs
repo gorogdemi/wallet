@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Wallet.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using Wallet.Infrastructure.Persistence;
 namespace Wallet.Infrastructure.Migrations
 {
     [DbContext(typeof(WalletContext))]
-    partial class WalletContextModelSnapshot : ModelSnapshot
+    [Migration("20260303205352_RefreshToken")]
+    partial class RefreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

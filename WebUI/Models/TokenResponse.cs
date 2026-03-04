@@ -1,6 +1,6 @@
-﻿namespace Wallet.Shared.Authentication;
+namespace Wallet.WebUI.Models;
 
-public class RefreshTokenRequest
+public class TokenResponse
 {
     public string AccessToken { get; set; }
 
