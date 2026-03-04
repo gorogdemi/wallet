@@ -8,7 +8,6 @@ using Wallet.Application.Common.Interfaces;
 using Wallet.Domain.Enums;
 using Wallet.Infrastructure.Identity;
 using Wallet.Infrastructure.Persistence;
-using Wallet.Infrastructure.Services;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
@@ -41,7 +40,6 @@ public static class ConfigureServices
 
         services.AddScoped<IDbContextService, WalletContextService>();
         services.AddScoped<WalletContextInitializer>();
-        services.AddScoped<ITokenService, JwtTokenService>();
 
         services.AddTransient<IIdentityService, IdentityService>();
 

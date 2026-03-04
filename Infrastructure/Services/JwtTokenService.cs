@@ -2,17 +2,17 @@ using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using FastEndpoints;
+using FastEndpoints.Security;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Wallet.Application.Common.Interfaces;
-using Wallet.Application.Common.Models;
 using Wallet.Domain.Entities;
-using Wallet.Infrastructure.Identity;
 using Wallet.Infrastructure.Options;
 
 namespace Wallet.Infrastructure.Services;
 
-public class JwtTokenService : ITokenService
+public class JwtTokenService : RefreshTokenService<TokenRequest, TokenResponse>
 {
     private const string JwtUserId = "userid";
     private const string JwtUserName = "username";
@@ -20,56 +20,82 @@ public class JwtTokenService : ITokenService
     private const string JwtFullName = "fullname";
     private readonly AuthenticationOptions _authenticationOptions;
     private readonly IDbContextService _dbContextService;
+    private readonly IIdentityService _identityService;
 
-    public JwtTokenService(IDbContextService dbContextService, IOptions<AuthenticationOptions> authenticationOptions)
+    public JwtTokenService(IOptions<AuthenticationOptions> authenticationOptions, IDbContextService dbContextService, IIdentityService identityService)
     {
-        _dbContextService = dbContextService;
         _authenticationOptions = authenticationOptions.Value;
+        _dbContextService = dbContextService;
+        _identityService = identityService;
+
+        Setup(o =>
+        {
+            o.TokenSigningKey = _authenticationOptions.JwtSecret;
+            o.AccessTokenValidity = _authenticationOptions.JwtTokenLifetime;
+            o.RefreshTokenValidity = DateTime.UtcNow - DateTime.UtcNow.AddMonths(_authenticationOptions.RefreshTokenLifetimeInMonths);
+
+            o.Endpoint("/authentication/refresh", ep => { ep.Summary(s => s.Summary = "this is the refresh token endpoint"); });
+        });
     }
 
-    public async Task<(Result Result, string AccessToken, string RefreshToken)> GenerateTokensForUserAsync(IUser user, CancellationToken cancellationToken)
+    public static void SetUserClaims(IUser user, UserPrivileges privileges)
     {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_authenticationOptions.JwtSecret);
-
-        var claims = new List<Claim>
-        {
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(JwtUserName, user.UserName),
-            new(JwtUserEmail, user.Email),
-            new(JwtUserId, user.Id),
-            new(JwtFullName, user.FullName),
-        };
-
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.Add(_authenticationOptions.JwtTokenLifetime),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-        };
-
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-
-        var refreshToken = new RefreshToken
-        {
-            JwtId = token.Id,
-            UserId = user.Id,
-            CreationDate = DateTime.UtcNow,
-            ExpiryDate = DateTime.UtcNow.AddMonths(_authenticationOptions.RefreshTokenLifetimeInMonths),
-        };
-
-        await _dbContextService.CreateAsync(refreshToken, cancellationToken);
-
-        return (Result.Success(), tokenHandler.WriteToken(token), refreshToken.Id);
+        privileges.Claims.AddRange(
+        [
+            new Claim(JwtUserName, user.UserName),
+            new Claim(JwtUserEmail, user.Email),
+            new Claim(JwtUserId, user.Id),
+            new Claim(JwtFullName, user.FullName),
+        ]);
     }
 
-    public async Task<(Result Result, IUser User)> RefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken)
+    public override async Task PersistTokenAsync(TokenResponse response)
     {
-        var validatedToken = GetPrincipalFromToken(token);
+        await _dbContextService.CreateAsync(
+            new RefreshToken
+            {
+                Id = response.RefreshToken,
+                AccessToken = response.AccessToken,
+                UserId = response.UserId,
+                CreationDate = DateTime.UtcNow,
+                ExpiryDate = DateTime.UtcNow.AddMonths(_authenticationOptions.RefreshTokenLifetimeInMonths),
+            },
+            CancellationToken.None);
+    }
+
+    public override async Task RefreshRequestValidationAsync(TokenRequest req)
+    {
+        if (string.IsNullOrEmpty(req.UserId))
+        {
+            ThrowError("User ID is required.");
+        }
+
+        if (string.IsNullOrEmpty(req.RefreshToken))
+        {
+            ThrowError("Refresh token is required.");
+        }
+
+        var storedRefreshToken = await _dbContextService.GetAsync<RefreshToken>(req.RefreshToken, CancellationToken.None);
+
+        if (storedRefreshToken is null)
+        {
+            ThrowError("This refresh token does not exist.");
+        }
+
+        var accessToken = storedRefreshToken.AccessToken;
+
+        var validatedToken = GetPrincipalFromToken(accessToken);
 
         if (validatedToken is null)
         {
-            return (Result.Failure(["Invalid token."]), null);
+            ThrowError("Invalid token.");
+        }
+
+        var userId = validatedToken.FindFirstValue(JwtUserId);
+
+        if (userId != req.UserId)
+        {
+            ThrowError("The user ID does not match the token's user ID.");
         }
 
         var exp = validatedToken.FindFirstValue(JwtRegisteredClaimNames.Exp);
@@ -77,49 +103,32 @@ public class JwtTokenService : ITokenService
 
         if (expiryDateTimeUtc > DateTime.UtcNow)
         {
-            return (Result.Failure(["This token has not expired yet."]), null);
-        }
-
-        var jti = validatedToken.FindFirstValue(JwtRegisteredClaimNames.Jti);
-        var storedRefreshToken = await _dbContextService.GetAsync<RefreshToken>(refreshToken, cancellationToken);
-
-        if (storedRefreshToken is null)
-        {
-            return (Result.Failure(["This refresh token does not exist."]), null);
+            ThrowError("This token has not expired yet.");
         }
 
         if (DateTime.UtcNow > storedRefreshToken.ExpiryDate)
         {
-            return (Result.Failure(["This refresh token has expired."]), null);
+            ThrowError("This refresh token has expired.");
         }
 
         if (storedRefreshToken.IsInvalidated)
         {
-            return (Result.Failure(["This refresh token has been invalidated."]), null);
+            ThrowError("This refresh token has been invalidated.");
         }
 
         if (storedRefreshToken.IsUsed)
         {
-            return (Result.Failure(["This refresh token has been used."]), null);
-        }
-
-        if (storedRefreshToken.JwtId != jti)
-        {
-            return (Result.Failure(["This refresh token does not match this JWT token."]), null);
+            ThrowError("This refresh token has been used.");
         }
 
         storedRefreshToken.IsUsed = true;
-        await _dbContextService.UpdateAsync(storedRefreshToken, cancellationToken);
+        await _dbContextService.UpdateAsync(storedRefreshToken, CancellationToken.None);
+    }
 
-        var user = new ApplicationUser
-        {
-            Id = validatedToken.FindFirstValue(JwtUserId),
-            UserName = validatedToken.FindFirstValue(JwtUserName),
-            Email = validatedToken.FindFirstValue(JwtUserEmail),
-            FullName = validatedToken.FindFirstValue(JwtFullName),
-        };
-
-        return (Result.Success(), user);
+    public override async Task SetRenewalPrivilegesAsync(TokenRequest request, UserPrivileges privileges)
+    {
+        var user = await _identityService.GetUserByIdAsync(request.UserId);
+        SetUserClaims(user, privileges);
     }
 
     private static bool IsJwtWithValidSecurityAlgorithm(SecurityToken validatedToken) =>

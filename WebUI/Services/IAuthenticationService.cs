@@ -1,16 +1,17 @@
 ﻿using Refit;
 using Wallet.Shared.Authentication;
+using Wallet.WebUI.Models;
 
 namespace Wallet.WebUI.Services;
 
 public interface IAuthenticationService
 {
     [Post("/login")]
-    Task<AuthenticationResponse> LoginAsync(LoginRequest loginRequest);
+    Task<TokenResponse> LoginAsync(LoginRequest loginRequest);
 
     [Post("/refresh")]
-    Task<AuthenticationResponse> RefreshTokenAsync(RefreshTokenRequest refreshTokenRequest);
+    Task<TokenResponse> RefreshTokenAsync(TokenRequest refreshTokenRequest);
 
     [Post("/register")]
-    Task RegisterAsync(RegistrationRequest registrationRequest);
+    Task RegisterAsync(RegisterRequest registerRequest);
 }

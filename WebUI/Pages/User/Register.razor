@@ -1,5 +1,5 @@
 ﻿@page "/register"
-@inherits UserBase<RegistrationRequest>
+@inherits UserBase<RegisterRequest>
 
 <h1>Registration</h1>
 
@@ -43,7 +43,7 @@
 
     protected override Task SetViewModelAsync()
     {
-        ViewModel = new RegistrationRequest();
+        ViewModel = new RegisterRequest();
         return Task.CompletedTask;
     }
 

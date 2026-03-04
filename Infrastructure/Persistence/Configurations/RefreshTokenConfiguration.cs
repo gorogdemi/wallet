@@ -17,9 +17,9 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
             .ValueGeneratedOnAdd();
 
         builder
-            .Property(x => x.JwtId)
+            .Property(x => x.AccessToken)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(8192);
 
         builder
             .HasOne<ApplicationUser>()
